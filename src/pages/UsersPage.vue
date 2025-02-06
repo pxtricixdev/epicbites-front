@@ -11,7 +11,6 @@ store.findAll()
 
 function insertUser() {
   store.createUser({
-    id: -1,
     name: 'sample',
     surname: 'sample',
   })

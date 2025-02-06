@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { type IUser } from './dtos/user.dto'
+import type { IUser } from './interfaces/IUser'
 
 export const useUsersStore = defineStore('users', () => {
   const users = ref(new Array<IUser>())
