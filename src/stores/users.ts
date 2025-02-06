@@ -1,21 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import UserDto from './dtos/user.dto'
+import { type IUser } from './dtos/user.dto'
 
 export const useUsersStore = defineStore('users', () => {
-  const users = ref(new Array<UserDto>())
+  const users = ref(new Array<IUser>())
 
   function findAll() {
     const data = [
-      { id: 0, name: 'test', surname: 'test2' },
-      { id: 0, name: 'test', surname: 'test3' },
-      { id: 0, name: 'test', surname: 'test4' },
-      { id: 0, name: 'test', surname: 'test5' },
+      { name: 'test', surname: 'test2' },
+      { name: 'test', surname: 'test3' },
+      { name: 'test', surname: 'test4' },
+      { name: 'test', surname: 'test5' },
     ]
     users.value.splice(0, users.value.length, ...data)
   }
 
-  function createUser() {}
+  function createUser(user: IUser) {
+    users.value.push(user)
+  }
   function deleteUser() {}
   function updateUser() {}
 
