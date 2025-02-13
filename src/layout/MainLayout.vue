@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import NavbarMobile from '@/components/NavbarMobile.vue'
+import Footer from '@/components/Footer.vue';
 import { navbarLinks } from '@/data/navbarLinks'
 </script>
 
@@ -9,5 +10,9 @@ import { navbarLinks } from '@/data/navbarLinks'
     <RouterView />
   </main>
   <NavbarMobile :links="navbarLinks" />
-  <footer>Esto será el footer</footer>
+  <footer>
+    <Footer />
+  </footer>
+
+
 </template>
