@@ -5,7 +5,9 @@ import { navbarLinks } from '@/data/navbarLinks'
 </script>
 
 <template>
-  <header><h1>Esto será el header</h1></header>
+  <header>
+    <h1>Esto será el header</h1>
+  </header>
   <main>
     <RouterView />
   </main>
@@ -13,6 +15,4 @@ import { navbarLinks } from '@/data/navbarLinks'
   <footer>
     <Footer />
   </footer>
-
-
 </template>
