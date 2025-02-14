@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :style="{ 'background-image': 'url( {{ src }} )'}">
+  <div class="card" :style="{ backgroundImage: `url(${src})` }">
     <span class="card__score"> {{ score }}</span>
     <div class="card__text">
       <span class="card__text__title">{{ title }}</span>
@@ -10,12 +10,11 @@
 
 <script setup lang="ts">
 defineProps<{
-  score: string,
-  title: string,
-  user: string,
-  src: string,
+  score: string
+  title: string
+  user: string
+  src: string
 }>()
-
 </script>
 
 <style lang="scss" scoped>
@@ -27,12 +26,12 @@ defineProps<{
   height: 140px;
   position: relative;
   font-family: $body;
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   border: 1px solid rgb(221, 221, 221);
   border-radius: 10px;
-  box-shadow: -2px 3px 51px -18px rgba(0,0,0,0.10);
+  box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
 
   &__score {
     position: absolute;
