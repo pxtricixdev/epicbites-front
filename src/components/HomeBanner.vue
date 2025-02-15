@@ -1,15 +1,3 @@
-<script setup lang="ts">
-defineProps({
-  title: String,
-  description: String,
-  features: Array,
-  note: String,
-  image1: String,
-  image2: String,
-  image3: String,
-})
-</script>
-
 <template>
   <section class="promo-banner">
     <div class="promo-banner__left">
@@ -19,7 +7,6 @@ defineProps({
         <li v-for="(feature, index) in features" :key="index">✔ {{ feature }}</li>
       </ul>
       <p class="promo-banner__note">{{ note }}</p>
-      <hr class="promo-banner__divider" />
     </div>
     <div class="promo-banner__right">
       <img :src="image2" class="promo-banner__image-small" />
@@ -29,14 +16,28 @@ defineProps({
   </section>
 </template>
 
+<script setup lang="ts">
+defineProps<{
+  title: string
+  description: string
+  features: string[]
+  note: string
+  image1: string
+  image2: string
+  image3: string
+}>()
+</script>
+
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 
 .promo-banner {
   display: flex;
   flex-direction: column;
-  margin: 20px auto;
+  margin-top: 125px;
   overflow: hidden;
+  color: $primary-yellow;
+  text-align: center;
 
   &__divider {
     border: none;
@@ -46,9 +47,14 @@ defineProps({
   }
 
   &__left {
-    background: $primary-yellow;
-    padding: 20px;
-    text-align: center;
+    background-image: url('/public/img/pexels-jonathanborba-2878745.jpg'),
+      linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5));
+    background-blend-mode: darken;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1;
+    padding: 30px 15px;
     font-family: $heading;
 
     h1 {
@@ -57,24 +63,21 @@ defineProps({
     }
 
     p {
-      font-size: 1rem;
-      margin-bottom: 10px;
+      font-size: 14px;
+      font-family: $body;
     }
 
     ul {
       list-style: none;
       padding: 0;
+      margin-top: 5px;
 
       li {
-        font-size: 0.9rem;
+        font-size: 14px;
         margin-bottom: 5px;
+        font-family: $body;
+        font-style: italic;
       }
-    }
-
-    &__note {
-      font-size: 0.8rem;
-      color: $black;
-      margin-top: 10px;
     }
 
     &__divider {
@@ -83,8 +86,13 @@ defineProps({
     }
   }
 
+  &__note {
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
   &__right {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     justify-content: center;
     background-color: $primary-yellow;
