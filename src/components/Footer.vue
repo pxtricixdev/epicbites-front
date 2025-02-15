@@ -3,7 +3,7 @@
     <hr class="footer__hr" />
     <ul class="footer__list">
       <li class="footer__item footer__item--logo">
-        <img src="" alt="epicbites logo" />
+        <img src="../../public/logo.png" alt="epicbites logo" />
       </li>
       <li class="footer__item">
         <RouterLink to="/home">Home</RouterLink>
@@ -12,7 +12,7 @@
         <RouterLink to="/recetas">Recetas</RouterLink>
       </li>
       <li class="footer__item">
-        <RouterLink to="/sobre nosotros">Sobre nosotros</RouterLink>
+        <RouterLink to="/sobre-nosotros">Sobre nosotros</RouterLink>
       </li>
       <li class="footer__item">
         <RouterLink to="/terminos">Términos y Condiciones</RouterLink>
@@ -35,25 +35,23 @@ import { RouterLink } from 'vue-router'
 .footer {
   width: 100%;
   text-align: center;
+  margin: 20px 0;
 
   &__item {
     margin: 0 auto;
     font-family: $body;
+
+    &--logo {
+      width: 180px;
+    }
 
     a {
       color: $black;
     }
 
     &--logo {
-      width: 166px;
-      height: 53px;
       display: flex;
       justify-content: center;
-
-      img {
-        max-width: 80%;
-        margin: 0 auto;
-      }
     }
   }
 
