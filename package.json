@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@primevue/forms": "^4.2.5",
     "@primevue/themes": "^4.2.5",
     "lucide-vue-next": "^0.475.0",
     "pinia": "^2.3.1",
