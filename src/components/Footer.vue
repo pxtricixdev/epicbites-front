@@ -3,16 +3,16 @@
     <hr class="footer__hr" />
     <ul class="footer__list">
       <li class="footer__item footer__item--logo">
-        <img src="" alt="lumifilm logo" />
+        <img src="" alt="epicbites logo" />
       </li>
       <li class="footer__item">
-        <RouterLink to="/cartelera">Home</RouterLink>
+        <RouterLink to="/home">Home</RouterLink>
       </li>
       <li class="footer__item">
         <RouterLink to="/recetas">Recetas</RouterLink>
       </li>
       <li class="footer__item">
-        <RouterLink to="/recetas">Sobre nosotros</RouterLink>
+        <RouterLink to="/sobre nosotros">Sobre nosotros</RouterLink>
       </li>
       <li class="footer__item">
         <RouterLink to="/terminos">Términos y Condiciones</RouterLink>

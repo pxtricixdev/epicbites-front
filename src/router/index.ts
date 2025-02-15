@@ -10,13 +10,17 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
-          path: '/users',
+          path: 'home',
+          name: 'home',
+          component: () => import('@/pages/HomePage.vue'),
+        },
+        {
+          path: 'users',
           name: 'users',
-          component: () => import('../pages/UsersPage.vue'),
+          component: () => import('@/pages/UsersPage.vue'),
         },
       ],
     },
   ],
-})
-
+});
 export default router
