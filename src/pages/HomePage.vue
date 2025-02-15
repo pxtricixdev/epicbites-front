@@ -1,16 +1,8 @@
-<script setup lang="ts">
-import Banner from '@/components/Banner.vue'
-import Review from '@/components/Review.vue'
-import FeatureSection from '@/components/FeatureSection.vue'
-
-const features = ['Rápido', 'Sencillo', 'Delicioso']
-</script>
-
 <template>
   <div class="home-page">
     <Banner
-      title="Tu espacio para descubrir, organizar y cocinar recetas deliciosas"
-      description="Accede a cientos de recetas, guárdalas y comparte las tuyas con el mundo"
+      title="Cocina, comparte e inspira: una comunidad para los amantes de la buena comida"
+      description="Guarda, organiza y planifica tus recetas para una cocina sin complicaciones."
       :features="features"
       note="¡Comienza a cocinar hoy mismo!"
       image1="/public/Img/pizza.jpg"
@@ -19,17 +11,19 @@ const features = ['Rápido', 'Sencillo', 'Delicioso']
     />
 
     <section class="home-page__reviews">
-      <h2 class="home-page__section-title">Reseñas de nuestros usuarios</h2>
+      <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
       <div class="reviews-container">
-        <Review
+        <HomeReview
           :stars="5"
-          text="El sitio de recetas más útil que he encontrado. Uso las recetas para cocinar para mis amigos y siempre les encanta."
+          text="¡La pizza de pepperoni es increíble! La hice para mi familia y a todos les encantó."
           author="Alex"
+          recipe="Pizza de pepperoni"
         />
-        <Review
+        <HomeReview
           :stars="4"
-          text="Las recetas son súper sencillas de seguir, y me han ayudado a mejorar en la cocina."
+          text="La ensalada de pollo es mi receta favorita. La hago cada semana y nunca me canso de ella."
           author="Patricia"
+          recipe="Ensalada de pollo"
         />
       </div>
     </section>
@@ -37,14 +31,23 @@ const features = ['Rápido', 'Sencillo', 'Delicioso']
     <section class="home-page__feature">
       <div class="feature-container">
         <FeatureSection
-          title="¿Estás sin ideas para cocinar?"
+          title="¿Qué vas a cocinar hoy?"
           subtitle="Descubre nuevas recetas"
+          link="/recetas"
           image="/public/Img/pizza.jpg"
         />
       </div>
     </section>
   </div>
 </template>
+
+<script setup lang="ts">
+import Banner from '@/components/HomeBanner.vue'
+import HomeReview from '@/components/HomeReview.vue'
+import FeatureSection from '@/components/FeatureSection.vue'
+
+const features = ['Rápido', 'Sencillo', 'Delicioso']
+</script>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
@@ -54,22 +57,22 @@ const features = ['Rápido', 'Sencillo', 'Delicioso']
     font-size: 28px;
     margin-bottom: 20px;
     text-align: center;
-    font-family: $heading;
+    font-family: $body;
+    color: $black;
   }
-
   &__reviews {
-    margin: 40px 0;
+    margin: 40px 15px;
   }
 
   &__feature {
-    margin-top: 60px;
+    margin-top: 30px;
   }
 }
 
 .feature-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
 }
 
 .reviews-container {
