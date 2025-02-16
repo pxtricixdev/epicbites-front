@@ -57,6 +57,7 @@ defineProps<{
     display: flex;
     flex-direction: column;
     gap: 8px;
+    color: $white;
   }
 
   &__title {

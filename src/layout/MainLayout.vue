@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MobileHeader from '@/components/MobileHeader.vue'
-import Footer from '@/components/Footer.vue'
+import Footer from '@/components/FooterComponent.vue'
 </script>
 
 <template>

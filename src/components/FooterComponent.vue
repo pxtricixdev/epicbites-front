@@ -5,7 +5,7 @@
         <img src="/logo_white.png" alt="epicbites logo" />
       </li>
       <li class="footer__item">
-        <RouterLink to="/home">Home</RouterLink>
+        <RouterLink to="/">Home</RouterLink>
       </li>
       <li class="footer__item">
         <RouterLink to="/recetas">Recetas</RouterLink>
