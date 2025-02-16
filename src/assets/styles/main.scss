@@ -3,5 +3,13 @@
 @use './variables';
 
 body {
-    background-color: #fafafa;
+  background-color: #fafafa;
+}
+
+//Change root variables for PrimeVue
+:root {
+  --p-floatlabel-focus-color: black !important;
+  --p-inputtext-focus-border-color: #E57309 !important;
+  --p-inputtext-color: black !important;
+  --p-filled: white !important;
 }
