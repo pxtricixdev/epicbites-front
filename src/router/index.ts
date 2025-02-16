@@ -22,6 +22,11 @@ const router = createRouter({
           path: '/terminos',
           name: 'Terminos',
           component: () => import('@/pages/TerminosPage.vue'),
+        },
+        {
+          path: '/politicas',
+          name: 'Politicas',
+          component: () => import('@/pages/PoliticasPage.vue'),
         }
       ],
     },
