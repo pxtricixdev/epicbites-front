@@ -5,9 +5,9 @@
       description="Guarda, organiza y planifica tus recetas para una cocina sin complicaciones."
       :features="features"
       note="¡Comienza a cocinar hoy mismo!"
-      image1="/public/Img/pizza.jpg"
-      image2="/public/Img/mix.jpg"
-      image3="/public/Img/salad.jpg"
+      image1="/img/pizza.jpg"
+      image2="/img/mix.jpg"
+      image3="/img/salad.jpg"
     />
 
     <section class="home-page__reviews">
@@ -34,7 +34,7 @@
           title="¿Qué vas a cocinar hoy?"
           subtitle="Descubre nuevas recetas"
           link="/recetas"
-          image="/public/Img/pizza.jpg"
+          image="/img/pizza.jpg"
         />
       </div>
     </section>
@@ -51,8 +51,10 @@ const features = ['Rápido', 'Sencillo', 'Delicioso']
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .home-page {
+  margin-top: 125px;
   &__section-title {
     font-size: 28px;
     margin-bottom: 20px;

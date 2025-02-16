@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="header__content">
-      <Image src="../../public/logo.png" alt="Epic bites logo" width="150" />
+      <Image src="/logo.png" alt="Epic bites logo" width="150" />
       <div class="header__content__buttons">
         <button @click="toggleMenu" class="header__content__button-x">
           <span class="icon-container" :class="{ rotate: isOpen }">

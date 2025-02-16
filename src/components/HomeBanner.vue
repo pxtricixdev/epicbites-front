@@ -34,7 +34,6 @@ defineProps<{
 .promo-banner {
   display: flex;
   flex-direction: column;
-  margin-top: 125px;
   overflow: hidden;
   color: $primary-yellow;
   text-align: center;
@@ -47,7 +46,7 @@ defineProps<{
   }
 
   &__left {
-    background-image: url('/public/img/pexels-jonathanborba-2878745.jpg'),
+    background-image: url('/img/pexels-jonathanborba-2878745.jpg'),
       linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5));
     background-blend-mode: darken;
     background-position: center;
