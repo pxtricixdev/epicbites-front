@@ -1,7 +1,9 @@
 <template>
   <header class="header">
     <div class="header__content">
-      <Image src="/logo.png" alt="Epic bites logo" width="150" />
+      <RouterLink to="/">
+        <Image src="/logo.png" alt="Epic bites logo" width="150" />
+      </RouterLink>
       <div class="header__content__buttons">
         <button @click="toggleMenu" class="header__content__button-x">
           <span class="icon-container" :class="{ rotate: isOpen }">
@@ -81,7 +83,7 @@ const toggleMenu = () => {
   background-color: $white;
   padding: 20px 20px 5px 20px;
   font-family: $body;
-  position: fixed;
+  position: sticky;
   width: 100%;
   z-index: 1000;
   top: 0;

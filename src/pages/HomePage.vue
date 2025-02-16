@@ -54,11 +54,9 @@ const features = ['Rápido', 'Sencillo', 'Delicioso']
 @use '@/assets/styles/mixins' as *;
 
 .home-page {
-  margin-top: 125px;
   &__section-title {
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 20px;
-    text-align: center;
     font-family: $body;
     color: $black;
   }

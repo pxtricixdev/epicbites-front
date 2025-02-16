@@ -55,7 +55,6 @@ const handleLogin = () => {
 @use '@/assets/styles/mixins' as *;
 
 .login {
-  margin-top: 140px;
   font-family: $body;
 
   &__welcome {

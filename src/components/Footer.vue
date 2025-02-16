@@ -1,9 +1,8 @@
 <template>
   <footer class="footer">
-    <hr class="footer__hr" />
     <ul class="footer__list">
       <li class="footer__item footer__item--logo">
-        <img src="../../public/logo.png" alt="epicbites logo" />
+        <img src="/logo_white.png" alt="epicbites logo" />
       </li>
       <li class="footer__item">
         <RouterLink to="/home">Home</RouterLink>
@@ -35,30 +34,32 @@ import { RouterLink } from 'vue-router'
 .footer {
   width: 100%;
   text-align: center;
-  margin: 20px 0;
+  padding: 8px 0 8px 0;
+  background-color: $black;
+  margin-top: auto;
 
   &__item {
     margin: 0 auto;
     font-family: $body;
 
     &--logo {
-      width: 180px;
+      width: 150px;
     }
 
     a {
-      color: $black;
+      color: $white;
+      font-size: 12px;
+
+      &:hover {
+        color: $secondary-orange;
+        transition: 0.1s ease-in-out;
+      }
     }
 
     &--logo {
       display: flex;
       justify-content: center;
     }
-  }
-
-  &__hr {
-    border-color: $secondary-orange;
-    opacity: 50%;
-    width: 90%;
   }
 }
 
