@@ -1,6 +1,7 @@
 <template>
   <header class="header">
     <div class="header__content">
+      <LogoCanvas />
       <RouterLink to="/">
         <Image src="/logo.png" alt="Epic bites logo" width="150" />
       </RouterLink>
@@ -63,6 +64,7 @@ import { Image } from 'primevue'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
+import LogoCanvas from './LogoCanvas.vue'
 
 const isOpen = ref(false)
 const inputSearch = ref('')
