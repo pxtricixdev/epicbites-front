@@ -1,9 +1,8 @@
 <template>
   <header class="header">
     <div class="header__content">
-      <LogoCanvas />
       <RouterLink to="/">
-        <Image src="/logo.png" alt="Epic bites logo" width="150" />
+        <LogoCanvas />
       </RouterLink>
       <div class="header__content__buttons">
         <button @click="toggleMenu" class="header__content__button-x">
@@ -64,7 +63,8 @@ import { Image } from 'primevue'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
-import LogoCanvas from './LogoCanvas.vue'
+import LogoCanvas from '@/components/LogoCanvas.vue'
+import NewLogo from './NewLogo.vue'
 
 const isOpen = ref(false)
 const inputSearch = ref('')

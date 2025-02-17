@@ -1,45 +1,60 @@
 <template>
-  <canvas ref="myCanvas" width="150" height="70"></canvas>
+  <canvas ref="myCanvas" class="logo-canvas"></canvas>
 </template>
 
-<script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 
 const myCanvas = ref<HTMLCanvasElement | null>(null)
 
 onMounted(() => {
   const canvas = myCanvas.value
+  if (!canvas) return
   const ctx = canvas.getContext('2d')
+  if (!ctx) return
 
-  function dibujaLogo(ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+  // Tamaño del canvas
+  const displayWidth = 170
+  const displayHeight = 50
 
-    // Ojos
-    ctx.lineWidth = 2
+  // Escalar contenido para evitar pixelado
+  const scaleFactor = 4
+  const canvasWidth = displayWidth * scaleFactor
+  const canvasHeight = displayHeight * scaleFactor
+  canvas.width = canvasWidth
+  canvas.height = canvasHeight
+  ctx.scale(scaleFactor, scaleFactor)
 
-    ctx.beginPath()
-    ctx.arc(125, 80, 10, Math.PI, 2 * Math.PI, false)
-    ctx.stroke()
+  // Fondo transparente
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    ctx.beginPath()
-    ctx.arc(180, 80, 10, Math.PI, 2 * Math.PI, false)
-    ctx.stroke()
+  // Ojos
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.arc(28, 15, 4, Math.PI, 2 * Math.PI, false)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.arc(45, 15, 4, Math.PI, 2 * Math.PI, false)
+  ctx.stroke()
 
-    // Texto
-    ctx.font = "bold 24px 'Lilita One'"
-    ctx.fillStyle = 'black'
-    ctx.fillText('epic bites', 225, 110)
+  // Texto
+  ctx.font = "24px 'Lilita One'"
+  ctx.fillStyle = 'black'
+  ctx.fillText('epic bites', 60, 30)
 
-    // Cargar y dibujar imagen del tenedor
-    const img = new Image()
-    img.src = '/img/fork.png'
-    img.onload = () => {
-      ctx.drawImage(img, 100, 100, 100, 50) // Ajustar tamaño y posición
-    }
+  // Imagen del tenedor
+  const img = new Image()
+  img.src = '/img/fork.png'
+  img.onload = () => {
+    ctx.drawImage(img, 19, 22, 35, 10)
   }
-
-  dibujaLogo(ctx)
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.logo-canvas {
+  width: 170px;
+  height: 50px;
+  display: block;
+}
+</style>
