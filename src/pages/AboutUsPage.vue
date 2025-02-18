@@ -17,7 +17,7 @@
     </div>
 
     <div class="about-us__image">
-      <ImageCard image="/public/img/pareja.jpg" altText="Persona cocinando en la cocina" />
+      <Image src="/img/pareja.jpg" alt="Persona cocinando en la cocina" width="400" />
     </div>
   </section>
 
@@ -39,47 +39,32 @@
     </div>
 
     <div class="nuestra-mision__image">
-      <ImageCard image="/public/img/nenes.jpg" altText="Personas cocinando juntas" />
+      <Image src="/img/nenes.jpg" alt="Niños cocinando" width="400" />
     </div>
   </section>
 
   <section class="nuestro-equipo">
     <h2 class="nuestro-equipo__title">Nuestro Equipo</h2>
     <div class="nuestro-equipo__container">
-      <TeamMember
-        image="/public/img/front.jpg"
-        name="Sofía Martínez"
-        role="Programadora Frontend"
-        description="Sofía es la mente creativa detrás del diseño y la experiencia de usuario de nuestra web. Se asegura de que todo luzca increíble y sea fácil de navegar."
-      />
-      <TeamMember
-        image="/public/img/programador.jpg"
-        name="Diego Ramírez"
-        role="Programador Backend"
-        description="Diego construye la infraestructura que hace posible Epic Bites, asegurando que la plataforma sea rápida, segura y eficiente."
-      />
-      <TeamMember
-        image="/public/img/cliente.jpg"
-        name="Pablo Torres"
-        role="Atención al Cliente"
-        description="Pablo es quien responde a todas tus dudas y sugerencias, garantizando que tu experiencia con Epic Bites sea excelente."
-      />
-      <TeamMember
-        image="/public/img/ceo.jpg"
-        name="Valeria Gómez"
-        role="CEO & Fundadora"
-        description="Valeria es la visión y el liderazgo detrás de Epic Bites, impulsando la misión de hacer la cocina accesible y divertida para todos."
-      />
+      <div v-for="member in teamMembers" :key="member.image">
+        <TeamMember
+          :image="member.image"
+          :name="member.name"
+          :role="member.role"
+          :description="member.description"
+        />
+      </div>
     </div>
   </section>
+
+  <!--
   <section class="contact-form">
     <h2 class="contact-form__title">¿Quieres compartir algo con nosotros?</h2>
     <p class="contact-form__description">
       Déjanos tu correo y número de teléfono junto con un mensaje. Nos pondremos en contacto contigo
       lo antes posible.
     </p>
-
-    <form class="contact-form__form">
+   <form class="contact-form__form">
       <div class="contact-form__group">
         <label for="email">Correo Electrónico</label>
         <input type="email" id="email" name="email" placeholder="ejemplo@email.com" required />
@@ -104,11 +89,13 @@
       <button type="submit" class="contact-form__button">Enviar</button>
     </form>
   </section>
+  -->
 </template>
 
 <script setup lang="ts">
-import ImageCard from '@/components/ImageCard.vue'
 import TeamMember from '@/components/TeamMember.vue'
+import { teamMembers } from '@/data/teamMembers'
+import { Image } from 'primevue'
 </script>
 
 <style lang="scss" scoped>
@@ -149,20 +136,13 @@ import TeamMember from '@/components/TeamMember.vue'
     width: 100%;
     display: flex;
     justify-content: center;
-
-    img {
-      width: 100%;
-      max-width: 500px;
-      height: auto;
-      border-radius: 12px;
-    }
   }
 }
 
 .nuestro-equipo {
   text-align: center;
   padding: 40px 20px;
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
 
   &__title {
@@ -240,6 +220,15 @@ import TeamMember from '@/components/TeamMember.vue'
     font-weight: bold;
     cursor: pointer;
     border-radius: 8px;
+  }
+}
+
+:deep(.p-image img) {
+  border-radius: 15px;
+  transition: transform ease-in-out 0.4s;
+
+  &:hover {
+    transform: scale(1.02);
   }
 }
 </style>

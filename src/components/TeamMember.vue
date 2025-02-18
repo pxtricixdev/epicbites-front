@@ -30,7 +30,8 @@ defineProps<{
   background-color: $white;
   border-radius: 12px;
   padding: 20px;
-  max-width: 300px;
+  width: 250px;
+  height: 350px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
 
@@ -53,7 +54,7 @@ defineProps<{
     font-weight: bold;
     color: $black;
     margin-bottom: 4px;
-    font-family: $heading;
+    font-family: $body;
   }
 
   &__role {
