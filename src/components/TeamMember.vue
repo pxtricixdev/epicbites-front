@@ -13,10 +13,10 @@
 
 <script setup lang="ts">
 defineProps<{
-  image: String
-  name: String
-  role: String
-  description: String
+  image: string
+  name: string
+  role: string
+  description: string
 }>()
 </script>
 
