@@ -27,9 +27,14 @@ const router = createRouter({
           path: '/politicas',
           name: 'Politicas',
           component: () => import('@/pages/PoliticasPage.vue'),
-        }
+        },
+        {
+          path: '/sobre-nosotros',
+          name: 'Sobre-nosotros',
+          component: () => import('@/pages/AboutUsPage.vue'),
+        },
       ],
     },
   ],
-});
+})
 export default router
