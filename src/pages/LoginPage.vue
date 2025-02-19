@@ -8,45 +8,58 @@
         Accede a tu cuenta y encuentra la inspiración culinaria perfecta.
       </p>
     </div>
-    <form @submit.prevent="handleLogin" class="login__form">
+    <Form :validation-schema="validationSchema" @submit.prevent="handleLogin" class="login__form">
       <div class="login__content">
         <div class="login__inputs">
           <FloatLabel class="login__card">
-            <InputText class="login__card__inputext" id="email" v-model="email" />
+            <Field name="email" v-slot="{ field }">
+              <InputText v-bind="field" class="login__card__inputext" id="email" />
+            </Field>
             <label class="login__card__label" for="email">Email</label>
           </FloatLabel>
+          <ErrorMessage name="email" class="login__card__error" />
+
           <FloatLabel class="login__card">
-            <InputText
-              type="password"
-              class="login__card__inputext"
-              id="password"
-              v-model="password"
-            />
+            <Field name="password" v-slot="{ field }">
+              <InputText
+                v-bind="field"
+                type="password"
+                class="login__card__inputext"
+                id="password"
+              />
+            </Field>
             <label class="login__card__label" for="password">Contraseña</label>
           </FloatLabel>
+          <ErrorMessage name="password" class="login__card__error" />
         </div>
+
         <p class="login__register">
           ¿Aún no tienes cuenta? <RouterLink to="/registro">Regístrate</RouterLink>
         </p>
         <button class="login__button">Enviar</button>
       </div>
-    </form>
+    </Form>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import { z } from 'zod'
+import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import { CookingPot } from 'lucide-vue-next'
 
-const email = ref('')
-const password = ref('')
+const validationSchema = toTypedSchema(
+  z.object({
+    email: z.string().email('El email no es válido'),
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  }),
+)
 
-const handleLogin = () => {
-  //POST /login
-  console.log('Username', email.value)
-  console.log('Password', password.value)
+const handleLogin = (values) => {
+  //POST /register
+  console.log('Datos de login:', values)
 }
 </script>
 
@@ -119,6 +132,11 @@ const handleLogin = () => {
     &__label {
       font-size: 12px;
       font-weight: 400;
+    }
+
+    &__error {
+      font-size: 12px;
+      color: red;
     }
   }
 
