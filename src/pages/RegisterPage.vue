@@ -5,50 +5,71 @@
         Por favor, rellena los datos para completar el registro
       </p>
     </div>
-    <form @submit.prevent="handleRegister" class="register__form">
+
+    <Form
+      :validation-schema="validationSchema"
+      @submit.prevent="handleRegister"
+      class="register__form"
+    >
       <div class="register__content">
         <div class="register__inputs">
           <FloatLabel class="register__card">
-            <InputText class="register__card__inputext" id="username" v-model="username" />
+            <Field name="username" v-slot="{ field }">
+              <InputText v-bind="field" class="register__card__inputext" id="username" />
+            </Field>
             <label class="register__card__label" for="username">Nombre de usuario</label>
           </FloatLabel>
+          <ErrorMessage name="username" class="register__card__error" />
+
           <FloatLabel class="register__card">
-            <InputText class="register__card__inputext" id="email" v-model="email" />
+            <Field v-slot="{ field }" name="email">
+              <InputText v-bind="field" class="register__card__inputext" id="email" />
+            </Field>
             <label class="register__card__label" for="email">Email</label>
           </FloatLabel>
+          <ErrorMessage name="email" class="register__card__error" />
+
           <FloatLabel class="register__card">
-            <InputText
-              type="password"
-              class="register__card__inputext"
-              id="password"
-              v-model="password"
-            />
+            <Field v-slot="{ field }" name="password">
+              <InputText
+                v-bind="field"
+                class="register__card__inputext"
+                id="password"
+                type="password"
+              />
+            </Field>
             <label class="register__card__label" for="password">Contraseña</label>
           </FloatLabel>
+          <ErrorMessage name="password" class="register__card__error" />
         </div>
+
         <p class="register__register">
           ¿Aún no tienes cuenta? <RouterLink to="/registro">Regístrate</RouterLink>
         </p>
-        <button class="register__button">Enviar</button>
+        <button class="register__button" type="submit">Enviar</button>
       </div>
-    </form>
+    </Form>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import { z } from 'zod'
+import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
+const validationSchema = toTypedSchema(
+  z.object({
+    username: z.string().min(3, 'El usuario debe tener al menos 3 caracteres'),
+    email: z.string().email('El email no es válido'),
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  }),
+)
 
-const handleRegister = () => {
-  // POST /register
-  console.log('Username', username.value)
-  console.log('Email', email.value)
-  console.log('Password', password.value)
+const handleRegister = (values) => {
+  //POST /register
+  console.log('Datos de registro:', values)
 }
 </script>
 
@@ -120,6 +141,11 @@ const handleRegister = () => {
     &__label {
       font-size: 12px;
       font-weight: 400;
+    }
+
+    &__error {
+      color: red;
+      font-size: 12px;
     }
   }
 
