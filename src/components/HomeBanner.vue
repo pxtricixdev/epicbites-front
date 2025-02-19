@@ -35,7 +35,7 @@ defineProps<{
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color: $primary-yellow;
+  color: $white;
   text-align: center;
 
   &__divider {
