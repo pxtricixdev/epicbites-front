@@ -18,9 +18,23 @@ const router = createRouter({
           name: 'login',
           component: () => import('@/pages/LoginPage.vue'),
         },
-
+        {
+          path: '/terminos',
+          name: 'Terminos',
+          component: () => import('@/pages/TerminosPage.vue'),
+        },
+        {
+          path: '/politicas',
+          name: 'Politicas',
+          component: () => import('@/pages/PoliticasPage.vue'),
+        },
+        {
+          path: '/sobre-nosotros',
+          name: 'Sobre-nosotros',
+          component: () => import('@/pages/AboutUsPage.vue'),
+        },
       ],
     },
   ],
-});
+})
 export default router

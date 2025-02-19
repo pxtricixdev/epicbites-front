@@ -35,7 +35,7 @@ onMounted(() => {
   ctx.scale(scaleFactor, scaleFactor)
 
   const img = new Image()
-  img.src = '/img/fork.png'
+  img.src = '/images/fork.png'
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width / scaleFactor, canvas.height / scaleFactor)
