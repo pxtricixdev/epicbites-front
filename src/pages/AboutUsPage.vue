@@ -17,7 +17,7 @@
     </div>
 
     <div class="about-us__image">
-      <Image src="/img/pareja.jpg" alt="Persona cocinando en la cocina" width="400" />
+      <Image src="/images/pareja.jpg" alt="Persona cocinando en la cocina" width="400" />
     </div>
   </section>
 
@@ -39,7 +39,7 @@
     </div>
 
     <div class="nuestra-mision__image">
-      <Image src="/img/nenes.jpg" alt="Niños cocinando" width="400" />
+      <Image src="/images/nenes.jpg" alt="Niños cocinando" width="400" />
     </div>
   </section>
 

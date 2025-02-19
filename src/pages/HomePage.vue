@@ -5,9 +5,9 @@
       description="Guarda, organiza y planifica tus recetas para una cocina sin complicaciones."
       :features="features"
       note="¡Comienza a cocinar hoy mismo!"
-      image1="/img/pizza.jpg"
-      image2="/img/mix.jpg"
-      image3="/img/salad.jpg"
+      image1="/images/pizza.jpg"
+      image2="/images/mix.jpg"
+      image3="/images/salad.jpg"
     />
 
     <section class="home-page__reviews">
@@ -34,7 +34,7 @@
           title="¿Qué vas a cocinar hoy?"
           subtitle="Descubre nuevas recetas"
           link="/recetas"
-          image="/img/pizza.jpg"
+          image="/images/pizza.jpg"
         />
       </div>
     </section>
