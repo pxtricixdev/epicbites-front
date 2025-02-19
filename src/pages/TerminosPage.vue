@@ -108,7 +108,7 @@ const termsSections = [
     }
 
     &__subtitle {
-        font-size: 24px; // 1.5rem en px
+        font-size: 24px;
         color: $secondary-orange;
         margin-bottom: 10px;
         font-family: $heading;
