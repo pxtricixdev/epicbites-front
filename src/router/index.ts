@@ -30,12 +30,12 @@ const router = createRouter({
         },
         {
           path: '/politicas',
-          name: 'Politicas',
+          name: 'politicas',
           component: () => import('@/pages/PoliticasPage.vue'),
         },
         {
           path: '/sobre-nosotros',
-          name: 'Sobre-nosotros',
+          name: 'sobre nosotros',
           component: () => import('@/pages/AboutUsPage.vue'),
         },
       ],

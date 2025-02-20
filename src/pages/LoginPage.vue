@@ -34,7 +34,7 @@
         </div>
 
         <p class="login__register">
-          ¿Aún no tienes cuenta? <RouterLink to="/registro">Regístrate</RouterLink>
+          ¿Aún no tienes cuenta? <RouterLink to="/register">Regístrate</RouterLink>
         </p>
         <button class="login__button">Enviar</button>
       </div>

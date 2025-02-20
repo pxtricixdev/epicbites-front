@@ -6,24 +6,27 @@
       </RouterLink>
 
       <!-- Menú para pantallas > 768 -->
-      <nav class="header__nav-desktop" v-if="isDesktop">
-        <RouterLink class="header__nav__item" to="/">Home</RouterLink>
-        <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
-        <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
-        <RouterLink class="header__nav__item" to="/perfil">Mi Perfil</RouterLink>
-      </nav>
+      <div class="header__content__right">
+        <nav class="header__nav-desktop" v-if="isDesktop">
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/recetas">Recetas</RouterLink>
+          <RouterLink to="/sobre-nosotros">Sobre Nosotros</RouterLink>
+          <RouterLink to="/perfil">Mi Perfil</RouterLink>
+        </nav>
 
-      <div class="header__content__buttons">
-        <!-- Ocultar el btn hamburguesa en desktop -->
-        <button v-if="!isDesktop" @click="toggleMenu" class="header__content__button-x">
-          <span class="icon-container" :class="{ rotate: isOpen }">
-            <Menu :size="28" v-if="!isOpen" color="black" />
-            <X :size="28" v-else color="black" />
-          </span>
-        </button>
-        <RouterLink to="/login" class="header__content__button-login"> Login </RouterLink>
+        <div class="header__content__buttons">
+          <!-- Ocultar el btn hamburguesa en desktop -->
+          <button v-if="!isDesktop" @click="toggleMenu" class="header__content__button-x">
+            <span class="icon-container" :class="{ rotate: isOpen }">
+              <Menu :size="28" v-if="!isOpen" color="black" />
+              <X :size="28" v-else color="black" />
+            </span>
+          </button>
+          <RouterLink to="/login" class="header__content__button-login"> Login </RouterLink>
+        </div>
       </div>
     </div>
+
     <div class="header__search">
       <IconField class="header__search__field">
         <InputIcon class="pi pi-search header__search__icon" />
@@ -38,7 +41,7 @@
     <!-- Menú hamburguesa (solo móviles) -->
     <nav v-if="!isDesktop" :class="{ header__nav__open: isOpen }" class="header__nav">
       <ul class="header__nav__list">
-         <li>
+        <li>
           <RouterLink class="header__nav__item" to="/">
             Home
             <ArrowRight :size="18" color="#E57309" />
@@ -70,12 +73,10 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ArrowRight, Menu, X } from 'lucide-vue-next'
-import { Image } from 'primevue'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
 import LogoCanvas from '@/components/LogoCanvas.vue'
-import NewLogo from './NewLogo.vue'
 
 const isOpen = ref(false)
 const inputSearch = ref('')
@@ -91,7 +92,7 @@ const updateScreenSize = () => {
   isDesktop.value = window.innerWidth > 768
 }
 
-// Detectar el cambio de pantalla 
+// Detectar el cambio de pantalla
 onMounted(() => {
   window.addEventListener('resize', updateScreenSize)
 })
@@ -110,7 +111,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 20px;
   background-color: $white;
-  padding: 20px 20px 15px 20px;
+  padding: 20px 20px 5px 20px;
   font-family: $body;
   position: sticky;
   width: 100%;
@@ -128,6 +129,7 @@ onUnmounted(() => {
     pointer-events: none;
 
     &__item {
+      border-top: 1px solid $secondary-orange;
       padding: 10px 5px;
       display: flex;
       flex-direction: row;
@@ -149,6 +151,16 @@ onUnmounted(() => {
   &__nav-desktop {
     display: flex;
     gap: 20px;
+
+    a {
+      color: $black;
+      font-weight: 600;
+      transition: 0.1s ease-in-out;
+    }
+
+    a:hover {
+      color: #5a5a5a;
+    }
 
     .header__nav__item {
       font-size: 16px;
@@ -195,6 +207,12 @@ onUnmounted(() => {
       cursor: pointer;
       display: flex;
       align-items: center;
+    }
+
+    &__right {
+      display: flex;
+      flex-direction: row;
+      gap: 60px;
     }
   }
 

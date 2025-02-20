@@ -40,7 +40,7 @@
         </div>
 
         <p class="register__register">
-          ¿Aún no tienes cuenta? <RouterLink to="/registro">Regístrate</RouterLink>
+          ¿Ya tienes cuenta? <RouterLink to="/login">Log in</RouterLink>
         </p>
         <button class="register__button" type="submit">Enviar</button>
       </div>
