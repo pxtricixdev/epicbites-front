@@ -6,11 +6,7 @@
       </p>
     </div>
 
-    <Form
-      :validation-schema="validationSchema"
-      @submit.prevent="handleRegister"
-      class="register__form"
-    >
+    <Form :validation-schema="validationSchema" @submit="handleRegister" class="register__form">
       <div class="register__content">
         <div class="register__inputs">
           <FloatLabel class="register__card">
