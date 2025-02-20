@@ -4,8 +4,18 @@
       <RouterLink to="/">
         <LogoCanvas />
       </RouterLink>
+
+      <!-- Menú para pantallas > 768 -->
+      <nav class="header__nav-desktop" v-if="isDesktop">
+        <RouterLink class="header__nav__item" to="/">Home</RouterLink>
+        <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
+        <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
+        <RouterLink class="header__nav__item" to="/perfil">Mi Perfil</RouterLink>
+      </nav>
+
       <div class="header__content__buttons">
-        <button @click="toggleMenu" class="header__content__button-x">
+        <!-- Ocultar el btn hamburguesa en desktop -->
+        <button v-if="!isDesktop" @click="toggleMenu" class="header__content__button-x">
           <span class="icon-container" :class="{ rotate: isOpen }">
             <Menu :size="28" v-if="!isOpen" color="black" />
             <X :size="28" v-else color="black" />
@@ -25,9 +35,10 @@
       </IconField>
     </div>
 
-    <nav :class="{ header__nav__open: isOpen }" class="header__nav">
+    <!-- Menú hamburguesa (solo móviles) -->
+    <nav v-if="!isDesktop" :class="{ header__nav__open: isOpen }" class="header__nav">
       <ul class="header__nav__list">
-        <li>
+         <li>
           <RouterLink class="header__nav__item" to="/">
             Home
             <ArrowRight :size="18" color="#E57309" />
@@ -57,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { ArrowRight, Menu, X } from 'lucide-vue-next'
 import { Image } from 'primevue'
 import IconField from 'primevue/iconfield'
@@ -68,10 +79,26 @@ import NewLogo from './NewLogo.vue'
 
 const isOpen = ref(false)
 const inputSearch = ref('')
+const isDesktop = ref(window.innerWidth > 768)
 
+// Alternar menú hamburguesa
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
 }
+
+// Detectar el tamaño de la pantalla
+const updateScreenSize = () => {
+  isDesktop.value = window.innerWidth > 768
+}
+
+// Detectar el cambio de pantalla 
+onMounted(() => {
+  window.addEventListener('resize', updateScreenSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateScreenSize)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -83,7 +110,7 @@ const toggleMenu = () => {
   flex-direction: column;
   gap: 20px;
   background-color: $white;
-  padding: 20px 20px 5px 20px;
+  padding: 20px 20px 15px 20px;
   font-family: $body;
   position: sticky;
   width: 100%;
@@ -101,7 +128,6 @@ const toggleMenu = () => {
     pointer-events: none;
 
     &__item {
-      border-top: 1px solid $secondary-orange;
       padding: 10px 5px;
       display: flex;
       flex-direction: row;
@@ -117,6 +143,22 @@ const toggleMenu = () => {
       pointer-events: auto;
       max-height: 300px;
       background-color: $white;
+    }
+  }
+
+  &__nav-desktop {
+    display: flex;
+    gap: 20px;
+
+    .header__nav__item {
+      font-size: 16px;
+      color: $black;
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        color: $secondary-orange;
+      }
     }
   }
 
@@ -183,6 +225,28 @@ const toggleMenu = () => {
 
   &.rotate {
     transform: rotate(180deg) scale(1.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .header__nav-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .header__content__button-x {
+    display: none;
+  }
+
+  .header__nav {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header__search {
+    margin-bottom: 30px;
   }
 }
 </style>

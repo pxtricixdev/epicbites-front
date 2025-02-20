@@ -12,8 +12,8 @@
       <div class="login__content">
         <div class="login__inputs">
           <FloatLabel class="login__card">
-            <InputText class="login__card__inputext" id="username" v-model="username" />
-            <label class="login__card__label" for="username">Usuario</label>
+            <InputText class="login__card__inputext" id="email" v-model="email" />
+            <label class="login__card__label" for="email">Email</label>
           </FloatLabel>
           <FloatLabel class="login__card">
             <InputText
@@ -40,12 +40,12 @@ import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import { CookingPot } from 'lucide-vue-next'
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 
 const handleLogin = () => {
   //POST /login
-  console.log('Username', username.value)
+  console.log('Username', email.value)
   console.log('Password', password.value)
 }
 </script>

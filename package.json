@@ -15,10 +15,12 @@
   "dependencies": {
     "@primevue/forms": "^4.2.5",
     "@primevue/themes": "^4.2.5",
+    "@vee-validate/zod": "^4.15.0",
     "lucide-vue-next": "^0.475.0",
     "pinia": "^2.3.1",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",
+    "vee-validate": "^4.15.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "zod": "^3.24.2"
