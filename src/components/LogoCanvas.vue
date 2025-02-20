@@ -41,13 +41,13 @@ onMounted(() => {
     ctx.clearRect(0, 0, canvas.width / scaleFactor, canvas.height / scaleFactor)
 
     if (globalOpacity < 1) {
-      globalOpacity += 0.04
+      globalOpacity += 0.02
     }
     ctx.globalAlpha = globalOpacity
 
     if (isBlinking) {
-      zoomFactor += (1.05 - zoomFactor) * 0.1
-      eyeScale = 1 + 0.1 * Math.sin(Date.now() * 0.005)
+      zoomFactor += (1.06 - zoomFactor) * 0.1
+      eyeScale = 1 + 0.2 * Math.sin(Date.now() * 0.006)
     } else {
       zoomFactor += (1 - zoomFactor) * 0.1
       eyeScale = 1
