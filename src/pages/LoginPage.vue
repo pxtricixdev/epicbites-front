@@ -8,7 +8,7 @@
         Accede a tu cuenta y encuentra la inspiración culinaria perfecta.
       </p>
     </div>
-    <Form :validation-schema="validationSchema" @submit.prevent="handleLogin" class="login__form">
+    <Form :validation-schema="validationSchema" @submit="handleLogin" class="login__form">
       <div class="login__content">
         <div class="login__inputs">
           <FloatLabel class="login__card">
