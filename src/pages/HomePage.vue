@@ -10,6 +10,37 @@
       image3="/images/salad.jpg"
     />
 
+    <section class="home-page__recipes">
+      <h2 class="home-page__section-title">Recetas populares 🔥</h2>
+      <div class="home-page__recipes__cards">
+        <CardRecipe
+          score="4.5"
+          title="Pizza de pepperoni con queso"
+          user="Alex"
+          src="/images/pizza.jpg"
+          :link="`/recetas/${'pizza'}`"
+        />
+        <CardRecipe
+          score="2"
+          title="Ensalada de pollo"
+          user="Patricia"
+          src="/images/salad.jpg"
+          :link="`/recetas/${'salad'}`"
+        />
+      </div>
+    </section>
+
+    <section class="home-page__feature">
+      <div class="feature-container">
+        <FeatureSection
+          title="¿Qué vas a cocinar hoy?"
+          subtitle="Descubre nuevas recetas"
+          link="/recetas"
+          image="/images/pizza.jpg"
+        />
+      </div>
+    </section>
+
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
       <div v-if="dataReviewsLoading" class="home-page__loading-data">
@@ -27,17 +58,6 @@
         </div>
       </div>
     </section>
-
-    <section class="home-page__feature">
-      <div class="feature-container">
-        <FeatureSection
-          title="¿Qué vas a cocinar hoy?"
-          subtitle="Descubre nuevas recetas"
-          link="/recetas"
-          image="/images/pizza.jpg"
-        />
-      </div>
-    </section>
   </div>
 </template>
 
@@ -45,6 +65,7 @@
 import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
+import CardRecipe from '@/components/CardRecipe.vue'
 import { useGetReviews } from '@/stores/useGetReviews'
 import { onMounted } from 'vue'
 
@@ -78,10 +99,24 @@ onMounted(async () => {
     padding-top: 40px;
     max-width: 1200px;
     margin: 0 auto;
+    margin-bottom: 60px;
   }
 
   &__feature {
     margin-top: 30px;
+  }
+
+  &__recipes {
+    padding-top: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    &__cards {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
   }
 
   &__loading-data {

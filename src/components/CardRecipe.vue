@@ -1,11 +1,18 @@
 <template>
-  <div class="card" :style="{ backgroundImage: `url(${src})` }">
-    <span class="card__score"> {{ score }}</span>
-    <div class="card__text">
-      <span class="card__text__title">{{ title }}</span>
-      <span class="card__text__user">{{ user }}</span>
+  <RouterLink :to="link">
+    <div class="card">
+      <div class="card__img" :style="{ backgroundImage: `url(${src})` }"></div>
+      <div class="card__info">
+        <div class="card__text">
+          <div class="card__text__top">
+            <span class="card__score"> {{ score }}</span>
+            <span class="card__text__title">{{ title }}</span>
+          </div>
+          <span class="card__text__user">{{ user }}</span>
+        </div>
+      </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
@@ -14,6 +21,7 @@ defineProps<{
   title: string
   user: string
   src: string
+  link: string
 }>()
 </script>
 
@@ -22,37 +30,74 @@ defineProps<{
 @use '@/assets/styles/mixins' as *;
 
 .card {
-  width: 160px;
-  height: 140px;
-  position: relative;
   font-family: $body;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  border: 1px solid rgb(221, 221, 221);
-  border-radius: 10px;
-  box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
+  height: 240px;
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-top: 20px;
+  align-items: center;
+  transition: ease-in-out 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &__img {
+    width: 150px;
+    height: 140px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+  }
 
   &__score {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 12px;
+    font-size: 10px;
+    color: #000000;
+    background-color: $primary-yellow;
+    border-radius: 999px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   &__text {
-    position: absolute;
-    bottom: 10px;
-    left: 15px;
     display: flex;
     flex-direction: column;
+    color: $black;
+
+    &__top {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+    }
 
     &__title {
       font-size: 12px;
+      color: $black;
+      font-weight: 570;
+      width: 80%;
     }
 
     &__user {
-      font-size: 10px;
+      font-size: 12px;
+      color: #656565;
+      font-weight: 570;
     }
   }
 }
