@@ -12,14 +12,16 @@
 
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
-      <div v-for="data in dataReviews" :key="data.id" class="reviews-container">
-        <HomeReview
-          :stars="data.score"
-          :text="data.text"
-          author="Alex"
-          recipe="Pizza de pepperoni"
-          :recipeLink="`/recetas/${data.recipeId}`"
-        />
+      <div class="reviews-container">
+        <div v-for="data in dataReviews" :key="data.id">
+          <HomeReview
+            :stars="data.score"
+            :text="data.text"
+            author="Alex"
+            recipe="Pizza de pepperoni"
+            :recipeLink="`/recetas/${data.recipeId}`"
+          />
+        </div>
       </div>
     </section>
 
@@ -70,7 +72,9 @@ onMounted(async () => {
     color: $black;
   }
   &__reviews {
-    margin: 40px 15px;
+    padding-top: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
   &__feature {
