@@ -3,7 +3,7 @@
     <div class="card__stars">
       <Star v-for="star in stars" :key="star" class="card__icon filled" />
     </div>
-    <RouterLink class="card__link" to="/recipe/1">{{ recipe }}</RouterLink>
+    <RouterLink class="card__link" :to="recipeLink">{{ recipe }}</RouterLink>
     <p class="card__text">{{ text }}</p>
     <p class="card__author">{{ author }}</p>
   </div>
@@ -17,6 +17,7 @@ defineProps<{
   text: string
   author: string
   recipe: string
+  recipeLink: string
 }>()
 </script>
 

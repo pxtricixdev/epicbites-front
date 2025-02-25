@@ -12,18 +12,13 @@
 
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
-      <div class="reviews-container">
+      <div v-for="data in dataReviews" :key="data.id" class="reviews-container">
         <HomeReview
-          :stars="5"
-          text="¡La pizza de pepperoni es increíble! La hice para mi familia y a todos les encantó."
+          :stars="data.score"
+          :text="data.text"
           author="Alex"
           recipe="Pizza de pepperoni"
-        />
-        <HomeReview
-          :stars="4"
-          text="La ensalada de pollo es mi receta favorita. La hago cada semana y nunca me canso de ella."
-          author="Patricia"
-          recipe="Ensalada de pollo"
+          :recipeLink="`/recetas/${data.recipeId}`"
         />
       </div>
     </section>
@@ -61,7 +56,6 @@ onMounted(async () => {
   await fetchReviews()
   console.log('Somos los comentarios', dataReviews.value)
 })
-
 </script>
 
 <style lang="scss" scoped>
