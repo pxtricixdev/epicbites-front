@@ -45,8 +45,23 @@
 import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
+import { useGetReviews } from '@/stores/useGetReviews'
+import { onMounted } from 'vue'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
+
+const {
+  dataReviews,
+  fetchReviews,
+  loading: dataReviewsLoading,
+  error: dataReviewsError,
+} = useGetReviews()
+
+onMounted(async () => {
+  await fetchReviews()
+  console.log('Somos los comentarios', dataReviews.value)
+})
+
 </script>
 
 <style lang="scss" scoped>
