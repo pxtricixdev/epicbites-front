@@ -1,8 +1,9 @@
 export interface IGetReviews {
   id: number,
+  recipeId: number,
+  name: string,
   text: string,
-  date: Date,
   score: number,
-  userId: number,
-  recipeId: number
+  date: Date,
+  username: string,
 }

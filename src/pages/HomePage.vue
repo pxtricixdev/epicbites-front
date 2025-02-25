@@ -13,12 +13,12 @@
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
       <div class="reviews-container">
-        <div v-for="data in dataReviews" :key="data.id">
+        <div v-for="data in dataReviews.slice(0, 6)" :key="data.id">
           <HomeReview
             :stars="data.score"
             :text="data.text"
-            author="Alex"
-            recipe="Pizza de pepperoni"
+            :author="data.username"
+            :recipe="data.name"
             :recipeLink="`/recetas/${data.recipeId}`"
           />
         </div>
