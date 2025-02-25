@@ -3,16 +3,18 @@
     <div class="feature-card__image">
       <img :src="image" />
     </div>
-    <LinkRouter :to="link">
+    <RouterLink :to="link">
       <div class="feature-card__content">
         <h3 class="feature-card__title">{{ title }}</h3>
         <p class="feature-card__description">{{ subtitle }}</p>
       </div>
-    </LinkRouter>
+    </RouterLink>
   </div>
 </template>
 
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
+
 defineProps<{
   image: string
   title: string
