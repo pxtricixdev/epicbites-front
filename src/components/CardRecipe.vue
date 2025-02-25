@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  score: string
+  score: number
   title: string
   user: string
   src: string

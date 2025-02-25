@@ -12,20 +12,23 @@
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas populares 🔥</h2>
+      <div v-if="dataRecipeLoading" class="home-page__loading-data">
+        <p>Loading...</p>
+      </div>
       <div class="home-page__recipes__cards">
         <CardRecipe
-          score="4.5"
+          :score="4.5"
           title="Pizza de pepperoni con queso"
           user="Alex"
           src="/images/pizza.jpg"
           :link="`/recetas/${'pizza'}`"
         />
         <CardRecipe
-          score="2"
-          title="Ensalada de pollo"
-          user="Patricia"
-          src="/images/salad.jpg"
-          :link="`/recetas/${'salad'}`"
+          :score="4.5"
+          title="Pizza de pepperoni con queso"
+          user="Alex"
+          src="/images/pizza.jpg"
+          :link="`/recetas/${'pizza'}`"
         />
       </div>
     </section>
@@ -67,6 +70,7 @@ import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
 import CardRecipe from '@/components/CardRecipe.vue'
 import { useGetReviews } from '@/stores/useGetReviews'
+import { useGetRecipe } from '@/stores/useGetRecipe'
 import { onMounted } from 'vue'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
@@ -81,6 +85,19 @@ const {
 onMounted(async () => {
   await fetchReviews()
   console.log('Somos los comentarios', dataReviews.value)
+})
+
+
+const {
+  dataRecipe,
+  fetchRecipe,
+  loading: dataRecipeLoading,
+  error: dataRecipeError,
+} = useGetRecipe()
+
+onMounted(async () => {
+  await fetchRecipe()
+  console.log('Recetaassss', dataRecipe.value)
 })
 </script>
 
