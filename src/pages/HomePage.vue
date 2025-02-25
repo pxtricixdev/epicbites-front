@@ -12,7 +12,10 @@
 
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
-      <div class="reviews-container">
+      <div v-if="dataReviewsLoading" class="home-page__loading-data">
+        <p>Loading...</p>
+      </div>
+      <div v-else class="reviews-container">
         <div v-for="data in dataReviews.slice(0, 6)" :key="data.id">
           <HomeReview
             :stars="data.score"
@@ -79,6 +82,15 @@ onMounted(async () => {
 
   &__feature {
     margin-top: 30px;
+  }
+
+  &__loading-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    color: black;
+    font-family: $body;
   }
 }
 
