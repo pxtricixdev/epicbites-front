@@ -9,7 +9,7 @@ export interface IGetRecipe {
     calories: number;
     difficulty: string;
     image: string;
-    userName?: string; 
+    userName: string; 
     ingredients: Ingredient[]; 
 }
 

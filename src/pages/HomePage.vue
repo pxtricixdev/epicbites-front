@@ -16,20 +16,15 @@
         <p>Loading...</p>
       </div>
       <div class="home-page__recipes__cards">
-        <CardRecipe
-          :score="4.5"
-          title="Pizza de pepperoni con queso"
-          user="Alex"
-          src="/images/pizza.jpg"
-          :link="`/recetas/${'pizza'}`"
-        />
-        <CardRecipe
-          :score="4.5"
-          title="Pizza de pepperoni con queso"
-          user="Alex"
-          src="/images/pizza.jpg"
-          :link="`/recetas/${'pizza'}`"
-        />
+        <div v-for="data in dataRecipe" :key="data.id">
+          <CardRecipe
+            :score="4.5"
+            :title="data.name"
+            :user="data.userName"
+            :src="data.image"
+            :link="`/recetas/${data.id}`"
+          />
+        </div>
       </div>
     </section>
 
