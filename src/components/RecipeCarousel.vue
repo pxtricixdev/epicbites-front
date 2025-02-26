@@ -25,9 +25,9 @@
 import { ref, defineProps } from 'vue'
 import CardRecipe from '@/components/CardRecipe.vue'
 import { Carousel } from 'primevue'
-import type { IGetRecipes } from '@/stores/interfaces/IGetRecipes'
+import type { IGetMostRatedRecipes } from '@/stores/interfaces/IGetMostRatedRecipes'
 
-defineProps<{ recipes: Array<IGetRecipes> }>()
+defineProps<{ recipes: Array<IGetMostRatedRecipes> }>()
 
 const responsiveOptions = ref([
   {

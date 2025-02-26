@@ -1,4 +1,4 @@
-export interface IGetRecipes {
+export interface IGetMostRatedRecipes {
     id: number;
     name: string;
     description: string;
@@ -10,5 +10,5 @@ export interface IGetRecipes {
     difficulty: string;
     image: string;
     userName: string;
-    scone: number;
+    score: number;
 }

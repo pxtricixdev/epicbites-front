@@ -1,8 +1,8 @@
 import { ref } from "vue"
-import type { IGetRecipes } from "./interfaces/IGetRecipes"
+import type { IGetMostRatedRecipes } from "./interfaces/IGetMostRatedRecipes"
 
-export function useGetLatestRecipes() {
-  const dataRecipe = ref<IGetRecipes[]>([])
+export function useGetMostRatedRecipes() {
+  const dataRecipe = ref<IGetMostRatedRecipes[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
 

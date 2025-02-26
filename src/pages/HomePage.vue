@@ -56,7 +56,7 @@ import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
 import { useGetReviews } from '@/stores/useGetReviews'
-import { useGetLatestRecipes } from '@/stores/useGetLatestRecipes'
+import { useGetLatestRecipes, useGetMostRatedRecipes } from '@/stores/useGetMostRatedRecipes'
 import { onMounted } from 'vue'
 import RecipeCarousel from '@/components/RecipeCarousel.vue'
 
@@ -79,7 +79,7 @@ const {
   fetchRecipes,
   loading: dataRecipeLoading,
   error: dataRecipeError,
-} = useGetLatestRecipes()
+} = useGetMostRatedRecipes()
 
 onMounted(async () => {
   await fetchRecipes()
@@ -143,5 +143,6 @@ onMounted(async () => {
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
+  margin-top: 20px;
 }
 </style>
