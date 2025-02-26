@@ -11,20 +11,12 @@
     />
 
     <section class="home-page__recipes">
-      <h2 class="home-page__section-title">Recetas populares 🔥</h2>
+      <h2 class="home-page__section-title">Últimas recetas añadidas</h2>
       <div v-if="dataRecipeLoading" class="home-page__loading-data">
         <p>Loading...</p>
       </div>
       <div class="home-page__recipes__cards">
-        <div v-for="data in dataRecipe" :key="data.id">
-          <CardRecipe
-            :score="4.5"
-            :title="data.name"
-            :user="data.userName"
-            :src="data.image"
-            :link="`/recetas/${data.id}`"
-          />
-        </div>
+        <RecipeCarousel :recipes="dataRecipe" />
       </div>
     </section>
 
@@ -63,10 +55,10 @@
 import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
-import CardRecipe from '@/components/CardRecipe.vue'
 import { useGetReviews } from '@/stores/useGetReviews'
-import { useGetRecipe } from '@/stores/useGetRecipe'
+import { useGetLatestRecipes } from '@/stores/useGetLatestRecipes'
 import { onMounted } from 'vue'
+import RecipeCarousel from '@/components/RecipeCarousel.vue'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
 
@@ -79,20 +71,19 @@ const {
 
 onMounted(async () => {
   await fetchReviews()
-  console.log('Somos los comentarios', dataReviews.value)
+  console.log('Los comentarios:', dataReviews.value)
 })
-
 
 const {
   dataRecipe,
-  fetchRecipe,
+  fetchRecipes,
   loading: dataRecipeLoading,
   error: dataRecipeError,
-} = useGetRecipe()
+} = useGetLatestRecipes()
 
 onMounted(async () => {
-  await fetchRecipe()
-  console.log('Recetaassss', dataRecipe.value)
+  await fetchRecipes()
+  console.log('Las recetas:', dataRecipe.value)
 })
 </script>
 
@@ -103,9 +94,9 @@ onMounted(async () => {
 .home-page {
   &__section-title {
     font-size: 24px;
-    margin-bottom: 20px;
     font-family: $body;
     color: $black;
+    margin-left: 15px;
   }
   &__reviews {
     padding-top: 40px;

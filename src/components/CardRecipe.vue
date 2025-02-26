@@ -31,22 +31,17 @@ defineProps<{
 
 .card {
   font-family: $body;
-  height: 240px;
+  height: 270px;
   width: 190px;
   display: flex;
   flex-direction: column;
   padding: 10px;
   padding-top: 20px;
   align-items: center;
-  transition: ease-in-out 0.3s;
-
-  &:hover {
-    transform: scale(1.05);
-  }
 
   &__img {
-    width: 150px;
-    height: 140px;
+    width: 170px;
+    height: 160px;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -58,16 +53,17 @@ defineProps<{
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 10px;
+    margin: 10px;
   }
 
   &__score {
     font-size: 10px;
     color: #000000;
+    font-weight: 600;
     background-color: $primary-yellow;
     border-radius: 999px;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     text-align: center;
     display: flex;
     justify-content: center;
@@ -88,7 +84,7 @@ defineProps<{
     }
 
     &__title {
-      font-size: 12px;
+      font-size: 14px;
       color: $black;
       font-weight: 570;
       width: 80%;

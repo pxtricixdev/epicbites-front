@@ -1,0 +1,73 @@
+<template>
+  <div class="recipe-carousel">
+    <Carousel
+      :value="recipes"
+      :numVisible="5"
+      :numScroll="3"
+      :responsiveOptions="responsiveOptions"
+    >
+      <template #item="{ data: recipe }">
+        <div class="recipe-card">
+          <CardRecipe
+            :score="recipe.score"
+            :title="recipe.name"
+            :user="recipe.userName"
+            :src="recipe.image"
+            :link="`/recetas/${recipe.id}`"
+          />
+        </div>
+      </template>
+    </Carousel>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, defineProps } from 'vue'
+import CardRecipe from '@/components/CardRecipe.vue'
+import { Carousel } from 'primevue'
+import type { IGetRecipes } from '@/stores/interfaces/IGetRecipes'
+
+defineProps<{ recipes: Array<IGetRecipes> }>()
+
+const responsiveOptions = ref([
+  {
+    breakpoint: '1400px',
+    numVisible: 2,
+    numScroll: 1,
+  },
+  {
+    breakpoint: '1199px',
+    numVisible: 3,
+    numScroll: 1,
+  },
+  {
+    breakpoint: '767px',
+    numVisible: 2,
+    numScroll: 1,
+  },
+  {
+    breakpoint: '575px',
+    numVisible: 1,
+    numScroll: 1,
+  },
+])
+</script>
+
+<style lang="scss" scoped>
+.recipe-carousel {
+  width: 100%;
+
+  .recipe-card {
+    border-radius: 8px;
+    padding: 10px;
+    margin: 5px;
+    transition: ease-in-out 0.3s;
+    display: flex;
+    justify-content: center;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+}
+</style>
