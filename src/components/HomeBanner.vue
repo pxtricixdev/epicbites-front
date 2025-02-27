@@ -8,11 +8,6 @@
       </ul>
       <p class="promo-banner__note">{{ note }}</p>
     </div>
-    <div class="promo-banner__right">
-      <img :src="image2" class="promo-banner__image-small" />
-      <img :src="image1" class="promo-banner__image" />
-      <img :src="image3" class="promo-banner__image-small" />
-    </div>
   </section>
 </template>
 
@@ -22,9 +17,6 @@ defineProps<{
   description: string
   features: string[]
   note: string
-  image1: string
-  image2: string
-  image3: string
 }>()
 </script>
 
