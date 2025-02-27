@@ -9,6 +9,7 @@ export interface IGetMostRatedRecipes {
     calories: number;
     difficulty: string;
     image: string;
+    steps: string;
     userName: string;
     score: number;
 }
