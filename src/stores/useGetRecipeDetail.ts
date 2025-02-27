@@ -1,9 +1,9 @@
 import { ref } from 'vue'
-import type { IGetRecipeDetail } from './interfaces/IGetRecipeDetail'
 import { useRoute } from "vue-router";
+import type { IGetAllRecipes } from './interfaces/IGetAllRecipes';
 
 export function useGetRecipeDetail() {
-  const dataRecipeDetail = ref<IGetRecipeDetail[]>([])
+  const dataRecipeDetail = ref<IGetAllRecipes[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
   const route = useRoute();
