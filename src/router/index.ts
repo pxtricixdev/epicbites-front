@@ -38,6 +38,11 @@ const router = createRouter({
           name: 'Sobre-nosotros',
           component: () => import('@/pages/AboutUsPage.vue'),
         },
+        {
+          path: '/recetas/:id',
+          name: 'recetas',
+          component: () => import('@/pages/RecipePage.vue'),
+        },
       ],
     },
   ],
