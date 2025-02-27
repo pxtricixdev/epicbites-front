@@ -1,10 +1,10 @@
 <template>
-  <div class="feature-card">
+  <div class="feature-card" :style="{ backgroundColor: backgroundColor }">
     <div class="feature-card__image">
       <img :src="image" />
     </div>
     <RouterLink :to="link">
-      <div class="feature-card__content">
+      <div class="feature-card__content" :style="{ color: textColor }">
         <h3 class="feature-card__title">{{ title }}</h3>
         <p class="feature-card__description">{{ subtitle }}</p>
       </div>
@@ -20,6 +20,8 @@ defineProps<{
   title: string
   subtitle: string
   link: string
+  backgroundColor: string
+  textColor: string
 }>()
 </script>
 
@@ -30,9 +32,8 @@ defineProps<{
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(126, 126, 126, 0.2);
-  background-color: $black;
-  width: 250px;
-  height: 230px;
+  width: 410px;
+  height: 250px;
   transition: ease-in-out 0.3s;
 
   &:hover {
@@ -69,7 +70,7 @@ defineProps<{
   }
 
   &__description {
-    font-size: 12px;
+    font-size: 13px;
     font-family: $body;
   }
 }
