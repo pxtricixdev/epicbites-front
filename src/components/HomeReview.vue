@@ -26,9 +26,13 @@ defineProps<{
 
 .card {
   background-color: $light-grey;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 15px;
   border-radius: 12px;
   max-width: 335px;
+  height: 150px;
   margin: 0 auto;
   text-align: justify;
   font-family: $body;
@@ -37,6 +41,7 @@ defineProps<{
   &__stars {
     display: flex;
     gap: 5px;
+    padding-bottom: 5px;
   }
 
   &__icon {

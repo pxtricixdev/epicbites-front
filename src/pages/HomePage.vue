@@ -5,9 +5,6 @@
       description="Guarda, organiza y planifica tus recetas para una cocina sin complicaciones."
       :features="features"
       note="¡Comienza a cocinar hoy mismo!"
-      image1="/images/pizza.jpg"
-      image2="/images/mix.jpg"
-      image3="/images/salad.jpg"
     />
 
     <section class="home-page__recipes">
@@ -23,10 +20,22 @@
     <section class="home-page__feature">
       <div class="feature-container">
         <FeatureSection
-          title="¿Qué vas a cocinar hoy?"
-          subtitle="Descubre nuevas recetas"
+          title="Inspírate y cocina!"
+          subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
           link="/recetas"
           image="/images/pizza.jpg"
+          backgroundColor="#000"
+          textColor="#fff"
+        />
+      </div>
+      <div class="feature-container">
+        <FeatureSection
+          title="Explora sabores increíbles"
+          subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
+          link="/recetas"
+          image="/images/pizza.jpg"
+          backgroundColor="#E7E34F"
+          textColor="#000"
         />
       </div>
     </section>
@@ -38,6 +47,16 @@
       </div>
       <div class="home-page__recipes__cards">
         <RecipeCarousel :recipes="vegetarianRecipes" />
+      </div>
+    </section>
+
+    <section class="home-page__recipes">
+      <h2 class="home-page__section-title">Recetas rápidas ⏳</h2>
+      <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
+        <p>Loading...</p>
+      </div>
+      <div class="home-page__recipes__cards">
+        <RecipeCarousel :recipes="fastRecipes" />
       </div>
     </section>
 
@@ -74,6 +93,7 @@ import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
 const vegetarianRecipes = ref<IGetAllRecipes[]>([])
+const fastRecipes = ref<IGetAllRecipes[]>([])
 
 const {
   dataReviews,
@@ -113,7 +133,11 @@ onMounted(async () => {
   vegetarianRecipes.value = dataAllRecipes.value.filter(
     (recipe) => recipe.diet.toLowerCase() === 'vegetariana',
   )
+
+  fastRecipes.value = dataAllRecipes.value.filter((recipe) => recipe.time <= 20)
+
   console.log('Las recetas vegetarianas', vegetarianRecipes.value)
+  console.log('Las recetas rápidas', fastRecipes.value)
 })
 </script>
 
@@ -137,6 +161,12 @@ onMounted(async () => {
 
   &__feature {
     margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    gap: 50px;
   }
 
   &__recipes {
@@ -171,7 +201,7 @@ onMounted(async () => {
 .reviews-container {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 30px;
   flex-wrap: wrap;
   margin-top: 20px;
 }
