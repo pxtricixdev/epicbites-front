@@ -11,7 +11,7 @@
     />
 
     <section class="home-page__recipes">
-      <h2 class="home-page__section-title">Últimas recetas añadidas</h2>
+      <h2 class="home-page__section-title">Recetas mejor valoradas 🔥</h2>
       <div v-if="dataRecipeLoading" class="home-page__loading-data">
         <p>Loading...</p>
       </div>
@@ -28,6 +28,16 @@
           link="/recetas"
           image="/images/pizza.jpg"
         />
+      </div>
+    </section>
+
+    <section class="home-page__recipes">
+      <h2 class="home-page__section-title">Recetas vegetarianas 🌱</h2>
+      <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
+        <p>Loading...</p>
+      </div>
+      <div class="home-page__recipes__cards">
+        <RecipeCarousel :recipes="vegetarianRecipes" />
       </div>
     </section>
 
@@ -57,10 +67,13 @@ import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
 import { useGetReviews } from '@/stores/useGetReviews'
 import { useGetMostRatedRecipes } from '@/stores/useGetMostRatedRecipes'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import RecipeCarousel from '@/components/RecipeCarousel.vue'
+import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
+import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
+const vegetarianRecipes = ref<IGetAllRecipes[]>([])
 
 const {
   dataReviews,
@@ -83,7 +96,24 @@ const {
 
 onMounted(async () => {
   await fetchRecipes()
-  console.log('Las recetas:', dataRecipe.value)
+  console.log('Las recetas mejor valoradas:', dataRecipe.value)
+})
+
+const {
+  dataAllRecipes,
+  fetchAllRecipes,
+  loading: dataAllRecipesLoading,
+  error: dataAllRecipesError,
+} = useGetAllRecipes()
+
+onMounted(async () => {
+  await fetchAllRecipes()
+  console.log('Todas las recetas:', dataAllRecipes.value)
+
+  vegetarianRecipes.value = dataAllRecipes.value.filter(
+    (recipe) => recipe.diet.toLowerCase() === 'vegetariana',
+  )
+  console.log('Las recetas vegetarianas', vegetarianRecipes.value)
 })
 </script>
 
