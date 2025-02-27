@@ -1,7 +1,7 @@
 <template>
   <RouterLink :to="link">
     <div class="card">
-      <div class="card__img" :style="{ backgroundImage: `url(${src})` }"></div>
+      <div class="card__img" :alt="alt" :style="{ backgroundImage: `url(${src})` }"></div>
       <div class="card__info">
         <div class="card__text">
           <div class="card__text__top">
@@ -22,6 +22,7 @@ defineProps<{
   user: string
   src: string
   link: string
+  alt: string
 }>()
 </script>
 
