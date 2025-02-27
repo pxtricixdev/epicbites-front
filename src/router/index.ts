@@ -39,8 +39,8 @@ const router = createRouter({
           component: () => import('@/pages/AboutUsPage.vue'),
         },
         {
-          path: '/receta',
-          name: 'receta',
+          path: '/recetas/:id',
+          name: 'recetas',
           component: () => import('@/pages/RecipePage.vue'),
         },
       ],

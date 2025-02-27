@@ -1,17 +1,20 @@
 import { ref } from 'vue'
 import type { IGetRecipeDetail } from './interfaces/IGetRecipeDetail'
+import { useRoute } from "vue-router";
 
 export function useGetRecipeDetail() {
   const dataRecipeDetail = ref<IGetRecipeDetail[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const route = useRoute();
+  const id = route.params.id;
 
   const fetchRecipeDetail = async () => {
     loading.value = true
     error.value = null
 
     try {
-      const response = await fetch('https://localhost:7129/api/recetas/22', {
+      const response = await fetch(`https://localhost:7129/api/recetas/${id}`, {
         method: 'GET',
         headers: {
           accept: 'text/plain',
