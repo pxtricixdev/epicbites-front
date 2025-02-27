@@ -32,7 +32,7 @@ defineProps<{
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(126, 126, 126, 0.2);
-  width: 410px;
+  width: 340px;
   height: 250px;
   transition: ease-in-out 0.3s;
 
