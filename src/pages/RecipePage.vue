@@ -10,7 +10,9 @@
         </div>
         <div class="recipe-page__info">
           <h1 class="recipe-page__title">{{ dataRecipeDetail.name }}</h1>
+          <p class="recipe-page__description">{{ dataRecipeDetail.description }}</p>
           <p class="recipe-page__author">{{ dataRecipeDetail.userName }}</p>
+
           <div class="recipe-page__meta">
             <span class="recipe-page__score">⭐ {{ dataRecipeDetail.score }}</span>
             <span class="recipe-page__time">⏳ {{ dataRecipeDetail.time }} min</span>
@@ -33,8 +35,8 @@
       <div class="recipe-page__steps">
         <h2>🍽️ <span>Pasos a seguir</span></h2>
         <ul>
-          <li>
-            <p>{{ dataRecipeDetail.description }}</p>
+          <li class="recipe-page__steps__list">
+            <p>{{ dataRecipeDetail.steps }}</p>
           </li>
         </ul>
       </div>
@@ -98,7 +100,13 @@ onMounted(async () => {
     font-size: 28px;
     margin-top: 20px;
     color: $black;
-    font-family: $heading;
+    font-family: $body;
+  }
+
+  &__description {
+    font-size: 18px;
+    margin-top: 10px;
+    color: $black;
   }
 
   &__author {
@@ -134,11 +142,17 @@ onMounted(async () => {
     align-items: center;
   }
 
-  &__ingredients,
-  &__steps {
+  &__ingredients {
     width: 100%;
     max-width: 500px;
     text-align: left;
+  }
+
+  &__steps {
+    &__list {
+      max-width: 500px;
+      height: auto;
+    }
   }
 
   h2 {
@@ -174,8 +188,8 @@ onMounted(async () => {
       &__container {
         display: flex;
         flex-direction: row;
-        align-items: center;
         justify-content: space-between;
+        align-items: flex-start;
         text-align: left;
         gap: 45px;
         margin-bottom: 30px;
