@@ -19,8 +19,8 @@ const router = createRouter({
           component: () => import('@/pages/LoginPage.vue'),
         },
         {
-          path: '/register',
-          name: 'register',
+          path: '/registro',
+          name: 'registro',
           component: () => import('@/pages/RegisterPage.vue')
         },
         {
@@ -30,18 +30,23 @@ const router = createRouter({
         },
         {
           path: '/politicas',
-          name: 'Politicas',
+          name: 'politicas',
           component: () => import('@/pages/PoliticasPage.vue'),
         },
         {
           path: '/sobre-nosotros',
-          name: 'Sobre-nosotros',
+          name: 'sobre-nosotros',
           component: () => import('@/pages/AboutUsPage.vue'),
         },
         {
-          path: '/recetas/:id',
+          path: '/recetas',
           name: 'recetas',
-          component: () => import('@/pages/RecipePage.vue'),
+          component: () => import('@/pages/RecipesPage.vue'),
+        },
+        {
+          path: '/receta/:id',
+          name: 'detalle-receta',
+          component: () => import('@/pages/RecipeDetailPage.vue'),
         },
       ],
     },
