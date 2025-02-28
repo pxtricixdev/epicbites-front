@@ -3,7 +3,7 @@
     <RouterLink :to="link">
       <img :src="image" :alt="alt" class="card-recipe__image" />
     </RouterLink>
-    <button class="card-recipe__button"><Heart :size="24" /></button>
+    <button class="card-recipe__button"><Heart :size="20" /></button>
     <div class="card-recipe__info">
       <h3 class="card-recipe__title">{{ title }}</h3>
       <div class="card-recipe__tags">
@@ -52,7 +52,7 @@ defineProps<{
 <style lang="scss">
 @use '@/assets/styles/variables' as *;
 .card-recipe {
-  width: 231px;
+  width: 241px;
   height: 381px;
   box-shadow: 0px 2px 10px rgba(126, 126, 126, 0.05);
   border-radius: 16px;

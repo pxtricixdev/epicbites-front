@@ -31,7 +31,7 @@ defineProps<{
   justify-content: center;
   padding: 15px;
   border-radius: 12px;
-  max-width: 335px;
+  width: 335px;
   height: 150px;
   margin: 0 auto;
   text-align: justify;

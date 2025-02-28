@@ -23,7 +23,7 @@
           title="Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
           :link="`/receta/${randomRecipe}`"
-          image="/images/pizza.jpg"
+          image="/images/coockingsection2.jpg"
           backgroundColor="#000"
           textColor="#fff"
         />
@@ -33,7 +33,7 @@
           title="Explora sabores increíbles"
           subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
           :link="`/receta/${randomRecipe}`"
-          image="/images/pizza.jpg"
+          image="/images/coockingsection1.jpg"
           backgroundColor="#E7E34F"
           textColor="#000"
         />
@@ -164,11 +164,10 @@ onMounted(async () => {
   }
 
   &__feature {
-    margin-top: 30px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 50px;
+    margin-top: 70px;
     margin-bottom: 20px;
     gap: 50px;
   }

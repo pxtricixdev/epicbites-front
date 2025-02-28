@@ -42,10 +42,11 @@ defineProps<{
 
   &__img {
     width: 170px;
-    height: 160px;
-    background-size: cover;
+    height: auto;
+    aspect-ratio: 1 / 1;
     background-repeat: no-repeat;
     background-position: center;
+    background-size: cover;
     border-radius: 10px;
   }
 
