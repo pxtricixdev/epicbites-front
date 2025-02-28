@@ -5,40 +5,45 @@
         <p>Cargando...</p>
       </div>
       <div v-else class="recipe-page__container">
-        <div class="recipe-page__image">
-          <img :src="dataRecipeDetail.image" alt="Imagen de la receta" />
-        </div>
-        <div class="recipe-page__info">
-          <h1 class="recipe-page__title">{{ dataRecipeDetail.name }}</h1>
-          <p class="recipe-page__description">{{ dataRecipeDetail.description }}</p>
-          <p class="recipe-page__author">{{ dataRecipeDetail.userName }}</p>
+        <div class="recipe-page__top-content">
+          <div class="recipe-page__image">
+            <img :src="dataRecipeDetail.image" alt="Imagen de la receta" />
+          </div>
+          <div>
+            <div class="recipe-page__info">
+              <h1 class="recipe-page__title">{{ dataRecipeDetail.name }}</h1>
+              <p class="recipe-page__description">{{ dataRecipeDetail.description }}</p>
+              <p class="recipe-page__author">{{ dataRecipeDetail.userName }}</p>
 
-          <div class="recipe-page__meta">
-            <span class="recipe-page__score">⭐ {{ dataRecipeDetail.score }}</span>
-            <span class="recipe-page__time">⏳ {{ dataRecipeDetail.time }} min</span>
-            <span class="recipe-page__calories">🔥 {{ dataRecipeDetail.calories }} kcal</span>
+              <div class="recipe-page__meta">
+                <span class="recipe-page__score">⭐ {{ dataRecipeDetail.score }}</span>
+                <span class="recipe-page__time">⏳ {{ dataRecipeDetail.time }} min</span>
+                <span class="recipe-page__calories">🔥 {{ dataRecipeDetail.calories }} kcal</span>
+              </div>
+            </div>
+            <div class="recipe-page__ingredients">
+              <h2>🛒 <span>Ingredientes</span></h2>
+              <ul>
+                <li
+                  v-for="ingredient in dataRecipeDetail.ingredients"
+                  :key="ingredient.ingredientId"
+                >
+                  {{ ingredient.quantity }} {{ ingredient.unit }} - {{ ingredient.ingredientName }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="recipe-page__details">
-      <div class="recipe-page__ingredients">
-        <h2>🛒 <span>Ingredientes</span></h2>
-        <ul>
-          <li v-for="ingredient in dataRecipeDetail.ingredients" :key="ingredient.ingredientId">
-            {{ ingredient.quantity }} {{ ingredient.unit }} - {{ ingredient.ingredientName }}
-          </li>
-        </ul>
-      </div>
-
-      <div class="recipe-page__steps">
-        <h2>🍽️ <span>Pasos a seguir</span></h2>
-        <ul>
-          <li class="recipe-page__steps__list">
-            <p>{{ dataRecipeDetail.steps }}</p>
-          </li>
-        </ul>
+        <div class="recipe-page__details">
+          <div class="recipe-page__steps">
+            <h2>🍽️ <span>Pasos a seguir</span></h2>
+            <ul>
+              <li class="recipe-page__steps__list">
+                <p>{{ dataRecipeDetail.steps }}</p>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -70,6 +75,12 @@ onMounted(async () => {
   margin: 40px auto;
   padding: 20px;
   font-family: $body;
+
+  &__top-content {
+    display: flex;
+    flex-direction: row;
+    gap: 70px;
+  }
 
   &__loading {
     font-size: 16px;
@@ -104,7 +115,6 @@ onMounted(async () => {
 
   &__title {
     font-size: 28px;
-    margin-top: 20px;
     color: $black;
     font-family: $body;
   }
@@ -116,9 +126,9 @@ onMounted(async () => {
   }
 
   &__author {
-    font-size: 18px;
-    color: $secondary-orange;
-    font-weight: bold;
+    font-size: 16px;
+    color: #777777;
+    font-weight: 600;
     margin-top: 5px;
   }
 
@@ -140,23 +150,16 @@ onMounted(async () => {
     font-size: 16px;
   }
 
-  &__details {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    margin-top: 30px;
-    align-items: center;
-  }
-
   &__ingredients {
     width: 100%;
     max-width: 500px;
     text-align: left;
+    margin-top: 60px;
   }
 
   &__steps {
     &__list {
-      max-width: 500px;
+      max-width: 910px;
       height: auto;
     }
   }
@@ -164,7 +167,7 @@ onMounted(async () => {
   h2 {
     font-size: 20px;
     margin-bottom: 10px;
-    color: $secondary-orange;
+    color: $black;
     font-family: $body;
   }
 
@@ -173,7 +176,7 @@ onMounted(async () => {
     padding: 0;
 
     li {
-      font-size: 16px;
+      font-size: 14px;
       margin-bottom: 12px;
       line-height: 1.5;
       background: $white;
@@ -193,11 +196,9 @@ onMounted(async () => {
     .recipe-page {
       &__container {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
+        flex-direction: column;
         text-align: left;
-        gap: 45px;
+        gap: 30px;
         margin-bottom: 30px;
       }
 
@@ -207,26 +208,11 @@ onMounted(async () => {
       }
 
       &__info {
-        width: 50%;
         text-align: left;
-        padding-left: 30px;
       }
 
       &__meta {
         justify-content: flex-start;
-      }
-
-      &__details {
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: left;
-        width: 100%;
-
-        &__ingredients,
-        &__steps {
-          width: 48%;
-          text-align: left;
-        }
       }
     }
   }
