@@ -10,7 +10,7 @@
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas mejor valoradas 🔥</h2>
       <div v-if="dataRecipeLoading" class="home-page__loading-data">
-        <p>Loading...</p>
+        <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
         <RecipeCarousel :recipes="dataRecipe" />
@@ -43,7 +43,7 @@
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas vegetarianas 🌱</h2>
       <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
-        <p>Loading...</p>
+        <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
         <RecipeCarousel :recipes="vegetarianRecipes" />
@@ -53,7 +53,7 @@
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas rápidas < 20 mins</h2>
       <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
-        <p>Loading...</p>
+        <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
         <RecipeCarousel :recipes="fastRecipes" />
@@ -63,7 +63,7 @@
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
       <div v-if="dataReviewsLoading" class="home-page__loading-data">
-        <p>Loading...</p>
+        <p>Cargando...</p>
       </div>
       <div v-else class="reviews-container">
         <div v-for="data in dataReviews.slice(0, 6)" :key="data.id">
