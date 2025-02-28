@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import MobileHeader from '@/components/MobileHeader.vue'
+import MainHeader from '@/components/MainHeader.vue'
 import Footer from '@/components/FooterComponent.vue'
 </script>
 
 <template>
-  <MobileHeader />
+  <MainHeader />
   <main>
     <RouterView />
   </main>
