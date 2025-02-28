@@ -22,7 +22,7 @@
         <FeatureSection
           title="Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
-          link="/recetas"
+          :link="`/recetas/${randomRecipe}`"
           image="/images/pizza.jpg"
           backgroundColor="#000"
           textColor="#fff"
@@ -32,7 +32,7 @@
         <FeatureSection
           title="Explora sabores increíbles"
           subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
-          link="/recetas"
+          :link="`/recetas/${randomRecipe}`"
           image="/images/pizza.jpg"
           backgroundColor="#E7E34F"
           textColor="#000"
@@ -94,6 +94,7 @@ import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
 const features = ['Rápido', 'Sencillo', 'Delicioso']
 const vegetarianRecipes = ref<IGetAllRecipes[]>([])
 const fastRecipes = ref<IGetAllRecipes[]>([])
+const randomRecipe = ref(0)
 
 const {
   dataReviews,
@@ -135,6 +136,9 @@ onMounted(async () => {
   )
 
   fastRecipes.value = dataAllRecipes.value.filter((recipe) => recipe.time <= 20)
+
+  randomRecipe.value =
+    dataAllRecipes.value[Math.floor(Math.random() * dataAllRecipes.value.length)].id
 
   console.log('Las recetas vegetarianas', vegetarianRecipes.value)
   console.log('Las recetas rápidas', fastRecipes.value)
