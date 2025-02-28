@@ -28,7 +28,7 @@
             paddingRight: '8px',
             borderRadius: '3px',
             backgroundColor:
-              difficulty === 'Facil' ? '#7fe570' : difficulty === 'Media' ? 'orange' : 'red',
+              difficulty === 'Facil' ? '#7fe570' : difficulty === 'Media' ? 'orange' : '#8bd2ff',
           }"
         >
           {{ difficulty }}
