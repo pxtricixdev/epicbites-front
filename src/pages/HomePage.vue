@@ -22,7 +22,7 @@
         <FeatureSection
           title="Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
-          :link="`/recetas/${randomRecipe}`"
+          :link="`/receta/${randomRecipe}`"
           image="/images/pizza.jpg"
           backgroundColor="#000"
           textColor="#fff"
@@ -32,7 +32,7 @@
         <FeatureSection
           title="Explora sabores increíbles"
           subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
-          :link="`/recetas/${randomRecipe}`"
+          :link="`/receta/${randomRecipe}`"
           image="/images/pizza.jpg"
           backgroundColor="#E7E34F"
           textColor="#000"
@@ -51,7 +51,7 @@
     </section>
 
     <section class="home-page__recipes">
-      <h2 class="home-page__section-title">Recetas rápidas ⏳</h2>
+      <h2 class="home-page__section-title">Recetas rápidas < 20 mins</h2>
       <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
         <p>Loading...</p>
       </div>
@@ -72,7 +72,7 @@
             :text="data.text"
             :author="data.username"
             :recipe="data.name"
-            :recipeLink="`/recetas/${data.recipeId}`"
+            :recipeLink="`/receta/${data.recipeId}`"
           />
         </div>
       </div>

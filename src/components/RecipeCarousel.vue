@@ -14,7 +14,7 @@
             :user="recipe.userName"
             :src="recipe.image"
             :alt="`Imagen de la receta ${recipe.name}`"
-            :link="`/recetas/${recipe.id}`"
+            :link="`/receta/${recipe.id}`"
           />
         </div>
       </template>
