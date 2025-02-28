@@ -1,8 +1,8 @@
 <template>
-  <section v-if="dataRecipeDetail" class="recipe-page">
+  <section class="recipe-page">
     <div class="recipe-page__main">
       <div v-if="dataRecipeDetailLoading" class="recipe-page__loading">
-        <p>loading...</p>
+        <p>Cargando...</p>
       </div>
       <div v-else class="recipe-page__container">
         <div class="recipe-page__image">
@@ -70,6 +70,12 @@ onMounted(async () => {
   margin: 40px auto;
   padding: 20px;
   font-family: $body;
+
+  &__loading {
+    font-size: 16px;
+    color: $black;
+    text-align: center;
+  }
 
   &__main {
     display: flex;
