@@ -39,7 +39,7 @@ const router = createRouter({
           component: () => import('@/pages/AboutUsPage.vue'),
         },
         {
-          path: '/recetas',
+          path: '/recetas/:category?',
           name: 'recetas',
           component: () => import('@/pages/RecipesPage.vue'),
         },

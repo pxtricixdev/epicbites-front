@@ -5,11 +5,15 @@
     </RouterLink>
     <button class="card-recipe__button"><Heart :size="20" /></button>
     <div class="card-recipe__info">
-      <h3 class="card-recipe__title">{{ title }}</h3>
+      <RouterLink :to="link">
+        <h3 class="card-recipe__title">{{ title }}</h3>
+      </RouterLink>
       <div class="card-recipe__tags">
-        <div class="card-recipe__meal">{{ meal }}</div>
-        <div class="card-recipe__diet">{{ diet }}</div>
-        <div class="card-recipe__flavour">{{ flavour }}</div>
+        <RouterLink :to="`/recetas/${meal}`" class="card-recipe__meal">{{ meal }}</RouterLink>
+        <RouterLink :to="`/recetas/${diet}`" class="card-recipe__diet">{{ diet }}</RouterLink>
+        <RouterLink :to="`/recetas/${flavour}`" class="card-recipe__flavour"
+          >{{ flavour }}
+        </RouterLink>
       </div>
 
       <div class="card-recipe__details">
@@ -26,7 +30,8 @@
             backgroundColor:
               difficulty === 'Facil' ? '#7fe570' : difficulty === 'Media' ? 'orange' : 'red',
           }"
-          >{{ difficulty }}
+        >
+          {{ difficulty }}
         </span>
       </div>
     </div>
@@ -49,7 +54,7 @@ defineProps<{
 }>()
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 .card-recipe {
   width: 241px;
@@ -110,6 +115,7 @@ defineProps<{
   &__title {
     font-weight: 400;
     font-size: 15px;
+    color: $black;
   }
 
   &__details {
@@ -140,6 +146,10 @@ defineProps<{
     padding: 2px 5px;
     font-size: 12px;
     width: fit-content;
+
+    &:hover {
+      background-color: #f3f3f3;
+    }
   }
 }
 </style>

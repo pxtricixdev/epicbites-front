@@ -2,9 +2,11 @@
   <section>
     <div class="card-recipe__loading" v-if="dataAllRecipesLoading">Cargando...</div>
     <div v-else>
-      <div class="card-recipe__title"><h1>Todas las recetas</h1></div>
+      <h1 class="card-recipe__title">
+        {{ category ? `Recetas de ${category}` : 'Todas las recetas' }}
+      </h1>
       <div class="card-recipe__container">
-        <div v-for="recipe in dataAllRecipes" :key="recipe.id">
+        <div v-for="recipe in filteredRecipes" :key="recipe.id">
           <CardRecipeInfo
             :image="recipe.image"
             :alt="recipe.name"
@@ -24,8 +26,25 @@
 
 <script setup lang="ts">
 import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import CardRecipeInfo from '@/components/CardRecipeInfo.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const category = computed(() => route.params.category)
+
+const filteredRecipes = computed(() => {
+  if (!category.value) {
+    return dataAllRecipes.value
+  } else {
+    return dataAllRecipes.value.filter(
+      (recipe) =>
+        recipe.meal === category.value ||
+        recipe.diet === category.value ||
+        recipe.flavour === category.value,
+    )
+  }
+})
 
 const {
   dataAllRecipes,
