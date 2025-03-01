@@ -11,7 +11,12 @@
         <div class="login__inputs">
           <FloatLabel class="login__card">
             <Field name="email" v-slot="{ field }">
-              <InputText v-bind="field" class="login__card__inputext" id="email" />
+              <InputText
+                v-bind="field"
+                class="login__card__inputext"
+                id="email"
+                v-model="dataLogin.email"
+              />
             </Field>
             <label class="login__card__label" for="email">Email</label>
           </FloatLabel>
@@ -24,6 +29,7 @@
                 type="password"
                 class="login__card__inputext"
                 id="password"
+                v-model="dataLogin.password"
               />
             </Field>
             <label class="login__card__label" for="password">Contraseña</label>
@@ -37,6 +43,9 @@
         <button class="login__button">Enviar</button>
       </div>
     </Form>
+    <div class="login__error" v-if="error">
+      <p>{{ error }}</p>
+    </div>
   </div>
 </template>
 
@@ -46,6 +55,9 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 const validationSchema = toTypedSchema(
   z.object({
@@ -54,9 +66,20 @@ const validationSchema = toTypedSchema(
   }),
 )
 
-const handleLogin = (values) => {
-  //POST /register
-  console.log('Datos de login:', values)
+const authStore = useAuthStore()
+const { dataLogin, token, error } = storeToRefs(authStore)
+const { login } = authStore
+
+const router = useRouter()
+
+const handleLogin = async () => {
+  await login()
+
+  if (token.value) {
+    router.push('/recetas')
+  } else {
+    console.error('No se recibió un token válido')
+  }
 }
 </script>
 
@@ -96,7 +119,7 @@ const handleLogin = (values) => {
     max-width: 280px;
     box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
     width: 90%;
-    margin: 20px auto 100px auto;
+    margin: 20px auto 10px auto;
   }
 
   &__content {
@@ -118,7 +141,7 @@ const handleLogin = (values) => {
 
   &__card {
     &__inputext {
-      background-color: $white;
+      background-color: $white !important;
       font-size: 12px;
       font-weight: 400;
       color: $black;
@@ -168,6 +191,12 @@ const handleLogin = (values) => {
       opacity: 0.8;
       transition: ease-in-out 0.2s;
     }
+  }
+
+  &__error {
+    text-align: center;
+    color: red;
+    font-size: 11px;
   }
 }
 </style>

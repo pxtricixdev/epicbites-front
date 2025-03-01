@@ -21,7 +21,13 @@
             <X :size="28" v-else color="black" />
           </span>
         </button>
-        <RouterLink to="/login" class="header__content__button-login"> Login </RouterLink>
+        <RouterLink
+          @click.prevent="isAuthenticated ? authStore.logout() : null"
+          :to="isAuthenticated ? '/' : '/login'"
+          class="header__content__button-login"
+        >
+          {{ isAuthenticated ? 'Logout' : 'Login' }}
+        </RouterLink>
       </div>
     </div>
 
@@ -58,9 +64,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { ArrowRight, Menu, X } from 'lucide-vue-next'
 import LogoCanvas from '@/components/LogoCanvas.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+
+const handleAuth = () => {
+  if (isAuthenticated.value) {
+    authStore.logout()
+  } else {
+    authStore.login()
+  }
+}
 
 const isOpen = ref(false)
 const isDesktop = ref(window.innerWidth > 768)
