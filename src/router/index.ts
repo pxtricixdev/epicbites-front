@@ -48,6 +48,11 @@ const router = createRouter({
           name: 'detalle-receta',
           component: () => import('@/pages/RecipeDetailPage.vue'),
         },
+        {
+          path: '/admin',
+          name: 'admin',
+          component: () => import('@/pages/AdminPage.vue'),
+        },
       ],
     },
   ],
