@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 import CardRecipe from '@/components/CardRecipe.vue'
 import { Carousel } from 'primevue'
 import type { IGetMostRatedRecipes } from '@/stores/interfaces/IGetMostRatedRecipes'

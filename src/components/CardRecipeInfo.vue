@@ -21,18 +21,20 @@
           <Clock color="#676767" :size="15" />
           {{ time }}'
         </div>
-        <span
-          class="card-recipe__difficulty"
-          :style="{
-            paddingLeft: '8px',
-            paddingRight: '8px',
-            borderRadius: '3px',
-            backgroundColor:
-              difficulty === 'Facil' ? '#7fe570' : difficulty === 'Media' ? 'orange' : '#8bd2ff',
-          }"
-        >
-          {{ difficulty }}
-        </span>
+        <RouterLink :to="`/recetas/${difficulty}`">
+          <span
+            class="card-recipe__difficulty"
+            :style="{
+              paddingLeft: '8px',
+              paddingRight: '8px',
+              borderRadius: '3px',
+              backgroundColor:
+                difficulty === 'Facil' ? '#7fe570' : difficulty === 'Media' ? 'orange' : '#8bd2ff',
+            }"
+          >
+            {{ difficulty }}
+          </span>
+        </RouterLink>
       </div>
     </div>
   </div>
