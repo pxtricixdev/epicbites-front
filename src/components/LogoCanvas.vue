@@ -11,6 +11,7 @@
 import { onMounted, ref } from 'vue'
 
 const myCanvas = ref<HTMLCanvasElement | null>(null)
+let ctx: CanvasRenderingContext2D | null = null
 let isBlinking = false
 let globalOpacity = 0
 let eyeScale = 1
@@ -19,7 +20,7 @@ let zoomFactor = 1
 onMounted(() => {
   const canvas = myCanvas.value
   if (!canvas) return
-  const ctx = canvas.getContext('2d')
+  ctx = canvas.getContext('2d')
   if (!ctx) return
 
   // Tamaño del canvas
@@ -38,6 +39,7 @@ onMounted(() => {
   img.src = '/images/fork.png'
 
   function animate() {
+    if (!ctx || !canvas) return
     ctx.clearRect(0, 0, canvas.width / scaleFactor, canvas.height / scaleFactor)
 
     if (globalOpacity < 1) {

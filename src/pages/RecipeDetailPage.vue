@@ -4,7 +4,7 @@
       <div v-if="dataRecipeDetailLoading" class="recipe-page__loading">
         <p>Cargando...</p>
       </div>
-      <div v-else class="recipe-page__container">
+      <div v-if="dataRecipeDetail" class="recipe-page__container">
         <div class="recipe-page__top-content">
           <div class="recipe-page__image">
             <img :src="dataRecipeDetail.image" alt="Imagen de la receta" />
@@ -62,7 +62,7 @@ const {
 
 onMounted(async () => {
   await fetchRecipeDetail()
-  console.log('Datos de la receta:', dataRecipeDetail.value)
+  console.log('Datos de la receta:', dataRecipeDetail)
 })
 </script>
 
