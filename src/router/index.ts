@@ -21,7 +21,7 @@ const router = createRouter({
         {
           path: '/registro',
           name: 'registro',
-          component: () => import('@/pages/RegisterPage.vue')
+          component: () => import('@/pages/RegisterPage.vue'),
         },
         {
           path: '/terminos',
@@ -47,6 +47,11 @@ const router = createRouter({
           path: '/receta/:id',
           name: 'detalle-receta',
           component: () => import('@/pages/RecipeDetailPage.vue'),
+        },
+        {
+          path: '/publicar-receta',
+          name: 'publicar-receta',
+          component: () => import('@/pages/PostRecipePage.vue'),
         },
       ],
     },
