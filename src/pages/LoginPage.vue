@@ -1,9 +1,7 @@
 <template>
   <div class="login">
     <div class="login__welcome">
-      <p class="login__welcome__title">
-        ¡Es hora de cocinar algo increíble! <CookingPot :size="20" />
-      </p>
+      <p class="login__welcome__title">¡Es hora de cocinar algo increíble!</p>
       <p class="login__welcome__subtitle">
         Accede a tu cuenta y encuentra la inspiración culinaria perfecta.
       </p>
@@ -48,7 +46,6 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
-import { CookingPot } from 'lucide-vue-next'
 
 const validationSchema = toTypedSchema(
   z.object({

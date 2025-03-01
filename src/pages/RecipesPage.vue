@@ -15,7 +15,10 @@
         <p class="card-recipe__text">
           Utiliza el buscador para filtrar por nombre, categoría o dificultad y encuentra justo lo
           que necesitas. ¡No hay excusas para no disfrutar de una buena comida! Ponte el delantal,
-          elige tu receta y déjate llevar por los sabores. <b>¡Manos a la cocina!</b>
+          elige tu receta y déjate llevar por los sabores.
+        </p>
+        <p class="card-recipe__text">
+          <b>¡Manos a la cocina! <CookingPot :size="20" /></b>
         </p>
         <input
           class="card-recipe__search"
@@ -49,6 +52,7 @@ import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
 import { onMounted, computed, ref } from 'vue'
 import CardRecipeInfo from '@/components/CardRecipeInfo.vue'
 import { useRoute } from 'vue-router'
+import { CookingPot } from 'lucide-vue-next'
 
 const route = useRoute()
 const category = computed(() => route.params.category)
@@ -108,7 +112,7 @@ const filteredRecipes = computed(() => {
     max-width: 1200px;
     font-family: $body;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     margin: 20px auto 40px auto;
     color: $black;
     gap: 10px;
@@ -126,16 +130,24 @@ const filteredRecipes = computed(() => {
   }
 
   &__search {
-    background-color: $white;
-    border: 1px solid $black;
+    background-color: $primary-yellow;
+    border: none;
     padding: 8px 12px;
-    border-radius: 5px;
+    border-radius: 8px;
     width: 300px;
     font-family: $body;
     font-size: 12px;
-    font-style: italic;
     color: rgb(55, 55, 55);
-    margin: 0 10px;
+    margin: 0 auto;
+
+    &::placeholder {
+      font-style: italic;
+      color: rgb(84, 84, 84);
+    }
+
+    &:focus {
+      outline: none;
+    }
   }
 
   &__container {
