@@ -14,7 +14,7 @@ export function useGetReviews() {
       const response = await fetch('https://localhost:7129/api/comentarios', {
         method: 'GET',
         headers: {
-          accept: 'text/plain',
+          'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
       })

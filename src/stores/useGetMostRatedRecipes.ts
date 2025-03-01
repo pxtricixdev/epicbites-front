@@ -1,5 +1,5 @@
-import { ref } from "vue"
-import type { IGetMostRatedRecipes } from "./interfaces/IGetMostRatedRecipes"
+import { ref } from 'vue'
+import type { IGetMostRatedRecipes } from './interfaces/IGetMostRatedRecipes'
 
 export function useGetMostRatedRecipes() {
   const dataRecipe = ref<IGetMostRatedRecipes[]>([])
@@ -8,29 +8,27 @@ export function useGetMostRatedRecipes() {
 
   const fetchRecipes = async () => {
     loading.value = true
-    error.value = null;
+    error.value = null
 
     try {
       const response = await fetch('https://localhost:7129/api/recetas/most-rated', {
         method: 'GET',
         headers: {
-          accept: 'text/plain',
-          'Content-Type': 'application/json'
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       })
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}`);
+        throw new Error(`Error ${response.status}`)
       }
 
-      dataRecipe.value = await response.json();
-
+      dataRecipe.value = await response.json()
     } catch (err: any) {
-      error.value = err.message;
-
+      error.value = err.message
     } finally {
       loading.value = false
     }
-  };
-  return { dataRecipe, loading, error, fetchRecipes}
+  }
+  return { dataRecipe, loading, error, fetchRecipes }
 }
