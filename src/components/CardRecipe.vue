@@ -86,7 +86,7 @@ defineProps<{
     }
 
     &__title {
-      font-size: 14px;
+      font-size: 13px;
       color: $black;
       font-weight: 570;
       width: 80%;

@@ -78,7 +78,7 @@ onMounted(async () => {
 
   &__top-content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 70px;
   }
 
@@ -158,6 +158,7 @@ onMounted(async () => {
   }
 
   &__steps {
+    margin-top: 30px;
     &__list {
       max-width: 910px;
       height: auto;
@@ -194,6 +195,11 @@ onMounted(async () => {
 
   @media (min-width: 768px) {
     .recipe-page {
+      &__top-content {
+        display: flex;
+        flex-direction: row;
+        gap: 70px;
+      }
       &__container {
         display: flex;
         flex-direction: column;
@@ -213,6 +219,10 @@ onMounted(async () => {
 
       &__meta {
         justify-content: flex-start;
+      }
+
+      &__steps {
+        margin-top: 10px;
       }
     }
   }
