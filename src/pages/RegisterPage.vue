@@ -11,7 +11,12 @@
         <div class="register__inputs">
           <FloatLabel class="register__card">
             <Field name="username" v-slot="{ field }">
-              <InputText v-bind="field" class="register__card__inputext" id="username" />
+              <InputText
+                v-bind="field"
+                class="register__card__inputext"
+                id="username"
+                v-model="dataRegister.username"
+              />
             </Field>
             <label class="register__card__label" for="username">Nombre de usuario</label>
           </FloatLabel>
@@ -19,7 +24,12 @@
 
           <FloatLabel class="register__card">
             <Field v-slot="{ field }" name="email">
-              <InputText v-bind="field" class="register__card__inputext" id="email" />
+              <InputText
+                v-bind="field"
+                class="register__card__inputext"
+                id="email"
+                v-model="dataRegister.email"
+              />
             </Field>
             <label class="register__card__label" for="email">Email</label>
           </FloatLabel>
@@ -32,16 +42,13 @@
                 class="register__card__inputext"
                 id="password"
                 type="password"
+                v-model="dataRegister.password"
               />
             </Field>
             <label class="register__card__label" for="password">Contraseña</label>
           </FloatLabel>
           <ErrorMessage name="password" class="register__card__error" />
         </div>
-
-        <p class="register__register">
-          ¿Aún no tienes cuenta? <RouterLink to="/registro">Regístrate</RouterLink>
-        </p>
         <button class="register__button" type="submit">Enviar</button>
       </div>
     </Form>
@@ -54,6 +61,10 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
+import { usePostUserRegister } from '@/stores/usePostUserRegister'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const validationSchema = toTypedSchema(
   z.object({
@@ -63,9 +74,11 @@ const validationSchema = toTypedSchema(
   }),
 )
 
-const handleRegister = (values) => {
-  //POST /register
-  console.log('Datos de registro:', values)
+const { dataRegister, register } = usePostUserRegister()
+
+const handleRegister = async () => {
+  await register()
+  router.push('/login')
 }
 </script>
 
