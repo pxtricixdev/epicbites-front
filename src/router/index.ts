@@ -49,7 +49,7 @@ const router = createRouter({
           component: () => import('@/pages/RecipeDetailPage.vue'),
         },
         {
-          path: '/publicar-receta',
+          path: '/recetas/publicar-receta',
           name: 'publicar-receta',
           component: () => import('@/pages/PostRecipePage.vue'),
         },

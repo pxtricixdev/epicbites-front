@@ -6,18 +6,20 @@ export function usePostRecipe() {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const postRecipe = async () => {
+  const postRecipe = async (requestData?: any) => {
     loading.value = true
     error.value = null
 
     try {
+      const dataToSend = requestData || dataPostRecipe.value
+
       const response = await fetch('https://localhost:7129/api/recetas', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dataPostRecipe.value),
+        body: JSON.stringify(dataToSend)
       })
 
       if (!response.ok) {
