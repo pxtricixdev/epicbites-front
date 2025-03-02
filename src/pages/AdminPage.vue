@@ -159,7 +159,7 @@
           >
             <template #header>
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-xl font-bold">Reviews</span>
+                <span class="text-xl font-bold">Úlimas reseña</span>
               </div>
             </template>
 
