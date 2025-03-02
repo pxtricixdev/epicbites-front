@@ -50,12 +50,45 @@
       </div>
     </div>
   </section>
+
+  <section class="reviews">
+    <div class="reviews__container">
+      <h2 class="reviews__title">
+        <EstrellaRating /> <span>Opiniones</span> <EstrellaRating />
+      </h2>
+      
+      <div v-if="dataReviewsLoading" class="reviews__loading">
+        <p>Cargando opiniones...</p>
+      </div>
+      
+      <div v-if="!dataReviewsLoading && !dataReviewByRecipe" class="reviews__empty">
+        <p>No hay opiniones para esta receta todavía. ¡Sé el primero en comentar!</p>
+      </div>
+      
+      <div v-if="dataReviewByRecipe" class="reviews__list">
+        <div v-for="review in dataReviewByRecipe" :key="dataReviewByRecipe.id" class="reviews__item">
+          <div class="reviews__header">
+            <div class="reviews__user-info">
+              <strong class="reviews__username">{{ dataReviewByRecipe.username }}</strong>
+            </div>
+            <div class="reviews__rating">
+              <EstrellaRating />
+              <span>{{ dataReviewByRecipe.score }}</span>
+            </div>
+          </div>
+          <p class="reviews__comment">{{ dataReviewByRecipe.text}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useGetRecipeDetail } from '@/stores/useGetRecipeDetail'
 import EstrellaRating from '@/components/SvgEstrella.vue'
+import { useGetReviewByRecipe } from '@/stores/useGetReviewByRecipe'
+
 
 const {
   dataRecipeDetail,
@@ -64,10 +97,22 @@ const {
   error: dataRecipeDetailError,
 } = useGetRecipeDetail()
 
+const {
+  dataReviewByRecipe,
+  fetchReviewByRecipe,
+  loading: dataReviewsLoading,
+  error: dataReviewsError,
+} = useGetReviewByRecipe()
+
+
 onMounted(async () => {
-  await fetchRecipeDetail()
-  console.log('Datos de la receta:', dataRecipeDetail)
-})
+ 
+    await fetchRecipeDetail()
+    console.log('Datos de la receta:', dataRecipeDetail.value)
+    
+    await fetchReviewByRecipe()
+    console.log('Reviews de la receta:', dataReviewByRecipe.value)
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -228,6 +273,90 @@ onMounted(async () => {
         margin-top: 10px;
       }
     }
+  }
+}
+
+.reviews {
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
+  padding: 20px;
+  font-family: $body;
+
+  &__container {
+    background-color: $white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  &__title {
+    font-size: 24px;
+    color: $black;
+    margin-bottom: 25px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  &__loading, &__empty {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: $black;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__item {
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    background-color: $white;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  &__user-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__username {
+    font-size: 16px;
+    color: $black;
+  }
+
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    color: $black;
+  }
+
+  &__comment {
+    font-size: 14px;
+    line-height: 1.6;
+    color: $black;
   }
 }
 </style>
