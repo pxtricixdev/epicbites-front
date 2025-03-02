@@ -105,11 +105,13 @@
             </Column>
             <Column header="Acciones">
               <template #body="slotProps">
-                <Button
-                  icon="pi pi-trash"
-                  class="p-button-danger p-button-rounded"
-                  @click="deleteRecipe(slotProps.data.id)"
-                />
+                <button
+                  class="btn-delete"
+                  @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
+                >
+                  <i class="pi pi-trash"></i>
+                  <span class="btn-text">Eliminar</span>
+                </button>
               </template>
             </Column>
           </DataTable>
@@ -140,6 +142,7 @@
             <Column field="role" header="Rol"></Column>
           </DataTable>
         </div>
+
         <!-- Tabla de Reviews -->
         <div v-if="activeSection === 'review'" class="recipe-table-container">
           <DataTable
@@ -168,6 +171,17 @@
                 <Rating :modelValue="slotProps.data.score" readonly />
               </template>
             </Column>
+            <Column header="Acciones">
+              <template #body="slotProps">
+                <button
+                  class="btn-delete"
+                  @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
+                >
+                  <i class="pi pi-trash"></i>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </template>
+            </Column>
           </DataTable>
         </div>
       </div>
@@ -179,32 +193,12 @@
           realizar modificaciones y garantizar que todo funcione correctamente.
         </p>
 
-        <h3 class="section-subtitle">Buenas prácticas en la administración</h3>
-        <ul class="section-list">
-          <li>
-            🔐<strong>Seguridad y privacidad</strong>: Protege la información de los usuarios y
-            sigue las normativas de seguridad establecidas.
-          </li>
-          <li>
-            ✅ <strong>Verificación de datos</strong>: Antes de realizar cambios, revisa la
-            información para evitar errores.
-          </li>
-          <li>
-            🛠️ <strong>Gestión eficiente</strong>: Usa las herramientas disponibles para optimizar
-            la administración del sistema.
-          </li>
-          <li>
-            ⚠️ <strong>Uso responsable</strong>: Cualquier cambio impacta en la experiencia de los
-            usuarios, así que actúa con prudencia.
-          </li>
-        </ul>
-
         <h3 class="section-subtitle">¿Qué puedes hacer desde este panel?</h3>
         <p class="section-message">Desde aquí tienes acceso a diferentes secciones del sistema:</p>
         <ul class="section-list">
           <li>
-            👥 <strong>Usuarios</strong>: Gestiona la información de los usuarios registrados, sus
-            roles y accesos.
+            👥 <strong>Usuarios</strong>: Gestiona la información de los usuarios registrados y sus
+            roles.
           </li>
           <li>
             📖 <strong>Recetas</strong>: Visualiza, edita y administra todas las recetas disponibles
@@ -225,6 +219,61 @@
       </div>
     </div>
   </div>
+
+  <!--  confirmación para eliminar receta -->
+  <Dialog
+    v-model:visible="deleteRecipeDialogVisible"
+    modal
+    header="Confirmar eliminación"
+    :style="{ width: '450px' }"
+    :closable="false"
+  >
+    <div class="confirmation-content">
+      <i class="pi pi-exclamation-triangle confirmation-icon"></i>
+      <span class="confirmation-message">
+        ¿Estás seguro de que deseas eliminar la receta <strong>{{ recipeToDelete.name }}</strong
+        >? Esta acción no se puede deshacer.
+      </span>
+    </div>
+    <template #footer>
+      <button class="btn-cancel" @click="cancelDeleteRecipe">
+        <i class="pi pi-times"></i>
+        <span>Cancelar</span>
+      </button>
+      <button class="btn-confirm" @click="proceedWithDeleteRecipe">
+        <i class="pi pi-check"></i>
+        <span>Confirmar</span>
+      </button>
+    </template>
+  </Dialog>
+
+  <!-- confirmación para eliminar review -->
+  <Dialog
+    v-model:visible="deleteReviewDialogVisible"
+    modal
+    header="Confirmar eliminación"
+    :style="{ width: '450px' }"
+    :closable="false"
+  >
+    <div class="confirmation-content">
+      <i class="pi pi-exclamation-triangle confirmation-icon"></i>
+      <span class="confirmation-message">
+        ¿Estás seguro de que deseas eliminar la reseña de la receta
+        <strong>{{ reviewToDelete.name }}</strong
+        >? Esta acción no se puede deshacer.
+      </span>
+    </div>
+    <template #footer>
+      <button class="btn-cancel" @click="cancelDeleteReview">
+        <i class="pi pi-times"></i>
+        <span>Cancelar</span>
+      </button>
+      <button class="btn-confirm" @click="proceedWithDeleteReview">
+        <i class="pi pi-check"></i>
+        <span>Confirmar</span>
+      </button>
+    </template>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -232,6 +281,7 @@ import { ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Rating from 'primevue/rating'
+import Dialog from 'primevue/dialog'
 
 import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
 import { useGetAllUsers } from '@/stores/useGetAllUsers'
@@ -239,6 +289,7 @@ import { useGetReviews } from '@/stores/useGetReviews'
 import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { useDeleteRecipe } from '@/stores/useDeleteRecipe'
+import { useDeleteReview } from '@/stores/useDeleteReview'
 
 const userData = ref({ total: 0 })
 const recipeData = ref({ total: 0 })
@@ -258,7 +309,13 @@ const { dataUsers, fetchUsers } = useGetAllUsers()
 const user = ref<IGetAllUsers[]>([])
 
 const { dataReviews, fetchReviews } = useGetReviews()
-const reviews = ref<{ name: string; username: string; score: number; text: string }[]>([])
+const reviews = ref<{ id: number; name: string; username: string; score: number; text: string }[]>([])
+
+const deleteRecipeDialogVisible = ref(false)
+const recipeToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
+
+const deleteReviewDialogVisible = ref(false)
+const reviewToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
 
 onMounted(async () => {
   await fetchAllRecipes()
@@ -271,6 +328,7 @@ onMounted(async () => {
 
   await fetchReviews()
   reviews.value = dataReviews.value?.map((review) => ({
+    id: review.id,
     name: review.name,
     username: review.username,
     score: review.score,
@@ -279,19 +337,54 @@ onMounted(async () => {
   reviewData.value.total = reviews.value.length
 })
 
-const { deleteRecipeById, deleteResponse } = useDeleteRecipe()
+//  eliminar recetas
+const { deleteRecipeById, deleteRecipeResponse } = useDeleteRecipe()
 
-const deleteRecipe = async (id: number) => {
-  await deleteRecipeById(id)
-  if (deleteResponse.value?.success) {
-    recipes.value = recipes.value.filter((recipe) => recipe.id !== id)
+const confirmDeleteRecipe = (id: number, name: string) => {
+  recipeToDelete.value = { id, name }
+  deleteRecipeDialogVisible.value = true
+}
+
+const cancelDeleteReview = () => {
+  deleteReviewDialogVisible.value = false
+}
+
+// eliminar si se ha confirmado
+const proceedWithDeleteRecipe = async () => {
+  await deleteRecipeById(recipeToDelete.value.id)
+  if (deleteRecipeResponse.value?.success) {
+    recipes.value = recipes.value.filter((recipe) => recipe.id !== recipeToDelete.value.id)
+    recipeData.value.total = recipes.value.length
   }
+  deleteRecipeDialogVisible.value = false
+}
+
+
+const cancelDeleteRecipe = () => {
+  deleteRecipeDialogVisible.value = false
+}
+
+// eliminar reviews
+const { deleteReviewById, deleteReviewResponse } = useDeleteReview()
+
+const confirmDeleteReview = (id: number, name: string) => {
+  reviewToDelete.value = { id, name }
+  deleteReviewDialogVisible.value = true
+}
+
+// eliminar si se ha confirmado
+const proceedWithDeleteReview = async () => {
+  await deleteReviewById(reviewToDelete.value.id)
+  if (deleteReviewResponse.value?.success) {
+    reviews.value = reviews.value.filter((review) => review.id !== reviewToDelete.value.id)
+    reviewData.value.total = reviews.value.length
+  }
+  deleteReviewDialogVisible.value = false
 }
 </script>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
-@use '@/assets/styles/mixins' as *;
 
 .layout {
   display: flex;
@@ -424,14 +517,16 @@ const deleteRecipe = async (id: number) => {
   }
 }
 
-.section-container {
-  background-color: $white;
-  border-radius: 6px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-top: 2rem;
+.section {
+  &-container {
+    background-color: $white;
+    border-radius: 6px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+  }
 
-  .section-title {
+  &-title {
     font-size: 1.5rem;
     font-weight: 700;
     color: $black;
@@ -439,7 +534,7 @@ const deleteRecipe = async (id: number) => {
     font-family: $heading;
   }
 
-  .section-message {
+  &-message {
     color: $black;
     font-size: 1rem;
     line-height: 1.6;
@@ -447,7 +542,7 @@ const deleteRecipe = async (id: number) => {
     max-width: 800px;
   }
 
-  .section-subtitle {
+  &-subtitle {
     font-size: 1.25rem;
     margin-bottom: 10px;
     font-weight: 600;
@@ -456,7 +551,7 @@ const deleteRecipe = async (id: number) => {
     font-family: $heading;
   }
 
-  .section-list {
+  &-list {
     list-style: none;
     padding: 0;
     max-width: 800px;
@@ -494,18 +589,141 @@ const deleteRecipe = async (id: number) => {
   transition: transform 0.2s ease-in-out;
 }
 
+%btn-base {
+  font-family: $body;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 0.5rem;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0px);
+  }
+}
 
+.btn {
+  &-delete {
+    @extend %btn-base;
+    background: linear-gradient(45deg, #ff5252, #ff7878);
+    color: white;
+    min-width: 110px;
+
+    &:hover {
+      background: linear-gradient(45deg, #ff3838, #ff5252);
+      box-shadow: 0 4px 8px rgba(255, 82, 82, 0.3);
+    }
+
+    i {
+      margin-right: 4px;
+    }
+  }
+
+  &-cancel {
+    @extend %btn-base;
+    background: linear-gradient(45deg, #e0e0e0, #f5f5f5);
+    color: #555;
+
+    &:hover {
+      background: linear-gradient(45deg, #d5d5d5, #e8e8e8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &-confirm {
+    @extend %btn-base;
+    background: linear-gradient(45deg, #4caf50, #8bc34a);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(45deg, #43a047, #7cb342);
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    }
+  }
+}
+
+.confirmation {
+  &-content {
+    font-family: $body;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  &-icon {
+    font-size: 2rem;
+    color: #ffa000;
+    margin-bottom: 1rem;
+  }
+
+  &-message {
+    font-size: 1rem;
+    color: $black;
+    line-height: 1.5;
+  }
+}
+
+// Media Queries
 @media (min-width: 768px) {
-  .layout-sidebar {
-    transform: translateX(0);
+  .layout {
+    &-sidebar {
+      transform: translateX(0);
+    }
+    
+    &-main {
+      margin-left: 250px;
+      padding: 1.5rem;
+    }
   }
-  .layout-main {
-    margin-left: 250px;
-    padding: 1.5rem;
-  }
+  
   .dashboard-cards {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
+  }
+  
+  .confirmation {
+    &-content {
+      flex-direction: row;
+      text-align: left;
+      padding: 1rem 2rem;
+    }
+    
+    &-icon {
+      margin-right: 1rem;
+      margin-bottom: 0;
+    }
+  }
+  
+  .btn-text {
+    display: inline;
+  }
+}
+
+@media (max-width: 767px) {
+  .btn-text {
+    display: none;
+  }
+  
+  .btn { 
+    &-delete,
+    &-cancel,
+    &-confirm {
+      padding: 0.5rem;
+      min-width: auto;
+    }
   }
 }
 
@@ -513,9 +731,11 @@ const deleteRecipe = async (id: number) => {
   .layout-main {
     padding: 2rem;
   }
+  
   .dashboard-cards {
     margin-bottom: 2rem;
   }
+  
   .recipe-table-container {
     padding: 1rem;
   }
