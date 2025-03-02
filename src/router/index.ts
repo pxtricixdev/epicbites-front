@@ -49,16 +49,21 @@ const router = createRouter({
           component: () => import('@/pages/RecipeDetailPage.vue'),
         },
         {
-          path: '/dashboard',
-          name: 'dashboard',
-          component: () => import('@/pages/AdminPage.vue'),
-        },
-        {
           path: '/recetas/publicar-receta',
           name: 'publicar-receta',
           component: () => import('@/pages/PostRecipePage.vue'),
         },
       ],
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('@/pages/AdminLoginPage.vue'),
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('@/pages/AdminPage.vue'),
     },
   ],
 })

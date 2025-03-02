@@ -1,279 +1,312 @@
 <template>
   <div class="layout">
-    <!-- falta un header -->
-    <!-- barra lateral -->
-    <div class="layout-sidebar" :class="{ active: sidebarActive }">
-      <ul class="layout-menu">
-        <li class="layout-menuitem">
-          <a href="#" class="layout-menuitem-link" @click="setActiveSection('home')">
-            <i class="pi pi-home"></i>
-            <span>Home</span>
-          </a>
-        </li>
-        <li class="layout-menuitem">
-          <a href="#" class="layout-menuitem-link" @click="setActiveSection('users')">
-            <i class="pi pi-users"></i>
-            <span>Users</span>
-          </a>
-        </li>
-        <li class="layout-menuitem">
-          <a href="#" class="layout-menuitem-link" @click="setActiveSection('recetas')">
-            <i class="pi pi-book"></i>
-            <span>Recetas</span>
-          </a>
-        </li>
-        <li class="layout-menuitem">
-          <a href="#" class="layout-menuitem-link" @click="setActiveSection('review')">
-            <i class="pi pi-star"></i>
-            <span>Review</span>
-          </a>
-        </li>
-      </ul>
+    <div class="layout-notAuth" v-if="!isAuthenticated">
+      <p>
+        <strong>Acceso restringido:</strong> Para administrar la web, es necesario iniciar sesión con una cuenta
+        autorizada. Solo los usuarios con permisos de administrador pueden acceder a esta sección.
+      </p>
+      <br />
+      <p>
+        Si ya tienes credenciales, por favor inicia sesión para continuar. En caso de no tener una
+        cuenta de administrador, solicita acceso al equipo correspondiente.
+      </p>
+      <br />
+      <p>
+        Para proceder con el inicio de sesión, haz clic
+        <RouterLink to="/admin">aquí</RouterLink>.
+      </p>
     </div>
-
-    <!-- principal  -->
-    <div class="layout-main" :class="{ 'sidebar-active': sidebarActive }">
-      <div class="layout-content">
-        <div class="dashboard-cards">
-          <div class="card">
-            <div class="card-header">
-              <h3>Users</h3>
-              <div class="card-icon">
-                <i class="pi pi-users"></i>
-              </div>
-            </div>
-            <div class="card-value">{{ userData.total }}</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h3>Recetas</h3>
-              <div class="card-icon recipes">
-                <i class="pi pi-book"></i>
-              </div>
-            </div>
-            <div class="card-value">{{ recipeData.total }}</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h3>Reviews</h3>
-              <div class="card-icon reviews">
-                <i class="pi pi-star"></i>
-              </div>
-            </div>
-            <div class="card-value">{{ reviewData.total }}</div>
-          </div>
-        </div>
-
-        <!-- Tabla de Recetas -->
-        <div v-if="activeSection === 'recetas'" class="recipe-table-container">
-          <DataTable
-            v-if="recipes.length > 0"
-            :value="recipes"
-            paginator
-            :rows="5"
-            :rowsPerPageOptions="[5, 10, 20, 50]"
-            tableStyle="min-width: 100%"
-            responsiveLayout="stack"
-            breakpoint="960px"
-            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            currentPageReportTemplate="{first} a {last} de {totalRecords}"
-          >
-            <template #header>
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-xl font-bold">Recetas</span>
-              </div>
-            </template>
-
-            <Column field="name" header="Nombre"></Column>
-
-            <Column header="Imagen">
-              <template #body="slotProps">
-                <img :src="slotProps.data.image" class="recipe-image" :alt="slotProps.data.name" />
-              </template>
-            </Column>
-
-            <Column field="userName" header="Usuario"></Column>
-
-            <Column field="difficulty" header="Dificultad"></Column>
-
-            <Column field="score" header="Reviews">
-              <template #body="slotProps">
-                <Rating :modelValue="slotProps.data.score" readonly />
-              </template>
-            </Column>
-            <Column header="Acciones">
-              <template #body="slotProps">
-                <button
-                  class="btn-delete"
-                  @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
-                >
-                  <i class="pi pi-trash"></i>
-                  <span class="btn-text">Eliminar</span>
-                </button>
-              </template>
-            </Column>
-          </DataTable>
-        </div>
-
-        <!-- Tabla de Users -->
-        <div v-if="activeSection === 'users'" class="recipe-table-container">
-          <DataTable
-            v-if="user.length > 0"
-            :value="user"
-            paginator
-            :rows="5"
-            :rowsPerPageOptions="[5, 10, 20, 50]"
-            tableStyle="min-width: 100%"
-            responsiveLayout="stack"
-            breakpoint="960px"
-            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            currentPageReportTemplate="{first} a {last} de {totalRecords}"
-          >
-            <template #header>
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-xl font-bold">Usuarios</span>
-              </div>
-            </template>
-
-            <Column field="username" header="Usuario"></Column>
-            <Column field="email" header="Correo"></Column>
-            <Column field="role" header="Rol"></Column>
-          </DataTable>
-        </div>
-
-        <!-- Tabla de Reviews -->
-        <div v-if="activeSection === 'review'" class="recipe-table-container">
-          <DataTable
-            v-if="reviews.length > 0"
-            :value="reviews"
-            paginator
-            :rows="5"
-            :rowsPerPageOptions="[5, 10, 20, 50]"
-            tableStyle="min-width: 100%"
-            responsiveLayout="stack"
-            breakpoint="960px"
-            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            currentPageReportTemplate="{first} a {last} de {totalRecords}"
-          >
-            <template #header>
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-xl font-bold">Úlimas reseña</span>
-              </div>
-            </template>
-
-            <Column field="name" header="Receta"></Column>
-            <Column field="username" header="Usuario"></Column>
-            <Column field="text" header="Comentario"></Column>
-            <Column field="score" header="Puntuación">
-              <template #body="slotProps">
-                <Rating :modelValue="slotProps.data.score" readonly />
-              </template>
-            </Column>
-            <Column header="Acciones">
-              <template #body="slotProps">
-                <button
-                  class="btn-delete"
-                  @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
-                >
-                  <i class="pi pi-trash"></i>
-                  <span class="btn-text">Eliminar</span>
-                </button>
-              </template>
-            </Column>
-          </DataTable>
-        </div>
-      </div>
-      <div v-if="activeSection === 'home'" class="section-container">
-        <h2 class="section-title">Bienvenido al Panel de Administración</h2>
-        <p class="section-message">
-          Este es el centro de control donde puedes administrar la información clave del sistema,
-          incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos importantes,
-          realizar modificaciones y garantizar que todo funcione correctamente.
-        </p>
-
-        <h3 class="section-subtitle">¿Qué puedes hacer desde este panel?</h3>
-        <p class="section-message">Desde aquí tienes acceso a diferentes secciones del sistema:</p>
-        <ul class="section-list">
-          <li>
-            👥 <strong>Usuarios</strong>: Gestiona la información de los usuarios registrados y sus
-            roles.
+    <div v-else class="layout-authenticated">
+      <!-- barra lateral -->
+      <div class="layout-sidebar" :class="{ active: sidebarActive }">
+        <ul class="layout-menu">
+          <li class="layout-menuitem">
+            <a href="#" class="layout-menuitem-link" @click="setActiveSection('home')">
+              <i class="pi pi-home"></i>
+              <span>Home</span>
+            </a>
           </li>
-          <li>
-            📖 <strong>Recetas</strong>: Visualiza, edita y administra todas las recetas disponibles
-            en la plataforma.
+          <li class="layout-menuitem">
+            <a href="#" class="layout-menuitem-link" @click="setActiveSection('users')">
+              <i class="pi pi-users"></i>
+              <span>Users</span>
+            </a>
           </li>
-          <li>
-            ⭐ <strong>Reseñas</strong>: Modera y supervisa las opiniones de los usuarios sobre las
-            recetas.
+          <li class="layout-menuitem">
+            <a href="#" class="layout-menuitem-link" @click="setActiveSection('recetas')">
+              <i class="pi pi-book"></i>
+              <span>Recetas</span>
+            </a>
+          </li>
+          <li class="layout-menuitem">
+            <a href="#" class="layout-menuitem-link" @click="setActiveSection('review')">
+              <i class="pi pi-star"></i>
+              <span>Review</span>
+            </a>
+          </li>
+          <li class="layout-menuitem">
+            <RouterLink
+              to="/recetas/publicar-receta"
+              class="layout-menuitem-link"
+              @click="setActiveSection('/recetas/publicar-receta')"
+            >
+              <i class="pi pi-pencil"></i>
+              <span>Crear Receta</span>
+            </RouterLink>
           </li>
         </ul>
+      </div>
 
-        <h3 class="section-subtitle">Recuerda:</h3>
-        <p class="section-message">
-          El correcto uso de este panel es fundamental para mantener la calidad y seguridad del
-          sistema. Cualquier modificación debe ser realizada con responsabilidad y pensando siempre
-          en la mejor experiencia para los usuarios.
-        </p>
+      <!-- principal  -->
+      <div class="layout-main" :class="{ 'sidebar-active': sidebarActive }">
+        <div class="layout-content">
+          <div class="dashboard-cards">
+            <div class="card">
+              <div class="card-header">
+                <h3>Users</h3>
+                <div class="card-icon">
+                  <i class="pi pi-users"></i>
+                </div>
+              </div>
+              <div class="card-value">{{ userData.total }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Recetas</h3>
+                <div class="card-icon recipes">
+                  <i class="pi pi-book"></i>
+                </div>
+              </div>
+              <div class="card-value">{{ recipeData.total }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Reviews</h3>
+                <div class="card-icon reviews">
+                  <i class="pi pi-star"></i>
+                </div>
+              </div>
+              <div class="card-value">{{ reviewData.total }}</div>
+            </div>
+          </div>
+
+          <!-- Tabla de Recetas -->
+          <div v-if="activeSection === 'recetas'" class="recipe-table-container">
+            <DataTable
+              v-if="recipes.length > 0"
+              :value="recipes"
+              paginator
+              :rows="5"
+              :rowsPerPageOptions="[5, 10, 20, 50]"
+              tableStyle="min-width: 100%"
+              responsiveLayout="stack"
+              breakpoint="960px"
+              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+              currentPageReportTemplate="{first} a {last} de {totalRecords}"
+            >
+              <template #header>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-xl font-bold">Recetas</span>
+                </div>
+              </template>
+
+              <Column field="name" header="Nombre"></Column>
+
+              <Column header="Imagen">
+                <template #body="slotProps">
+                  <img
+                    :src="slotProps.data.image"
+                    class="recipe-image"
+                    :alt="slotProps.data.name"
+                  />
+                </template>
+              </Column>
+
+              <Column field="userName" header="Usuario"></Column>
+
+              <Column field="difficulty" header="Dificultad"></Column>
+
+              <Column field="score" header="Reviews">
+                <template #body="slotProps">
+                  <Rating :modelValue="slotProps.data.score" readonly />
+                </template>
+              </Column>
+              <Column header="Acciones">
+                <template #body="slotProps">
+                  <button
+                    class="btn-delete"
+                    @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
+                  >
+                    <i class="pi pi-trash"></i>
+                    <span class="btn-text">Eliminar</span>
+                  </button>
+                </template>
+              </Column>
+            </DataTable>
+          </div>
+
+          <!-- Tabla de Users -->
+          <div v-if="activeSection === 'users'" class="recipe-table-container">
+            <DataTable
+              v-if="user.length > 0"
+              :value="user"
+              paginator
+              :rows="5"
+              :rowsPerPageOptions="[5, 10, 20, 50]"
+              tableStyle="min-width: 100%"
+              responsiveLayout="stack"
+              breakpoint="960px"
+              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+              currentPageReportTemplate="{first} a {last} de {totalRecords}"
+            >
+              <template #header>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-xl font-bold">Usuarios</span>
+                </div>
+              </template>
+
+              <Column field="username" header="Usuario"></Column>
+              <Column field="email" header="Correo"></Column>
+              <Column field="role" header="Rol"></Column>
+            </DataTable>
+          </div>
+
+          <!-- Tabla de Reviews -->
+          <div v-if="activeSection === 'review'" class="recipe-table-container">
+            <DataTable
+              v-if="reviews.length > 0"
+              :value="reviews"
+              paginator
+              :rows="5"
+              :rowsPerPageOptions="[5, 10, 20, 50]"
+              tableStyle="min-width: 100%"
+              responsiveLayout="stack"
+              breakpoint="960px"
+              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+              currentPageReportTemplate="{first} a {last} de {totalRecords}"
+            >
+              <template #header>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-xl font-bold">Úlimas reseña</span>
+                </div>
+              </template>
+
+              <Column field="name" header="Receta"></Column>
+              <Column field="username" header="Usuario"></Column>
+              <Column field="text" header="Comentario"></Column>
+              <Column field="score" header="Puntuación">
+                <template #body="slotProps">
+                  <Rating :modelValue="slotProps.data.score" readonly />
+                </template>
+              </Column>
+              <Column header="Acciones">
+                <template #body="slotProps">
+                  <button
+                    class="btn-delete"
+                    @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
+                  >
+                    <i class="pi pi-trash"></i>
+                    <span class="btn-text">Eliminar</span>
+                  </button>
+                </template>
+              </Column>
+            </DataTable>
+          </div>
+        </div>
+        <div v-if="activeSection === 'home'" class="section-container">
+          <h2 class="section-title">Bienvenido al Panel de Administración</h2>
+          <p class="section-message">
+            Este es el centro de control donde puedes administrar la información clave del sistema,
+            incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos importantes,
+            realizar modificaciones y garantizar que todo funcione correctamente.
+          </p>
+
+          <h3 class="section-subtitle">¿Qué puedes hacer desde este panel?</h3>
+          <p class="section-message">
+            Desde aquí tienes acceso a diferentes secciones del sistema:
+          </p>
+          <ul class="section-list">
+            <li>
+              👥 <strong>Usuarios</strong>: Gestiona la información de los usuarios registrados y
+              sus roles.
+            </li>
+            <li>
+              📖 <strong>Recetas</strong>: Visualiza, edita y administra todas las recetas
+              disponibles en la plataforma.
+            </li>
+            <li>
+              ⭐ <strong>Reseñas</strong>: Modera y supervisa las opiniones de los usuarios sobre
+              las recetas.
+            </li>
+          </ul>
+
+          <h3 class="section-subtitle">Recuerda:</h3>
+          <p class="section-message">
+            El correcto uso de este panel es fundamental para mantener la calidad y seguridad del
+            sistema. Cualquier modificación debe ser realizada con responsabilidad y pensando
+            siempre en la mejor experiencia para los usuarios.
+          </p>
+        </div>
       </div>
     </div>
+
+    <!--  confirmación para eliminar receta -->
+    <Dialog
+      v-model:visible="deleteRecipeDialogVisible"
+      modal
+      header="Confirmar eliminación"
+      :style="{ width: '450px' }"
+      :closable="false"
+    >
+      <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle confirmation-icon"></i>
+        <span class="confirmation-message">
+          ¿Estás seguro de que deseas eliminar la receta <strong>{{ recipeToDelete.name }}</strong
+          >? Esta acción no se puede deshacer.
+        </span>
+      </div>
+      <template #footer>
+        <button class="btn-cancel" @click="cancelDeleteRecipe">
+          <i class="pi pi-times"></i>
+          <span>Cancelar</span>
+        </button>
+        <button class="btn-confirm" @click="proceedWithDeleteRecipe">
+          <i class="pi pi-check"></i>
+          <span>Confirmar</span>
+        </button>
+      </template>
+    </Dialog>
+
+    <!-- confirmación para eliminar review -->
+    <Dialog
+      v-model:visible="deleteReviewDialogVisible"
+      modal
+      header="Confirmar eliminación"
+      :style="{ width: '450px' }"
+      :closable="false"
+    >
+      <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle confirmation-icon"></i>
+        <span class="confirmation-message">
+          ¿Estás seguro de que deseas eliminar la reseña de la receta
+          <strong>{{ reviewToDelete.name }}</strong
+          >? Esta acción no se puede deshacer.
+        </span>
+      </div>
+      <template #footer>
+        <button class="btn-cancel" @click="cancelDeleteReview">
+          <i class="pi pi-times"></i>
+          <span>Cancelar</span>
+        </button>
+        <button class="btn-confirm" @click="proceedWithDeleteReview">
+          <i class="pi pi-check"></i>
+          <span>Confirmar</span>
+        </button>
+      </template>
+    </Dialog>
   </div>
-
-  <!--  confirmación para eliminar receta -->
-  <Dialog
-    v-model:visible="deleteRecipeDialogVisible"
-    modal
-    header="Confirmar eliminación"
-    :style="{ width: '450px' }"
-    :closable="false"
-  >
-    <div class="confirmation-content">
-      <i class="pi pi-exclamation-triangle confirmation-icon"></i>
-      <span class="confirmation-message">
-        ¿Estás seguro de que deseas eliminar la receta <strong>{{ recipeToDelete.name }}</strong
-        >? Esta acción no se puede deshacer.
-      </span>
-    </div>
-    <template #footer>
-      <button class="btn-cancel" @click="cancelDeleteRecipe">
-        <i class="pi pi-times"></i>
-        <span>Cancelar</span>
-      </button>
-      <button class="btn-confirm" @click="proceedWithDeleteRecipe">
-        <i class="pi pi-check"></i>
-        <span>Confirmar</span>
-      </button>
-    </template>
-  </Dialog>
-
-  <!-- confirmación para eliminar review -->
-  <Dialog
-    v-model:visible="deleteReviewDialogVisible"
-    modal
-    header="Confirmar eliminación"
-    :style="{ width: '450px' }"
-    :closable="false"
-  >
-    <div class="confirmation-content">
-      <i class="pi pi-exclamation-triangle confirmation-icon"></i>
-      <span class="confirmation-message">
-        ¿Estás seguro de que deseas eliminar la reseña de la receta
-        <strong>{{ reviewToDelete.name }}</strong
-        >? Esta acción no se puede deshacer.
-      </span>
-    </div>
-    <template #footer>
-      <button class="btn-cancel" @click="cancelDeleteReview">
-        <i class="pi pi-times"></i>
-        <span>Cancelar</span>
-      </button>
-      <button class="btn-confirm" @click="proceedWithDeleteReview">
-        <i class="pi pi-check"></i>
-        <span>Confirmar</span>
-      </button>
-    </template>
-  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -290,14 +323,16 @@ import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { useDeleteRecipe } from '@/stores/useDeleteRecipe'
 import { useDeleteReview } from '@/stores/useDeleteReview'
+import { useAuthStore } from '@/stores/useAuthStore'
 
+const { isAuthenticated } = useAuthStore()
 const userData = ref({ total: 0 })
 const recipeData = ref({ total: 0 })
 const reviewData = ref({ total: 0 })
 
-const sidebarActive = ref(false)
+const sidebarActive = ref(true)
 
-const activeSection = ref('recetas')
+const activeSection = ref('home')
 const setActiveSection = (section: string) => {
   activeSection.value = section
 }
@@ -309,7 +344,9 @@ const { dataUsers, fetchUsers } = useGetAllUsers()
 const user = ref<IGetAllUsers[]>([])
 
 const { dataReviews, fetchReviews } = useGetReviews()
-const reviews = ref<{ id: number; name: string; username: string; score: number; text: string }[]>([])
+const reviews = ref<{ id: number; name: string; username: string; score: number; text: string }[]>(
+  [],
+)
 
 const deleteRecipeDialogVisible = ref(false)
 const recipeToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
@@ -359,7 +396,6 @@ const proceedWithDeleteRecipe = async () => {
   deleteRecipeDialogVisible.value = false
 }
 
-
 const cancelDeleteRecipe = () => {
   deleteRecipeDialogVisible.value = false
 }
@@ -394,9 +430,30 @@ const proceedWithDeleteReview = async () => {
   position: relative;
   font-family: $body;
 
+  &-notAuth {
+    text-align: center;
+    color: $black;
+    margin-top: 300px;
+    font-size: 14px;
+
+    a {
+      color: $secondary-orange;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &-authenticated {
+    display: flex;
+    min-height: calc(100vh - 80px);
+    position: relative;
+  }
+
   &-sidebar {
     position: fixed;
-    margin-top: 80px;
     left: 0;
     top: 0;
     width: 250px;
@@ -404,13 +461,8 @@ const proceedWithDeleteReview = async () => {
     background-color: $white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 998;
-    transform: translateX(-100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
-
-    &.active {
-      transform: translateX(0);
-    }
 
     .layout-menu {
       list-style: none;
@@ -452,10 +504,7 @@ const proceedWithDeleteReview = async () => {
     padding: 1rem;
     flex: 1;
     transition: margin-left 0.3s ease;
-
-    &.sidebar-active {
-      margin-left: 250px;
-    }
+    margin-left: 250px;
 
     .layout-content {
       width: 100%;
@@ -524,6 +573,7 @@ const proceedWithDeleteReview = async () => {
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-top: 2rem;
+    max-width: 66.3%;
   }
 
   &-title {
@@ -539,7 +589,7 @@ const proceedWithDeleteReview = async () => {
     font-size: 1rem;
     line-height: 1.6;
     text-align: justify;
-    max-width: 800px;
+    max-width: 1200px;
   }
 
   &-subtitle {
@@ -554,7 +604,7 @@ const proceedWithDeleteReview = async () => {
   &-list {
     list-style: none;
     padding: 0;
-    max-width: 800px;
+    max-width: 1200px;
 
     li {
       display: flex;
@@ -602,11 +652,11 @@ const proceedWithDeleteReview = async () => {
   transition: all 0.3s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   gap: 0.5rem;
-  
+
   &:hover {
     transform: translateY(-2px);
   }
-  
+
   &:active {
     transform: translateY(0px);
   }
@@ -677,47 +727,28 @@ const proceedWithDeleteReview = async () => {
 }
 
 // Media Queries
-@media (min-width: 768px) {
-  .layout {
-    &-sidebar {
+@media (max-width: 767px) {
+  .layout-sidebar {
+    transform: translateX(-100%);
+
+    &.active {
       transform: translateX(0);
     }
-    
-    &-main {
-      margin-left: 250px;
-      padding: 1.5rem;
-    }
   }
-  
-  .dashboard-cards {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  
-  .confirmation {
-    &-content {
-      flex-direction: row;
-      text-align: left;
-      padding: 1rem 2rem;
-    }
-    
-    &-icon {
-      margin-right: 1rem;
-      margin-bottom: 0;
-    }
-  }
-  
-  .btn-text {
-    display: inline;
-  }
-}
 
-@media (max-width: 767px) {
+  .layout-main {
+    margin-left: 0;
+
+    &.sidebar-active {
+      margin-left: 250px;
+    }
+  }
+
   .btn-text {
     display: none;
   }
-  
-  .btn { 
+
+  .btn {
     &-delete,
     &-cancel,
     &-confirm {
@@ -725,19 +756,64 @@ const proceedWithDeleteReview = async () => {
       min-width: auto;
     }
   }
+
+  .confirmation {
+    &-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    &-icon {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .layout-sidebar {
+    transform: translateX(0);
+  }
+
+  .layout-main {
+    margin-left: 250px;
+    padding: 1.5rem;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .confirmation {
+    &-content {
+      flex-direction: row;
+      text-align: left;
+      padding: 1rem 2rem;
+    }
+
+    &-icon {
+      margin-right: 1rem;
+      margin-bottom: 0;
+    }
+  }
+
+  .btn-text {
+    display: inline;
+  }
 }
 
 @media (min-width: 1200px) {
   .layout-main {
     padding: 2rem;
   }
-  
+
   .dashboard-cards {
     margin-bottom: 2rem;
   }
-  
+
   .recipe-table-container {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 }
 </style>
