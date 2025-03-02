@@ -21,7 +21,7 @@ const router = createRouter({
         {
           path: '/registro',
           name: 'registro',
-          component: () => import('@/pages/RegisterPage.vue')
+          component: () => import('@/pages/RegisterPage.vue'),
         },
         {
           path: '/terminos',
@@ -52,6 +52,11 @@ const router = createRouter({
           path: '/dashboard',
           name: 'dashboard',
           component: () => import('@/pages/AdminPage.vue'),
+        },
+        {
+          path: '/recetas/publicar-receta',
+          name: 'publicar-receta',
+          component: () => import('@/pages/PostRecipePage.vue'),
         },
       ],
     },

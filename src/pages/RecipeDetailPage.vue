@@ -39,7 +39,7 @@
             <h2>🍽️ <span>Pasos a seguir</span></h2>
             <ul>
               <li class="recipe-page__steps__list">
-                <p>{{ dataRecipeDetail.steps }}</p>
+                <div v-html="dataRecipeDetail.steps" class="recipe-page__steps__content"></div>
               </li>
             </ul>
           </div>

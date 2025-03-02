@@ -17,7 +17,7 @@ export function useGetRecipeDetail() {
       const response = await fetch(`https://localhost:7129/api/recetas/${id}`, {
         method: 'GET',
         headers: {
-          accept: 'text/plain',
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       })
