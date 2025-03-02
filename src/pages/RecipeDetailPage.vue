@@ -1,3 +1,4 @@
+
 <template>
   <section class="recipe-page">
     <div class="recipe-page__main">
@@ -16,7 +17,9 @@
               <p class="recipe-page__author">{{ dataRecipeDetail.userName }}</p>
 
               <div class="recipe-page__meta">
-                <span class="recipe-page__score">⭐ {{ dataRecipeDetail.score }}</span>
+                <span class="recipe-page__score">
+                  <EstrellaRating /> {{ dataRecipeDetail.score }}
+                </span>
                 <span class="recipe-page__time">⏳ {{ dataRecipeDetail.time }} min</span>
                 <span class="recipe-page__calories">🔥 {{ dataRecipeDetail.calories }} kcal</span>
               </div>
@@ -52,6 +55,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useGetRecipeDetail } from '@/stores/useGetRecipeDetail'
+import EstrellaRating from '@/components/SvgEstrella.vue'
 
 const {
   dataRecipeDetail,
@@ -67,7 +71,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables' as *;
 @use '@/assets/styles/variables' as *;
 
 .recipe-page {
