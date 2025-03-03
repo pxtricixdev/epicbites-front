@@ -1,4 +1,3 @@
-
 <template>
   <section class="recipe-page">
     <div class="recipe-page__main">
@@ -53,30 +52,28 @@
 
   <section class="reviews">
     <div class="reviews__container">
-      <h2 class="reviews__title">
-        <EstrellaRating /> <span>Opiniones</span> <EstrellaRating />
-      </h2>
-      
+      <h2 class="reviews__title"><EstrellaRating /> <span>Opiniones</span> <EstrellaRating /></h2>
+
       <div v-if="dataReviewsLoading" class="reviews__loading">
         <p>Cargando opiniones...</p>
       </div>
-      
-      <div v-if="!dataReviewsLoading && !dataReviewByRecipe" class="reviews__empty">
+
+      <div v-if="!dataReviewsLoading && dataReviewByRecipe.length === 0" class="reviews__empty">
         <p>No hay opiniones para esta receta todavía. ¡Sé el primero en comentar!</p>
       </div>
-      
+
       <div v-if="dataReviewByRecipe" class="reviews__list">
-        <div v-for="review in dataReviewByRecipe" :key="dataReviewByRecipe.id" class="reviews__item">
+        <div v-for="review in dataReviewByRecipe" :key="review.reviewId" class="reviews__item">
           <div class="reviews__header">
             <div class="reviews__user-info">
-              <strong class="reviews__username">{{ dataReviewByRecipe.username }}</strong>
+              <strong class="reviews__username">{{ review.userName }}</strong>
             </div>
             <div class="reviews__rating">
               <EstrellaRating />
-              <span>{{ dataReviewByRecipe.score }}</span>
+              <span>{{ review.reviewScore }}</span>
             </div>
           </div>
-          <p class="reviews__comment">{{ dataReviewByRecipe.text}}</p>
+          <p class="reviews__comment">{{ review.reviewText }}</p>
         </div>
       </div>
     </div>
@@ -88,7 +85,6 @@ import { onMounted } from 'vue'
 import { useGetRecipeDetail } from '@/stores/useGetRecipeDetail'
 import EstrellaRating from '@/components/SvgEstrella.vue'
 import { useGetReviewByRecipe } from '@/stores/useGetReviewByRecipe'
-
 
 const {
   dataRecipeDetail,
@@ -104,15 +100,13 @@ const {
   error: dataReviewsError,
 } = useGetReviewByRecipe()
 
-
 onMounted(async () => {
- 
-    await fetchRecipeDetail()
-    console.log('Datos de la receta:', dataRecipeDetail.value)
-    
-    await fetchReviewByRecipe()
-    console.log('Reviews de la receta:', dataReviewByRecipe.value)
-  })
+  await fetchRecipeDetail()
+  console.log('Datos de la receta:', dataRecipeDetail.value)
+
+  await fetchReviewByRecipe()
+  console.log('Reviews de la receta:', dataReviewByRecipe.value)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -300,7 +294,8 @@ onMounted(async () => {
     gap: 10px;
   }
 
-  &__loading, &__empty {
+  &__loading,
+  &__empty {
     text-align: center;
     padding: 20px;
     font-size: 16px;
