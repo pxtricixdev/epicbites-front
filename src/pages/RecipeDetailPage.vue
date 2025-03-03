@@ -77,6 +77,7 @@
           <p class="reviews__date">{{ formatDate(review.reviewDate) }}</p>
         </div>
       </div>
+      
     </div>
   </section>
 </template>
@@ -86,6 +87,7 @@ import { onMounted } from 'vue'
 import { useGetRecipeDetail } from '@/stores/useGetRecipeDetail'
 import EstrellaRating from '@/components/SvgEstrella.vue'
 import { useGetReviewByRecipe } from '@/stores/useGetReviewByRecipe'
+import { usePostReview } from '@/stores/usePostReview'
 
 const {
   dataRecipeDetail,
@@ -101,12 +103,17 @@ const {
   error: dataReviewsError,
 } = useGetReviewByRecipe()
 
+const { dataPostReview, postReview } = usePostReview()
+
 onMounted(async () => {
   await fetchRecipeDetail()
   console.log('Datos de la receta:', dataRecipeDetail.value)
 
   await fetchReviewByRecipe()
   console.log('Reviews de la receta:', dataReviewByRecipe.value)
+
+  await postReview()
+  console.log('Reseña enviada', dataPostReview.value)
 })
 
 const formatDate = (dateString: Date) => {
