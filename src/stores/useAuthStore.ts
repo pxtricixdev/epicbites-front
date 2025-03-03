@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const userId = ref<number | null>(
     localStorage.getItem('userId') ? parseInt(localStorage.getItem('userId')!) : null,
   )
+  const username = ref<string | null>(localStorage.getItem('username'))
   const loading = ref(false)
   const error = ref<string | null>(null)
   const isAuthenticated = computed(() => !!token.value)
@@ -39,10 +40,12 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = responseData.token
         userRole.value = responseData.role
         userId.value = responseData.userId
+        username.value = responseData.username
 
         localStorage.setItem('authToken', responseData.token)
         localStorage.setItem('userRole', responseData.role)
         localStorage.setItem('userId', responseData.userId.toString())
+        localStorage.setItem('username', responseData.username)
       } else {
         throw new Error('No se recibió un token válido')
       }
@@ -58,5 +61,16 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('authToken')
   }
 
-  return { dataLogin, isAuthenticated, token, userRole, userId, loading, error, login, logout }
+  return {
+    dataLogin,
+    isAuthenticated,
+    token,
+    userRole,
+    userId,
+    username,
+    loading,
+    error,
+    login,
+    logout,
+  }
 })

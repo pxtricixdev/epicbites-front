@@ -53,6 +53,11 @@ const router = createRouter({
           name: 'publicar-receta',
           component: () => import('@/pages/PostRecipePage.vue'),
         },
+        {
+          path: '/perfil',
+          name: 'perfil',
+          component: () => import('@/pages/PerfilPage.vue'),
+        },
       ],
     },
     {
