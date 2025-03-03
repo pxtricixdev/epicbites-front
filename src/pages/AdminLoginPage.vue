@@ -77,6 +77,7 @@ const handleLogin = async () => {
   if (token.value) {
     if (userRole.value === 'Admin') router.push('/dashboard')
     else {
+      alert('No tienes acceso al panel de administrdador. Serás redirigido a la Home.')
       router.push('/')
     }
   } else {

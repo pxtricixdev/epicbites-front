@@ -1,9 +1,10 @@
 <template>
   <div class="layout">
-    <div class="layout-notAuth" v-if="!isAuthenticated">
+    <div class="layout-notAuth" v-if="!isAuthenticated || userRole !== 'Admin'">
       <p>
-        <strong>Acceso restringido:</strong> Para administrar la web, es necesario iniciar sesión con una cuenta
-        autorizada. Solo los usuarios con permisos de administrador pueden acceder a esta sección.
+        <strong>Acceso restringido:</strong> Para administrar la web, es necesario iniciar sesión
+        con una cuenta autorizada. Solo los usuarios con permisos de administrador pueden acceder a
+        esta sección.
       </p>
       <br />
       <p>
@@ -325,7 +326,7 @@ import { useDeleteRecipe } from '@/stores/useDeleteRecipe'
 import { useDeleteReview } from '@/stores/useDeleteReview'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-const { isAuthenticated } = useAuthStore()
+const { isAuthenticated, userRole } = useAuthStore()
 const userData = ref({ total: 0 })
 const recipeData = ref({ total: 0 })
 const reviewData = ref({ total: 0 })
