@@ -74,6 +74,7 @@
             </div>
           </div>
           <p class="reviews__comment">{{ review.reviewText }}</p>
+          <p class="reviews__date">{{ formatDate(review.reviewDate) }}</p>
         </div>
       </div>
     </div>
@@ -107,6 +108,20 @@ onMounted(async () => {
   await fetchReviewByRecipe()
   console.log('Reviews de la receta:', dataReviewByRecipe.value)
 })
+
+const formatDate = (dateString: Date) => {
+  if (!dateString) return ''
+
+  const date = new Date(dateString)
+
+  return date.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -315,12 +330,6 @@ onMounted(async () => {
     border-radius: 8px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
     background-color: $white;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
   }
 
   &__header {
@@ -352,6 +361,13 @@ onMounted(async () => {
     font-size: 14px;
     line-height: 1.6;
     color: $black;
+  }
+
+  &__date {
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 5px;
+    color: #a2a2a2;
   }
 }
 </style>
