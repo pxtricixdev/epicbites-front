@@ -1,8 +1,9 @@
 <template>
   <div class="register">
     <div class="register__welcome">
-      <p class="register__welcome__title">
-        Por favor, rellena los datos para completar el registro
+      <p class="register__welcome__title">¡Bienvenido/a!</p>
+      <p class="register__welcome__subtitle">
+        Únete a nuestra comunidad culinaria completando el siguiente formulario
       </p>
     </div>
 
@@ -88,6 +89,7 @@ const handleRegister = async () => {
 
 .register {
   font-family: $body;
+  margin-top: 30px;
 
   &__welcome {
     color: $black;
@@ -97,14 +99,14 @@ const handleRegister = async () => {
 
     &__title {
       font-weight: 600;
-      font-size: 15px;
+      font-size: 18px;
       width: 90%;
       margin: 0 auto;
     }
 
     &__subtitle {
-      font-size: 11px;
-      width: 80%;
+      font-size: 12px;
+      width: 90%;
       margin: 0 auto;
       padding-top: 5px;
     }
@@ -118,7 +120,7 @@ const handleRegister = async () => {
     max-width: 280px;
     box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
     width: 90%;
-    margin: 20px auto 100px auto;
+    margin: 10px auto 100px auto;
   }
 
   &__content {
