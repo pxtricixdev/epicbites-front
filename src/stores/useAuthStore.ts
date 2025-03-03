@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { ILogin } from '@/stores/interfaces/ILogin'
+import type { IAuthResponse } from '@/stores/interfaces/IAuthResponse'
 
 export const useAuthStore = defineStore('auth', () => {
   const dataLogin = ref<ILogin>({ email: '', password: '' })
   const token = ref<string | null>(localStorage.getItem('authToken'))
+  const userRole = ref<string | null>(localStorage.getItem('userRole'))
+  const userId = ref<number | null>(
+    localStorage.getItem('userId') ? parseInt(localStorage.getItem('userId')!) : null,
+  )
   const loading = ref(false)
   const error = ref<string | null>(null)
   const isAuthenticated = computed(() => !!token.value)
@@ -28,11 +33,16 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error(errorData?.message || `Error ${response.status}`)
       }
 
-      const responseData = await response.text()
+      const responseData: IAuthResponse = await response.json()
 
-      if (responseData) {
-        token.value = responseData
-        localStorage.setItem('authToken', responseData)
+      if (responseData && responseData.token) {
+        token.value = responseData.token
+        userRole.value = responseData.role
+        userId.value = responseData.userId
+
+        localStorage.setItem('authToken', responseData.token)
+        localStorage.setItem('userRole', responseData.role)
+        localStorage.setItem('userId', responseData.userId.toString())
       } else {
         throw new Error('No se recibió un token válido')
       }
@@ -48,5 +58,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('authToken')
   }
 
-  return { dataLogin, isAuthenticated, token, loading, error, login, logout }
+  return { dataLogin, isAuthenticated, token, userRole, userId, loading, error, login, logout }
 })

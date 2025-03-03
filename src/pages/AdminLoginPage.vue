@@ -1,10 +1,11 @@
 <template>
   <div class="login">
     <div class="login__welcome">
-    <p class="login__welcome__title">¡Bienvenido al panel de administración!</p>
-    <p class="login__welcome__subtitle">
-        Accede con tu cuenta para gestionar el contenido, supervisar la actividad y mantener todo en orden.  
-    </p>
+      <p class="login__welcome__title">¡Bienvenido al panel de administración!</p>
+      <p class="login__welcome__subtitle">
+        Accede con tu cuenta para gestionar el contenido, supervisar la actividad y mantener todo en
+        orden.
+      </p>
     </div>
 
     <Form :validation-schema="validationSchema" @submit="handleLogin" class="login__form">
@@ -64,16 +65,20 @@ const validationSchema = toTypedSchema(
 )
 
 const authStore = useAuthStore()
-const { dataLogin, token, error } = storeToRefs(authStore)
+const { dataLogin, token, error, userRole } = storeToRefs(authStore)
 const { login } = authStore
 
 const router = useRouter()
+console.log(token.value)
 
 const handleLogin = async () => {
   await login()
 
   if (token.value) {
-    router.push('/dashboard')
+    if (userRole.value === 'Admin') router.push('/dashboard')
+    else {
+      router.push('/')
+    }
   } else {
     console.error('No se recibió un token válido')
   }
@@ -86,7 +91,7 @@ const handleLogin = async () => {
 
 .login {
   font-family: $body;
-  margin-top: 400px;
+  margin-top: 150px;
 
   &__welcome {
     color: $black;
