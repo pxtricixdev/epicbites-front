@@ -1,5 +1,5 @@
-import { ref } from "vue"
-import type { IGetAllUsers } from "./interfaces/IGetAllUsers"
+import { ref } from 'vue'
+import type { IGetAllUsers } from '../stores/interfaces/IGetAllUsers'
 
 export function useGetAllUsers() {
   const dataUsers = ref<IGetAllUsers[]>([])
@@ -8,29 +8,27 @@ export function useGetAllUsers() {
 
   const fetchUsers = async () => {
     loading.value = true
-    error.value = null;
+    error.value = null
 
     try {
       const response = await fetch('https://localhost:7129/api/users', {
         method: 'GET',
         headers: {
           accept: 'text/plain',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
       })
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}`);
+        throw new Error(`Error ${response.status}`)
       }
 
-      dataUsers.value = await response.json();
-
+      dataUsers.value = await response.json()
     } catch (err: any) {
-      error.value = err.message;
-
+      error.value = err.message
     } finally {
       loading.value = false
     }
-  };
+  }
   return { dataUsers, loading, error, fetchUsers }
 }

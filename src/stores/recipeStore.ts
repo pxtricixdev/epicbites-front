@@ -45,6 +45,7 @@ export const useRecipeStore = defineStore('recipes', () => {
   const fetchRecipeDetail = async (id: string | number) => {
     loadingDetail.value = true
     error.value = null
+    recipeDetail.value = null
 
     try {
       const response = await fetch(`https://localhost:7129/api/recetas/${id}`, {
@@ -110,8 +111,7 @@ export const useRecipeStore = defineStore('recipes', () => {
       }
 
       allRecipes.value = allRecipes.value.filter((recipe) => recipe.id !== id)
-
-      return await response.json()
+      
     } catch (err: any) {
       error.value = err.message
       throw err

@@ -53,7 +53,7 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
-import { useAuthStore } from '@/stores/useAuthStore'
+import { authStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
@@ -64,9 +64,9 @@ const validationSchema = toTypedSchema(
   }),
 )
 
-const authStore = useAuthStore()
-const { dataLogin, token, error, userRole } = storeToRefs(authStore)
-const { login } = authStore
+const auth = authStore()
+const { dataLogin, token, error, userRole } = storeToRefs(auth)
+const { login } = auth
 
 const router = useRouter()
 console.log(token.value)

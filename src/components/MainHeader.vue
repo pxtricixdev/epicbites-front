@@ -22,7 +22,7 @@
           </span>
         </button>
         <RouterLink
-          @click.prevent="isAuthenticated ? authStore.logout() : null"
+          @click.prevent="isAuthenticated ? auth.logout() : null"
           :to="isAuthenticated ? '/' : '/login'"
           class="header__content__button-login"
         >
@@ -67,18 +67,18 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { ArrowRight, Menu, X } from 'lucide-vue-next'
 import LogoCanvas from '@/components/LogoCanvas.vue'
-import { useAuthStore } from '@/stores/useAuthStore'
+import { authStore } from '@/stores/authStore'
 
-const authStore = useAuthStore()
-const isAuthenticated = computed(() => authStore.isAuthenticated)
+const auth = authStore()
+const isAuthenticated = computed(() => auth.isAuthenticated)
 
-const handleAuth = () => {
+/*const handleAuth = () => {
   if (isAuthenticated.value) {
-    authStore.logout()
+    auth.logout()
   } else {
-    authStore.login()
+    auth.login()
   }
-}
+}*/
 
 const isOpen = ref(false)
 const isDesktop = ref(window.innerWidth > 768)

@@ -96,8 +96,8 @@
           <!-- Tabla de Recetas -->
           <div v-if="activeSection === 'recetas'" class="recipe-table-container">
             <DataTable
-              v-if="recipes.length > 0"
-              :value="recipes"
+              v-if="allRecipes.length > 0"
+              :value="allRecipes"
               paginator
               :rows="5"
               :rowsPerPageOptions="[5, 10, 20, 50]"
@@ -177,8 +177,8 @@
           <!-- Tabla de Reviews -->
           <div v-if="activeSection === 'review'" class="recipe-table-container">
             <DataTable
-              v-if="reviews.length > 0"
-              :value="reviews"
+              v-if="allReviews.length > 0"
+              :value="allReviews"
               paginator
               :rows="5"
               :rowsPerPageOptions="[5, 10, 20, 50]"
@@ -317,16 +317,14 @@ import Column from 'primevue/column'
 import Rating from 'primevue/rating'
 import Dialog from 'primevue/dialog'
 
-import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
-import { useGetAllUsers } from '@/stores/useGetAllUsers'
-import { useGetReviews } from '@/stores/useGetReviews'
-import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
+import { useRecipeStore } from '@/stores/recipeStore'
+import { useReviewStore } from '@/stores/reviewStore'
+import { useGetAllUsers } from '@/composables/useGetAllUsers'
+import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
-import { useDeleteRecipe } from '@/stores/useDeleteRecipe'
-import { useDeleteReview } from '@/stores/useDeleteReview'
-import { useAuthStore } from '@/stores/useAuthStore'
+import { storeToRefs } from 'pinia'
 
-const { isAuthenticated, userRole } = useAuthStore()
+const { isAuthenticated, userRole } = authStore()
 const userData = ref({ total: 0 })
 const recipeData = ref({ total: 0 })
 const reviewData = ref({ total: 0 })
@@ -338,16 +336,16 @@ const setActiveSection = (section: string) => {
   activeSection.value = section
 }
 
-const { dataAllRecipes, fetchAllRecipes } = useGetAllRecipes()
-const recipes = ref<IGetAllRecipes[]>([])
+const recipeStore = useRecipeStore()
+const { allRecipes } = storeToRefs(recipeStore)
+const { fetchAllRecipes, deleteRecipe } = recipeStore
+
+const reviewStore = useReviewStore()
+const { allReviews } = storeToRefs(reviewStore)
+const { fetchAllReviews, deleteReview } = reviewStore
 
 const { dataUsers, fetchUsers } = useGetAllUsers()
 const user = ref<IGetAllUsers[]>([])
-
-const { dataReviews, fetchReviews } = useGetReviews()
-const reviews = ref<{ id: number; name: string; username: string; score: number; text: string }[]>(
-  [],
-)
 
 const deleteRecipeDialogVisible = ref(false)
 const recipeToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
@@ -355,67 +353,71 @@ const recipeToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
 const deleteReviewDialogVisible = ref(false)
 const reviewToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
 
+const mappedReviews = ref<
+  { id: number; name: string; username: string; score: number; text: string }[]
+>([])
+
 onMounted(async () => {
   await fetchAllRecipes()
-  recipes.value = dataAllRecipes.value
-  recipeData.value.total = recipes.value.length
+  recipeData.value.total = allRecipes.value.length
 
   await fetchUsers()
   user.value = dataUsers.value
   userData.value.total = user.value.length
 
-  await fetchReviews()
-  reviews.value = dataReviews.value?.map((review) => ({
+  await fetchAllReviews()
+  mapReviews()
+  reviewData.value.total = mappedReviews.value.length
+})
+
+const mapReviews = () => {
+  mappedReviews.value = allReviews.value.map((review) => ({
     id: review.id,
     name: review.name,
     username: review.username,
     score: review.score,
     text: review.text,
   }))
-  reviewData.value.total = reviews.value.length
-})
-
-//  eliminar recetas
-const { deleteRecipeById, deleteRecipeResponse } = useDeleteRecipe()
+}
 
 const confirmDeleteRecipe = (id: number, name: string) => {
   recipeToDelete.value = { id, name }
   deleteRecipeDialogVisible.value = true
 }
 
-const cancelDeleteReview = () => {
-  deleteReviewDialogVisible.value = false
-}
-
-// eliminar si se ha confirmado
 const proceedWithDeleteRecipe = async () => {
-  await deleteRecipeById(recipeToDelete.value.id)
-  if (deleteRecipeResponse.value?.success) {
-    recipes.value = recipes.value.filter((recipe) => recipe.id !== recipeToDelete.value.id)
-    recipeData.value.total = recipes.value.length
+  try {
+    await deleteRecipe(recipeToDelete.value.id)
+    recipeData.value.total = allRecipes.value.length
+  } catch (error) {
+    console.error('Error al eliminar la receta:', error)
+  } finally {
+    deleteRecipeDialogVisible.value = false
   }
-  deleteRecipeDialogVisible.value = false
 }
 
 const cancelDeleteRecipe = () => {
   deleteRecipeDialogVisible.value = false
 }
 
-// eliminar reviews
-const { deleteReviewById, deleteReviewResponse } = useDeleteReview()
-
 const confirmDeleteReview = (id: number, name: string) => {
   reviewToDelete.value = { id, name }
   deleteReviewDialogVisible.value = true
 }
 
-// eliminar si se ha confirmado
 const proceedWithDeleteReview = async () => {
-  await deleteReviewById(reviewToDelete.value.id)
-  if (deleteReviewResponse.value?.success) {
-    reviews.value = reviews.value.filter((review) => review.id !== reviewToDelete.value.id)
-    reviewData.value.total = reviews.value.length
+  try {
+    await deleteReview(reviewToDelete.value.id)
+    mapReviews()
+    reviewData.value.total = mappedReviews.value.length
+  } catch (error) {
+    console.error('Error al eliminar la reseña:', error)
+  } finally {
+    deleteReviewDialogVisible.value = false
   }
+}
+
+const cancelDeleteReview = () => {
   deleteReviewDialogVisible.value = false
 }
 </script>
