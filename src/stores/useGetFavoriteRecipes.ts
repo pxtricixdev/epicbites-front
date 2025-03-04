@@ -1,22 +1,21 @@
-// stores/useGetFavoriteRecipes.ts
 import { ref } from 'vue'
 import type { IGetFavoriteRecipes } from './interfaces/IGetFavoriteRecipes'
-import { useAuthStore } from './useAuthStore'
+import { authStore } from '@/stores/authStore'
 
 export function useGetFavoriteRecipes() {
   const dataFavoriteRecipes = ref<IGetFavoriteRecipes[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
-  
-  const authStore = useAuthStore()
+
+  const auth = authStore()
 
   const fetchFavoriteRecipes = async () => {
-    if (!authStore.isAuthenticated) {
+    if (!auth.isAuthenticated) {
       error.value = 'Usuario no autenticado'
       return
     }
 
-    const userId = authStore.userId 
+    const userId = auth.userId
     loading.value = true
     error.value = null
 
@@ -24,9 +23,9 @@ export function useGetFavoriteRecipes() {
       const response = await fetch(`https://localhost:7129/api/favoritos/user/${userId}`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authStore.token}` 
+          Authorization: `Bearer ${auth.token}`,
         },
       })
 
@@ -42,6 +41,5 @@ export function useGetFavoriteRecipes() {
     }
   }
 
-
-  return { dataFavoriteRecipes, loading, error, fetchFavoriteRecipes, }
+  return { dataFavoriteRecipes, loading, error, fetchFavoriteRecipes }
 }

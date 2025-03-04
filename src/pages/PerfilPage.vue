@@ -142,26 +142,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useGetFavoriteRecipes } from '@/stores/useGetFavoriteRecipes'
-import { useAuthStore } from '@/stores/useAuthStore'
+import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
 import { useDeleteFavoriteRecipes } from '@/stores/useDeleteFavoriteRecipes'
 import { useGetRecipeByUser } from '@/stores/useGetRecipeByUser'
-import { useDeleteRecipe } from '@/stores/useDeleteRecipe'
+import { useRecipeStore } from '@/stores/recipeStore'
 
 const { dataFavoriteRecipes, loading, error, fetchFavoriteRecipes } = useGetFavoriteRecipes()
 const { dataRecipeByUser, fetchRecipeByUser } = useGetRecipeByUser()
-const {
-  deleteFavoriteById,
-  deleteFavoriteRecipes,
-  loading: deleteLoading,
-} = useDeleteFavoriteRecipes()
+const { deleteFavoriteById } = useDeleteFavoriteRecipes()
 
-const { deleteRecipeResponse, deleteRecipeById, loading: deleteRecipeLoading } = useDeleteRecipe()
+const recipeStore = useRecipeStore()
+const { deleteRecipe } = recipeStore
 
-const authStore = useAuthStore()
+const auth = authStore()
 const router = useRouter()
 
 const activeTab = ref('favorites')
@@ -176,7 +173,7 @@ const userProfile = ref({
   profileImage: '',
 })
 
-const isAuthenticated = computed(() => authStore.isAuthenticated)
+const isAuthenticated = computed(() => auth.isAuthenticated)
 
 // foto de perfil
 const getInitials = (name: string) => {
@@ -189,17 +186,15 @@ const getInitials = (name: string) => {
 }
 
 const loadUserProfile = async () => {
-  if (!authStore.isAuthenticated || !authStore.userId) {
+  if (!auth.isAuthenticated || !auth.userId) {
     router.push('/login')
     return
   }
 
-  // Obtener datos del usuario desde authStore y localStorage
-  const userId = authStore.userId || localStorage.getItem('userId') || ''
-  const email = authStore.dataLogin?.email || ''
-
-  // Usar el username almacenado en el store o localStorage
-  let username = authStore.username || localStorage.getItem('username') || ''
+  // Obtener datos del usuario
+  const userId = auth.userId || localStorage.getItem('userId') || ''
+  const email = auth.dataLogin?.email || ''
+  const username = auth.username || localStorage.getItem('username') || ''
 
   userProfile.value = {
     id: String(userId),
@@ -242,7 +237,7 @@ const confirmDeleteRecipe = (recipeId: number) => {
 
 const executeDeleteRecipe = async () => {
   if (recipeToDelete.value) {
-    await deleteRecipeById(recipeToDelete.value)
+    await deleteRecipe(recipeToDelete.value)
   }
   showConfirmModal.value = false
   recipeToDelete.value = null
@@ -258,7 +253,7 @@ const executeDeleteFavorite = async () => {
 }
 
 onMounted(async () => {
-  if (!authStore.isAuthenticated) {
+  if (!auth.isAuthenticated) {
     router.push('/login')
     return
   }
@@ -304,7 +299,7 @@ onMounted(async () => {
       justify-content: center;
       font-size: 2.5rem;
       font-weight: bold;
-      font-family: $heading;
+      font-family: $body;
     }
   }
 
@@ -314,7 +309,7 @@ onMounted(async () => {
     h1 {
       margin: 0 0 0.5rem;
       font-size: 1.8rem;
-      font-family: $heading;
+      font-family: $body;
       color: $black;
     }
 
@@ -328,7 +323,7 @@ onMounted(async () => {
 
         .stat-value {
           font-weight: bold;
-          font-size: 1.2rem;
+          font-size: 1rem;
           color: $black;
         }
       }
@@ -367,12 +362,12 @@ onMounted(async () => {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 1.5rem;
-  
+
   .create-recipe-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     .plus-icon {
       font-size: 1.2rem;
       font-weight: bold;
@@ -433,11 +428,11 @@ onMounted(async () => {
   .card-with-actions {
     position: relative;
   }
-  
+
   .card-clickable {
     cursor: pointer;
     transition: transform 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-5px);
     }

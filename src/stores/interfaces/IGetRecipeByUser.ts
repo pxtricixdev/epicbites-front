@@ -2,6 +2,6 @@ export interface IGetRecipeByUser {
   id: number
   name: string
   time: number
-  iamge: string 
+  image: string
   userId: number
 }
