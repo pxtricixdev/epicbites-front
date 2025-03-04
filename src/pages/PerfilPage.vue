@@ -68,8 +68,15 @@
           </div>
         </div>
       </div>
-      
+
       <div v-if="activeTab === 'myRecipes'" class="myRecipe-tab">
+        <!-- Botón para crear nueva receta en la parte superior -->
+        <div class="action-buttons">
+          <button @click="goToCreate" class="primary-button create-recipe-button">
+            <span class="plus-icon">+</span> Crear nueva receta
+          </button>
+        </div>
+
         <div v-if="loading" class="loading">
           <div class="spinner"></div>
           <span>Cargando mis recetas...</span>
@@ -79,18 +86,23 @@
         </div>
         <div v-else-if="dataRecipeByUser.length === 0" class="empty-state">
           <p>Aún no tienes recetas creadas</p>
-          <button @click="goToExplore" class="primary-button">Crear receta</button>
+          <button @click="goToCreate" class="primary-button">Crear receta</button>
         </div>
         <div v-else class="recipes-grid">
           <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="card-wrapper">
             <div class="card-with-actions">
-              <CardRecipePerfil
-                :time="recipe.time"
-                :title="recipe.name"
-                :src="recipe.image"
-                :alt="`Imagen de la receta ${recipe.name}`"
-                :link="`/receta/${recipe.id}`"
-              />
+              <div class="card-clickable" @click="goToRecipe(recipe.id)">
+                <CardRecipePerfil
+                  :time="recipe.time"
+                  :title="recipe.name"
+                  :src="recipe.image"
+                  :alt="`Imagen de la receta ${recipe.name}`"
+                  :link="`/receta/${recipe.id}`"
+                />
+              </div>
+              <button @click.stop="confirmDeleteRecipe(recipe.id)" class="remove-favorite-button">
+                <span class="close-icon">×</span>
+              </button>
             </div>
           </div>
         </div>
@@ -98,16 +110,31 @@
     </div>
 
     <!--confirmación para eliminar favorito -->
-    <div v-if="showConfirmModal" class="modal-overlay">
+    <div v-if="showConfirmModal && modalType === 'favorite'" class="modal-overlay">
       <div class="modal-container confirm-modal">
         <div class="modal-header">
           <h2>Eliminar de favoritos</h2>
-          <button @click="showConfirmModal = false" class="close-button">×</button>
+          <button @click="closeModal" class="close-button">×</button>
         </div>
         <p>¿Estás seguro de que quieres eliminar esta receta de tus favoritos?</p>
         <div class="modal-actions">
-          <button @click="showConfirmModal = false" class="secondary-button">Cancelar</button>
+          <button @click="closeModal" class="secondary-button">Cancelar</button>
           <button @click="executeDeleteFavorite" class="primary-button danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <!--confirmación para eliminar receta -->
+    <div v-if="showConfirmModal && modalType === 'recipe'" class="modal-overlay">
+      <div class="modal-container confirm-modal">
+        <div class="modal-header">
+          <h2>Eliminar Receta</h2>
+          <button @click="closeModal" class="close-button">×</button>
+        </div>
+        <p>¿Estás seguro de que quieres eliminar esta receta?</p>
+        <div class="modal-actions">
+          <button @click="closeModal" class="secondary-button">Cancelar</button>
+          <button @click="executeDeleteRecipe" class="primary-button danger">Eliminar</button>
         </div>
       </div>
     </div>
@@ -121,7 +148,8 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
 import { useDeleteFavoriteRecipes } from '@/stores/useDeleteFavoriteRecipes'
-import {useGetRecipeByUser} from '@/stores/useGetRecipeByUser'
+import { useGetRecipeByUser } from '@/stores/useGetRecipeByUser'
+import { useDeleteRecipe } from '@/stores/useDeleteRecipe'
 
 const { dataFavoriteRecipes, loading, error, fetchFavoriteRecipes } = useGetFavoriteRecipes()
 const { dataRecipeByUser, fetchRecipeByUser } = useGetRecipeByUser()
@@ -131,12 +159,16 @@ const {
   loading: deleteLoading,
 } = useDeleteFavoriteRecipes()
 
+const { deleteRecipeResponse, deleteRecipeById, loading: deleteRecipeLoading } = useDeleteRecipe()
+
 const authStore = useAuthStore()
 const router = useRouter()
 
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
+const modalType = ref<'favorite' | 'recipe'>('favorite')
 const favoriteToDelete = ref<number | null>(null)
+const recipeToDelete = ref<number | null>(null)
 const userProfile = ref({
   id: '',
   name: '',
@@ -146,7 +178,7 @@ const userProfile = ref({
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 
-//foto de perfil
+// foto de perfil
 const getInitials = (name: string) => {
   if (!name) return ''
   return name
@@ -185,10 +217,35 @@ const goToCreate = () => {
   router.push('/recetas/publicar-receta')
 }
 
+// Nueva función para navegar a la página de la receta
+const goToRecipe = (recipeId: number) => {
+  router.push(`/receta/${recipeId}`)
+}
+
+const closeModal = () => {
+  showConfirmModal.value = false
+}
+
 const confirmDeleteFavorite = (favoriteId: number) => {
   console.log(`Confirmando eliminar favorito con ID: ${favoriteId}`)
   favoriteToDelete.value = favoriteId
+  modalType.value = 'favorite'
   showConfirmModal.value = true
+}
+
+const confirmDeleteRecipe = (recipeId: number) => {
+  console.log(`Confirmando eliminar la receta con ID: ${recipeId}`)
+  recipeToDelete.value = recipeId
+  modalType.value = 'recipe'
+  showConfirmModal.value = true
+}
+
+const executeDeleteRecipe = async () => {
+  if (recipeToDelete.value) {
+    await deleteRecipeById(recipeToDelete.value)
+  }
+  showConfirmModal.value = false
+  recipeToDelete.value = null
 }
 
 const executeDeleteFavorite = async () => {
@@ -306,6 +363,23 @@ onMounted(async () => {
   }
 }
 
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+  
+  .create-recipe-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .plus-icon {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+}
+
 .tab-content {
   min-height: 300px;
 
@@ -358,6 +432,15 @@ onMounted(async () => {
 
   .card-with-actions {
     position: relative;
+  }
+  
+  .card-clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
   }
 
   .remove-favorite-button {
