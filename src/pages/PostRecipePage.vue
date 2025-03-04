@@ -28,7 +28,7 @@
                 class="post-recipe__title"
                 id="name"
                 type="text"
-                v-model="dataPostRecipe.name"
+                v-model="recipeForm.name"
               />
             </div>
 
@@ -38,14 +38,14 @@
                 class="post-recipe__description"
                 id="description"
                 type="text"
-                v-model="dataPostRecipe.description"
+                v-model="recipeForm.description"
                 placeholder="Un arroz cremoso con un toque de mar, fácil y delicioso"
               />
             </div>
 
             <div class="post-recipe__meal-section">
               <label for="meal">Selecciona el momento del día:</label>
-              <select id="meal" v-model="dataPostRecipe.meal">
+              <select id="meal" v-model="recipeForm.meal">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Desayuno">Desayuno</option>
                 <option value="Almuerzo">Almuerzo</option>
@@ -57,7 +57,7 @@
 
             <div class="post-recipe__diet-section">
               <label for="diet">¿Qué tipo de dieta sigue esta receta?</label>
-              <select id="diet" v-model="dataPostRecipe.diet">
+              <select id="diet" v-model="recipeForm.diet">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Vegetariana">Vegetariana</option>
                 <option value="Vegana">Vegana</option>
@@ -71,7 +71,7 @@
 
             <div class="post-recipe__flavour-section">
               <label for="flavour">¿Cuál es el sabor predominante?</label>
-              <select id="flavour" v-model="dataPostRecipe.flavour">
+              <select id="flavour" v-model="recipeForm.flavour">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Dulce">Dulce</option>
                 <option value="Salado">Salado</option>
@@ -87,18 +87,18 @@
                 placeholder="Ej: 320"
                 id="calories"
                 type="text"
-                v-model="dataPostRecipe.calories"
+                v-model="recipeForm.calories"
               />
             </div>
 
             <div class="post-recipe__time-section">
               <label for="time">Tiempo total de preparación (en minutos):</label>
-              <input placeholder="Ej: 20" id="time" type="text" v-model="dataPostRecipe.time" />
+              <input placeholder="Ej: 20" id="time" type="text" v-model="recipeForm.time" />
             </div>
 
             <div class="post-recipe__title-section">
               <label for="difficulty">Dificultad de la receta:</label>
-              <select id="difficulty" v-model="dataPostRecipe.difficulty">
+              <select id="difficulty" v-model="recipeForm.difficulty">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Facil">Fácil</option>
                 <option value="Media">Media</option>
@@ -113,7 +113,7 @@
 
             <div class="post-recipe__steps-section">
               <label for="steps">Instrucciones paso a paso:</label>
-              <Editor v-model="dataPostRecipe.steps" editorStyle="height: 320px" />
+              <Editor v-model="recipeForm.steps" editorStyle="height: 320px" />
             </div>
           </div>
 
@@ -182,14 +182,38 @@
 
 <script lang="ts" setup>
 import type { IIngredients } from '@/stores/interfaces/IGetAllRecipes'
-import { useAuthStore } from '@/stores/useAuthStore'
-import { usePostRecipe } from '@/stores/usePostRecipe'
+import { authStore } from '@/stores/authStore'
+import { useRecipeStore } from '@/stores/recipeStore'
+import { storeToRefs } from 'pinia'
 import { UtensilsCrossedIcon } from 'lucide-vue-next'
 import Editor from 'primevue/editor'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import type { IPostRecipe } from '@/stores/interfaces/IPostRecipe'
 
-const { isAuthenticated } = useAuthStore()
-const { dataPostRecipe, postRecipe } = usePostRecipe()
+const { isAuthenticated } = authStore()
+
+const recipeStore = useRecipeStore()
+const { loadingCreate } = storeToRefs(recipeStore)
+const { createRecipe } = recipeStore
+
+const userId = ref<number | null>(
+  localStorage.getItem('userId') ? parseInt(localStorage.getItem('userId')!) : null,
+)
+
+const recipeForm = reactive({
+  name: '',
+  description: '',
+  meal: 'Desayuno',
+  diet: 'Vegetariana',
+  flavour: 'Dulce',
+  calories: 0,
+  time: 0,
+  difficulty: 'Facil',
+  image: '',
+  steps: '',
+  userId: userId,
+  ingredients: [] as IIngredients[],
+})
 
 const ingredients = ref<IIngredients[]>([
   { ingredientId: 0, ingredientName: '', quantity: 0, unit: '' },
@@ -212,27 +236,23 @@ const handleFileUpload = (event: Event) => {
   if (file) {
     const reader = new FileReader()
     reader.onload = (e) => {
-      if (dataPostRecipe.value) {
-        dataPostRecipe.value.image = e.target?.result as string
-      }
+      recipeForm.image = e.target?.result as string
     }
     reader.readAsDataURL(file)
   }
 }
 
 const handlePost = async () => {
-  if (dataPostRecipe.value) {
-    dataPostRecipe.value.ingredients = ingredients.value
+  recipeForm.ingredients = ingredients.value
 
-    if (dataPostRecipe.value.calories) {
-      dataPostRecipe.value.calories = Number(dataPostRecipe.value.calories)
-    }
-    if (dataPostRecipe.value.time) {
-      dataPostRecipe.value.time = Number(dataPostRecipe.value.time)
-    }
+  if (recipeForm.calories) {
+    recipeForm.calories = Number(recipeForm.calories)
+  }
+  if (recipeForm.time) {
+    recipeForm.time = Number(recipeForm.time)
   }
 
-  await postRecipe()
+  await createRecipe(recipeForm as IPostRecipe)
 }
 </script>
 

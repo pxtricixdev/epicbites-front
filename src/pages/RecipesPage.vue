@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="card-recipe__loading" v-if="dataAllRecipesLoading">Cargando...</div>
+    <div class="card-recipe__loading" v-if="loadingAllRecipes">Cargando...</div>
     <div v-else>
       <div class="card-recipe__content">
         <h1 class="card-recipe__title">
@@ -48,7 +48,8 @@
 </template>
 
 <script setup lang="ts">
-import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
+import { useRecipeStore } from '@/stores/recipeStore'
+import { storeToRefs } from 'pinia'
 import { onMounted, computed, ref } from 'vue'
 import CardRecipeInfo from '@/components/CardRecipeInfo.vue'
 import { useRoute } from 'vue-router'
@@ -57,12 +58,9 @@ import { CookingPot } from 'lucide-vue-next'
 const route = useRoute()
 const category = computed(() => route.params.category)
 
-const {
-  dataAllRecipes,
-  fetchAllRecipes,
-  loading: dataAllRecipesLoading,
-  error: dataAllRecipesError,
-} = useGetAllRecipes()
+const recipeStore = useRecipeStore()
+const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
+const { fetchAllRecipes } = recipeStore
 
 onMounted(async () => {
   await fetchAllRecipes()
@@ -71,11 +69,11 @@ onMounted(async () => {
 const searchRecipe = ref('')
 
 const filteredRecipes = computed(() => {
-  if (!dataAllRecipes.value) return []
+  if (!allRecipes.value) return []
 
   const searchInput = searchRecipe.value.toLowerCase().trim()
 
-  return dataAllRecipes.value.filter((recipe) => {
+  return allRecipes.value.filter((recipe) => {
     const matchesCategory = category.value
       ? recipe.meal === category.value ||
         recipe.diet === category.value ||

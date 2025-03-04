@@ -16,7 +16,7 @@
                 v-bind="field"
                 class="register__card__inputext"
                 id="username"
-                v-model="dataRegister.username"
+                v-model="registerForm.username"
               />
             </Field>
             <label class="register__card__label" for="username">Nombre de usuario</label>
@@ -29,7 +29,7 @@
                 v-bind="field"
                 class="register__card__inputext"
                 id="email"
-                v-model="dataRegister.email"
+                v-model="registerForm.email"
               />
             </Field>
             <label class="register__card__label" for="email">Email</label>
@@ -43,7 +43,7 @@
                 class="register__card__inputext"
                 id="password"
                 type="password"
-                v-model="dataRegister.password"
+                v-model="registerForm.password"
               />
             </Field>
             <label class="register__card__label" for="password">Contraseña</label>
@@ -62,8 +62,9 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
-import { usePostUserRegister } from '@/stores/usePostUserRegister'
+import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
+import { reactive } from 'vue'
 
 const router = useRouter()
 
@@ -74,12 +75,19 @@ const validationSchema = toTypedSchema(
     password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
   }),
 )
+const auth = authStore()
+const { register, clearRegisterData } = auth
 
-const { dataRegister, register } = usePostUserRegister()
+const registerForm = reactive({
+  username: '',
+  email: '',
+  password: '',
+})
 
 const handleRegister = async () => {
-  await register()
+  await register(registerForm)
   router.push('/login')
+  clearRegisterData()
 }
 </script>
 

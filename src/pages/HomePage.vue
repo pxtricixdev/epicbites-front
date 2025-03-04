@@ -9,11 +9,11 @@
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas mejor valoradas 🔥</h2>
-      <div v-if="dataRecipeLoading" class="home-page__loading-data">
+      <div v-if="loadingMostRated && mostRatedRecipes.length === 0" class="home-page__loading-data">
         <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
-        <RecipeCarousel :recipes="dataRecipe" />
+        <RecipeCarousel :recipes="mostRatedRecipes" />
       </div>
     </section>
 
@@ -42,7 +42,7 @@
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas vegetarianas 🌱</h2>
-      <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
+      <div v-if="loadingAllRecipes" class="home-page__loading-data">
         <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
@@ -52,7 +52,7 @@
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas rápidas < 20 mins</h2>
-      <div v-if="dataAllRecipesLoading" class="home-page__loading-data">
+      <div v-if="loadingAllRecipes" class="home-page__loading-data">
         <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
@@ -62,11 +62,11 @@
 
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
-      <div v-if="dataReviewsLoading" class="home-page__loading-data">
+      <div v-if="loadingAllReviews" class="home-page__loading-data">
         <p>Cargando...</p>
       </div>
       <div v-else class="reviews-container">
-        <div v-for="data in dataReviews.slice(0, 6)" :key="data.id">
+        <div v-for="data in allReviews.slice(0, 6)" :key="data.id">
           <HomeReview
             :stars="data.score"
             :text="data.text"
@@ -84,61 +84,42 @@
 import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
-import { useGetReviews } from '@/stores/useGetReviews'
-import { useGetMostRatedRecipes } from '@/stores/useGetMostRatedRecipes'
 import { onMounted, ref } from 'vue'
 import RecipeCarousel from '@/components/RecipeCarousel.vue'
-import { useGetAllRecipes } from '@/stores/useGetAllRecipes'
 import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
+import { useRecipeStore } from '@/stores/recipeStore'
+import { useReviewStore } from '@/stores/reviewStore'
+import { storeToRefs } from 'pinia'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
 const vegetarianRecipes = ref<IGetAllRecipes[]>([])
 const fastRecipes = ref<IGetAllRecipes[]>([])
 const randomRecipe = ref(0)
 
-const {
-  dataReviews,
-  fetchReviews,
-  loading: dataReviewsLoading,
-  error: dataReviewsError,
-} = useGetReviews()
+const recipeStore = useRecipeStore()
+const { allRecipes, loadingAllRecipes, mostRatedRecipes, loadingMostRated } =
+  storeToRefs(recipeStore)
+const { fetchAllRecipes, fetchMostRatedRecipes } = recipeStore
 
-onMounted(async () => {
-  await fetchReviews()
-  console.log('Los comentarios:', dataReviews.value)
-})
-
-const {
-  dataRecipe,
-  fetchRecipes,
-  loading: dataRecipeLoading,
-  error: dataRecipeError,
-} = useGetMostRatedRecipes()
-
-onMounted(async () => {
-  await fetchRecipes()
-  console.log('Las recetas mejor valoradas:', dataRecipe.value)
-})
-
-const {
-  dataAllRecipes,
-  fetchAllRecipes,
-  loading: dataAllRecipesLoading,
-  error: dataAllRecipesError,
-} = useGetAllRecipes()
+const reviewStore = useReviewStore()
+const { allReviews, loadingAllReviews } = storeToRefs(reviewStore)
+const { fetchAllReviews } = reviewStore
 
 onMounted(async () => {
   await fetchAllRecipes()
-  console.log('Todas las recetas:', dataAllRecipes.value)
+  console.log('Todas las recetas:', allRecipes.value)
+  await fetchMostRatedRecipes()
+  console.log('Las recetas mejor valoradas:', mostRatedRecipes.value)
+  await fetchAllReviews()
+  console.log('Los comentarios:', allReviews.value)
 
-  vegetarianRecipes.value = dataAllRecipes.value.filter(
+  vegetarianRecipes.value = allRecipes.value.filter(
     (recipe) => recipe.diet.toLowerCase() === 'vegetariana',
   )
 
-  fastRecipes.value = dataAllRecipes.value.filter((recipe) => recipe.time <= 20)
+  fastRecipes.value = allRecipes.value.filter((recipe) => recipe.time <= 20)
 
-  randomRecipe.value =
-    dataAllRecipes.value[Math.floor(Math.random() * dataAllRecipes.value.length)].id
+  randomRecipe.value = allRecipes.value[Math.floor(Math.random() * allRecipes.value.length)].id
 
   console.log('Las recetas vegetarianas', vegetarianRecipes.value)
   console.log('Las recetas rápidas', fastRecipes.value)
