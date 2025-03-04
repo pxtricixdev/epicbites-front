@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type { IDeleteReview } from './interfaces/IDeleteReview'
 import type { IGetReviewByRecipe } from './interfaces/IGetReviewByRecipe'
 import type { IGetReviews } from './interfaces/IGetReviews'
+import type { IPostReview } from './interfaces/IPostReview'
 
 export const useReviewStore = defineStore('reviews', () => {
   const allReviews = ref<IGetReviews[]>([])
@@ -13,6 +14,7 @@ export const useReviewStore = defineStore('reviews', () => {
   const loadingAllReviews = ref(false)
   const loadingReviewsByRecipe = ref(false)
   const loadingDelete = ref(false)
+  const loadingCreate = ref(false)
 
   const error = ref<string | null>(null)
 
@@ -110,6 +112,40 @@ export const useReviewStore = defineStore('reviews', () => {
     return currentRecipeId.value === recipeId && reviewsByRecipe.value.length > 0
   }
 
+  const createReview = async (dataReview: IPostReview) => {
+    loadingCreate.value = true
+    error.value = null
+
+    try {
+      const response = await fetch('https://localhost:7129/api/comentarios', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataReview),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.message || `Error ${response.status}`)
+      }
+
+      const newReview = await response.json()
+
+      if (allReviews.value.length > 0) {
+        allReviews.value.push(newReview)
+      }
+
+      return newReview
+    } catch (err: any) {
+      error.value = err.message
+      throw err
+    } finally {
+      loadingCreate.value = false
+    }
+  }
+
   return {
     allReviews,
     reviewsByRecipe,
@@ -127,5 +163,6 @@ export const useReviewStore = defineStore('reviews', () => {
     deleteReview,
     clearReviewsByRecipe,
     hasReviewsForRecipe,
+    createReview,
   }
 })
