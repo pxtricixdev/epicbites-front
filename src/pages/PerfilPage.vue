@@ -12,6 +12,7 @@
         <div class="stats">
           <div class="stat">
             <span class="stat-value">{{ dataFavoriteRecipes.length }} Recetas favoritas</span>
+            <span class="stat-value"> {{ dataRecipeByUser.length }} Recetas publicadas</span>
           </div>
         </div>
       </div>
@@ -24,6 +25,13 @@
         class="tab-button"
       >
         Favoritos
+      </button>
+      <button
+        @click="activeTab = 'myRecipes'"
+        :class="{ active: activeTab === 'myRecipes' }"
+        class="tab-button"
+      >
+        Mis Recetas
       </button>
     </div>
 
@@ -60,6 +68,33 @@
           </div>
         </div>
       </div>
+      
+      <div v-if="activeTab === 'myRecipes'" class="myRecipe-tab">
+        <div v-if="loading" class="loading">
+          <div class="spinner"></div>
+          <span>Cargando mis recetas...</span>
+        </div>
+        <div v-else-if="error" class="error-message">
+          {{ error }}
+        </div>
+        <div v-else-if="dataRecipeByUser.length === 0" class="empty-state">
+          <p>Aún no tienes recetas creadas</p>
+          <button @click="goToExplore" class="primary-button">Crear receta</button>
+        </div>
+        <div v-else class="recipes-grid">
+          <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="card-wrapper">
+            <div class="card-with-actions">
+              <CardRecipePerfil
+                :time="recipe.time"
+                :title="recipe.name"
+                :src="recipe.image"
+                :alt="`Imagen de la receta ${recipe.name}`"
+                :link="`/receta/${recipe.id}`"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!--confirmación para eliminar favorito -->
@@ -86,8 +121,10 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
 import { useDeleteFavoriteRecipes } from '@/stores/useDeleteFavoriteRecipes'
+import {useGetRecipeByUser} from '@/stores/useGetRecipeByUser'
 
 const { dataFavoriteRecipes, loading, error, fetchFavoriteRecipes } = useGetFavoriteRecipes()
+const { dataRecipeByUser, fetchRecipeByUser } = useGetRecipeByUser()
 const {
   deleteFavoriteById,
   deleteFavoriteRecipes,
@@ -144,6 +181,10 @@ const goToExplore = () => {
   router.push('/recetas')
 }
 
+const goToCreate = () => {
+  router.push('/recetas/publicar-receta')
+}
+
 const confirmDeleteFavorite = (favoriteId: number) => {
   console.log(`Confirmando eliminar favorito con ID: ${favoriteId}`)
   favoriteToDelete.value = favoriteId
@@ -159,7 +200,6 @@ const executeDeleteFavorite = async () => {
   favoriteToDelete.value = null
 }
 
-// Ciclo de vida
 onMounted(async () => {
   if (!authStore.isAuthenticated) {
     router.push('/login')
@@ -168,6 +208,7 @@ onMounted(async () => {
 
   await loadUserProfile()
   await fetchFavoriteRecipes()
+  await fetchRecipeByUser()
 })
 </script>
 

@@ -15,7 +15,7 @@
   <script setup lang="ts">
   defineProps<{
     time: number
-    title: string
+    title: string 
     src: string
     link: string
     alt: string
