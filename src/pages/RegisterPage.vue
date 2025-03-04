@@ -1,8 +1,9 @@
 <template>
   <div class="register">
     <div class="register__welcome">
-      <p class="register__welcome__title">
-        Por favor, rellena los datos para completar el registro
+      <p class="register__welcome__title">¡Bienvenido/a!</p>
+      <p class="register__welcome__subtitle">
+        Únete a nuestra comunidad culinaria completando el siguiente formulario
       </p>
     </div>
 
@@ -15,7 +16,7 @@
                 v-bind="field"
                 class="register__card__inputext"
                 id="username"
-                v-model="dataRegister.username"
+                v-model="registerForm.username"
               />
             </Field>
             <label class="register__card__label" for="username">Nombre de usuario</label>
@@ -28,7 +29,7 @@
                 v-bind="field"
                 class="register__card__inputext"
                 id="email"
-                v-model="dataRegister.email"
+                v-model="registerForm.email"
               />
             </Field>
             <label class="register__card__label" for="email">Email</label>
@@ -42,7 +43,7 @@
                 class="register__card__inputext"
                 id="password"
                 type="password"
-                v-model="dataRegister.password"
+                v-model="registerForm.password"
               />
             </Field>
             <label class="register__card__label" for="password">Contraseña</label>
@@ -61,8 +62,9 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
-import { usePostUserRegister } from '@/stores/usePostUserRegister'
+import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
+import { reactive } from 'vue'
 
 const router = useRouter()
 
@@ -73,12 +75,19 @@ const validationSchema = toTypedSchema(
     password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
   }),
 )
+const auth = authStore()
+const { register, clearRegisterData } = auth
 
-const { dataRegister, register } = usePostUserRegister()
+const registerForm = reactive({
+  username: '',
+  email: '',
+  password: '',
+})
 
 const handleRegister = async () => {
-  await register()
+  await register(registerForm)
   router.push('/login')
+  clearRegisterData()
 }
 </script>
 
@@ -88,6 +97,7 @@ const handleRegister = async () => {
 
 .register {
   font-family: $body;
+  margin-top: 30px;
 
   &__welcome {
     color: $black;
@@ -97,14 +107,14 @@ const handleRegister = async () => {
 
     &__title {
       font-weight: 600;
-      font-size: 15px;
+      font-size: 18px;
       width: 90%;
       margin: 0 auto;
     }
 
     &__subtitle {
-      font-size: 11px;
-      width: 80%;
+      font-size: 12px;
+      width: 90%;
       margin: 0 auto;
       padding-top: 5px;
     }
@@ -118,7 +128,7 @@ const handleRegister = async () => {
     max-width: 280px;
     box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
     width: 90%;
-    margin: 20px auto 100px auto;
+    margin: 10px auto 100px auto;
   }
 
   &__content {

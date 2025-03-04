@@ -1,35 +1,32 @@
 <template>
   <section class="recipe-page">
     <div class="recipe-page__main">
-      <div v-if="dataRecipeDetailLoading" class="recipe-page__loading">
+      <div v-if="loadingDetail" class="recipe-page__loading">
         <p>Cargando...</p>
       </div>
-      <div v-if="dataRecipeDetail" class="recipe-page__container">
+      <div v-if="recipeDetail" class="recipe-page__container">
         <div class="recipe-page__top-content">
           <div class="recipe-page__image">
-            <img :src="dataRecipeDetail.image" alt="Imagen de la receta" />
+            <img :src="recipeDetail.image" alt="Imagen de la receta" />
           </div>
           <div>
             <div class="recipe-page__info">
-              <h1 class="recipe-page__title">{{ dataRecipeDetail.name }}</h1>
-              <p class="recipe-page__description">{{ dataRecipeDetail.description }}</p>
-              <p class="recipe-page__author">{{ dataRecipeDetail.userName }}</p>
+              <h1 class="recipe-page__title">{{ recipeDetail.name }}</h1>
+              <p class="recipe-page__description">{{ recipeDetail.description }}</p>
+              <p class="recipe-page__author">{{ recipeDetail.userName }}</p>
 
               <div class="recipe-page__meta">
                 <span class="recipe-page__score">
-                  <EstrellaRating /> {{ dataRecipeDetail.score }}
+                  <EstrellaRating /> {{ recipeDetail.score }}
                 </span>
-                <span class="recipe-page__time">⏳ {{ dataRecipeDetail.time }} min</span>
-                <span class="recipe-page__calories">🔥 {{ dataRecipeDetail.calories }} kcal</span>
+                <span class="recipe-page__time">⏳ {{ recipeDetail.time }} min</span>
+                <span class="recipe-page__calories">🔥 {{ recipeDetail.calories }} kcal</span>
               </div>
             </div>
             <div class="recipe-page__ingredients">
               <h2>🛒 <span>Ingredientes</span></h2>
               <ul>
-                <li
-                  v-for="ingredient in dataRecipeDetail.ingredients"
-                  :key="ingredient.ingredientId"
-                >
+                <li v-for="ingredient in recipeDetail.ingredients" :key="ingredient.ingredientId">
                   {{ ingredient.quantity }} {{ ingredient.unit }} - {{ ingredient.ingredientName }}
                 </li>
               </ul>
@@ -41,7 +38,7 @@
             <h2>🍽️ <span>Pasos a seguir</span></h2>
             <ul>
               <li class="recipe-page__steps__list">
-                <div v-html="dataRecipeDetail.steps" class="recipe-page__steps__content"></div>
+                <div v-html="recipeDetail.steps" class="recipe-page__steps__content"></div>
               </li>
             </ul>
           </div>
@@ -54,16 +51,16 @@
     <div class="reviews__container">
       <h2 class="reviews__title"><EstrellaRating /> <span>Opiniones</span> <EstrellaRating /></h2>
 
-      <div v-if="dataReviewsLoading" class="reviews__loading">
+      <div v-if="loadingReviewsByRecipe" class="reviews__loading">
         <p>Cargando opiniones...</p>
       </div>
 
-      <div v-if="!dataReviewsLoading && dataReviewByRecipe.length === 0" class="reviews__empty">
+      <div v-if="reviewsByRecipe.length === 0" class="reviews__empty">
         <p>No hay opiniones para esta receta todavía. ¡Sé el primero en comentar!</p>
       </div>
 
-      <div v-if="dataReviewByRecipe" class="reviews__list">
-        <div v-for="review in dataReviewByRecipe" :key="review.reviewId" class="reviews__item">
+      <div v-if="reviewsByRecipe" class="reviews__list">
+        <div v-for="review in reviewsByRecipe" :key="review.reviewId" class="reviews__item">
           <div class="reviews__header">
             <div class="reviews__user-info">
               <strong class="reviews__username">{{ review.userName }}</strong>
@@ -82,32 +79,46 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useGetRecipeDetail } from '@/stores/useGetRecipeDetail'
+import { onMounted, watch } from 'vue'
 import EstrellaRating from '@/components/SvgEstrella.vue'
-import { useGetReviewByRecipe } from '@/stores/useGetReviewByRecipe'
+import { useRecipeStore } from '@/stores/recipeStore'
+import { useReviewStore } from '@/stores/reviewStore'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
-const {
-  dataRecipeDetail,
-  fetchRecipeDetail,
-  loading: dataRecipeDetailLoading,
-  error: dataRecipeDetailError,
-} = useGetRecipeDetail()
+const recipeStore = useRecipeStore()
+const { recipeDetail, loadingDetail } = storeToRefs(recipeStore)
+const { fetchRecipeDetail } = recipeStore
 
-const {
-  dataReviewByRecipe,
-  fetchReviewByRecipe,
-  loading: dataReviewsLoading,
-  error: dataReviewsError,
-} = useGetReviewByRecipe()
+const reviewStore = useReviewStore()
+const { reviewsByRecipe, loadingReviewsByRecipe } = storeToRefs(reviewStore)
+const { fetchReviewsByRecipe, clearReviewsByRecipe } = reviewStore
+
+const loadData = async (id: string) => {
+  clearReviewsByRecipe()
+
+  await fetchRecipeDetail(id)
+  await fetchReviewsByRecipe(id)
+
+  console.log('Datos de la receta:', recipeDetail.value)
+  console.log('Reviews de la receta:', reviewsByRecipe.value)
+}
 
 onMounted(async () => {
-  await fetchRecipeDetail()
-  console.log('Datos de la receta:', dataRecipeDetail.value)
-
-  await fetchReviewByRecipe()
-  console.log('Reviews de la receta:', dataReviewByRecipe.value)
+  const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+  await loadData(id)
 })
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (newId) {
+      const id = Array.isArray(newId) ? newId[0] : newId
+      await loadData(id)
+    }
+  },
+)
 
 const formatDate = (dateString: Date) => {
   if (!dateString) return ''

@@ -3,7 +3,6 @@
     <RouterLink :to="link">
       <img :src="image" :alt="alt" class="card-recipe__image" />
     </RouterLink>
-    <button class="card-recipe__button"><Heart :size="20" /></button>
     <div class="card-recipe__info">
       <RouterLink :to="link">
         <h3 class="card-recipe__title">{{ title }}</h3>
@@ -41,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Clock, Heart } from 'lucide-vue-next'
+import { Clock } from 'lucide-vue-next'
 
 defineProps<{
   image: string
@@ -67,18 +66,6 @@ defineProps<{
   color: $black;
   overflow: hidden;
   position: relative;
-
-  &__button {
-    display: flex;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: black;
-    border-radius: 999px;
-    padding: 8px;
-    border: none;
-    cursor: pointer;
-  }
 
   &__image {
     width: 100%;
