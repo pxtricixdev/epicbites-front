@@ -1,19 +1,25 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { authStore } from '@/stores/authStore'
 import type { IGetAllRecipes } from './interfaces/IGetAllRecipes'
 import type { IPostRecipe } from './interfaces/IPostRecipe'
 import type { IGetMostRatedRecipes } from './interfaces/IGetMostRatedRecipes'
+import type { IGetRecipeByUser } from './interfaces/IGetRecipeByUser'
 
 export const useRecipeStore = defineStore('recipes', () => {
   const allRecipes = ref<IGetAllRecipes[]>([])
   const recipeDetail = ref<IGetAllRecipes | null>(null)
   const mostRatedRecipes = ref<IGetMostRatedRecipes[]>([])
+  const dataRecipeByUser = ref<IGetRecipeByUser[]>([])
 
   const loadingAllRecipes = ref(false)
   const loadingDetail = ref(false)
   const loadingMostRated = ref(false)
   const loadingDelete = ref(false)
   const loadingCreate = ref(false)
+  const loadingRecipeByUser = ref(false)
+
+  const auth = authStore()
 
   const error = ref<string | null>(null)
 
@@ -154,15 +160,49 @@ export const useRecipeStore = defineStore('recipes', () => {
     }
   }
 
+  const fetchRecipeByUser = async () => {
+    if (!auth.isAuthenticated) {
+      error.value = 'Usuario no autenticado'
+      return
+    }
+
+    const userId = auth.userId
+    loadingRecipeByUser.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`https://localhost:7129/api/recetas/user/${userId}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`)
+      }
+
+      dataRecipeByUser.value = await response.json()
+    } catch (err: any) {
+      error.value = err.message
+    } finally {
+      loadingRecipeByUser.value = false
+    }
+  }
+  
   return {
     allRecipes,
     recipeDetail,
     mostRatedRecipes,
+    dataRecipeByUser,
     loadingAllRecipes,
     loadingDetail,
     loadingMostRated,
     loadingDelete,
     loadingCreate,
+    loadingRecipeByUser,
     error,
 
     fetchAllRecipes,
@@ -170,5 +210,6 @@ export const useRecipeStore = defineStore('recipes', () => {
     fetchMostRatedRecipes,
     deleteRecipe,
     createRecipe,
+    fetchRecipeByUser
   }
 })

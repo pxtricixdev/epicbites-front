@@ -21,13 +21,10 @@
             <X :size="28" v-else color="black" />
           </span>
         </button>
-        <RouterLink
-          @click.prevent="isAuthenticated ? auth.logout() : null"
-          :to="isAuthenticated ? '/' : '/login'"
-          class="header__content__button-login"
-        >
-          {{ isAuthenticated ? 'Logout' : 'Login' }}
-        </RouterLink>
+        <button v-if="isAuthenticated" @click="handleAuth" class="header__content__button-login">
+          Logout
+        </button>
+        <RouterLink v-else to="/login" class="header__content__button-login"> Login </RouterLink>
       </div>
     </div>
 
@@ -68,17 +65,18 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { ArrowRight, Menu, X } from 'lucide-vue-next'
 import LogoCanvas from '@/components/LogoCanvas.vue'
 import { authStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const auth = authStore()
 const isAuthenticated = computed(() => auth.isAuthenticated)
 
-/*const handleAuth = () => {
+const handleAuth = () => {
   if (isAuthenticated.value) {
     auth.logout()
-  } else {
-    auth.login()
+    router.push('/')
   }
-}*/
+}
 
 const isOpen = ref(false)
 const isDesktop = ref(window.innerWidth > 768)

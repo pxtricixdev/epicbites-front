@@ -3,4 +3,5 @@ export interface IAuthResponse {
   role: string
   userId: number
   email: string
+  username: string
 }

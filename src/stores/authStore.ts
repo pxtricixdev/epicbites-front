@@ -11,6 +11,8 @@ export const authStore = defineStore('auth', () => {
   const userId = ref<number | null>(
     localStorage.getItem('userId') ? parseInt(localStorage.getItem('userId')!) : null,
   )
+  const username = ref<string | null>(localStorage.getItem('username'))
+
   const loading = ref(false)
   const error = ref<string | null>(null)
   const isAuthenticated = computed(() => !!token.value)
@@ -44,10 +46,12 @@ export const authStore = defineStore('auth', () => {
         token.value = responseData.token
         userRole.value = responseData.role
         userId.value = responseData.userId
+        username.value = responseData.username
 
         localStorage.setItem('authToken', responseData.token)
         localStorage.setItem('userRole', responseData.role)
         localStorage.setItem('userId', responseData.userId.toString())
+        localStorage.setItem('username', responseData.username)
       } else {
         throw new Error('No se recibió un token válido')
       }
@@ -59,11 +63,17 @@ export const authStore = defineStore('auth', () => {
   }
 
   const logout = () => {
-    token.value = null
     localStorage.removeItem('authToken')
+    localStorage.removeItem('userId')
+    localStorage.removeItem('userRole')
+    localStorage.removeItem('username')
+    token.value = null
+    userId.value = null
+    userRole.value = null
+    username.value = null
   }
 
-  const register = async (registerData : IRegister) => {
+  const register = async (registerData: IRegister) => {
     loadingRegister.value = true
     errorRegister.value = null
 
@@ -104,6 +114,7 @@ export const authStore = defineStore('auth', () => {
     token,
     userRole,
     userId,
+    username,
     loading,
     error,
     login,
