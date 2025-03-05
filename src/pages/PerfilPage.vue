@@ -37,7 +37,7 @@
 
     <div class="tab-content">
       <div v-if="activeTab === 'favorites'" class="favorites-tab">
-        <div v-if="loading" class="loading">
+        <div v-if="loadingFavoriteRecipes" class="loading">
           <div class="spinner"></div>
           <span>Cargando recetas favoritas...</span>
         </div>
@@ -70,14 +70,13 @@
       </div>
 
       <div v-if="activeTab === 'myRecipes'" class="myRecipe-tab">
-        <!-- Botón para crear nueva receta en la parte superior -->
         <div class="action-buttons">
           <button @click="goToCreate" class="primary-button create-recipe-button">
             <span class="plus-icon">+</span> Crear nueva receta
           </button>
         </div>
 
-        <div v-if="loading" class="loading">
+        <div v-if="loadingFavoriteRecipes" class="loading">
           <div class="spinner"></div>
           <span>Cargando mis recetas...</span>
         </div>
@@ -86,7 +85,7 @@
         </div>
         <div v-else-if="dataRecipeByUser.length === 0" class="empty-state">
           <p>Aún no tienes recetas creadas</p>
-          <button @click="goToCreate" class="primary-button">Crear receta</button>
+          <p>!!Crea una nueva!!</p>
         </div>
         <div v-else class="recipes-grid">
           <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="card-wrapper">
@@ -143,23 +142,26 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useGetFavoriteRecipes } from '@/stores/useGetFavoriteRecipes'
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
-import { useDeleteFavoriteRecipes } from '@/stores/useDeleteFavoriteRecipes'
-import { useGetRecipeByUser } from '@/stores/useGetRecipeByUser'
 import { useRecipeStore } from '@/stores/recipeStore'
-
-const { dataFavoriteRecipes, loading, error, fetchFavoriteRecipes } = useGetFavoriteRecipes()
-const { dataRecipeByUser, fetchRecipeByUser } = useGetRecipeByUser()
-const { deleteFavoriteById } = useDeleteFavoriteRecipes()
-
-const recipeStore = useRecipeStore()
-const { deleteRecipe } = recipeStore
+import { useFavoriteStore } from '@/stores/favoriteStore' 
 
 const auth = authStore()
+const recipeStore = useRecipeStore()
+const favoriteStore = useFavoriteStore()
 const router = useRouter()
+
+const { dataRecipeByUser, fetchRecipeByUser, deleteRecipe } = recipeStore
+
+const { 
+  dataFavoriteRecipes, 
+  loadingFavoriteRecipes,  
+  error, 
+  fetchFavoriteRecipes,
+  deleteFavoriteById 
+} = favoriteStore
 
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
@@ -212,7 +214,6 @@ const goToCreate = () => {
   router.push('/recetas/publicar-receta')
 }
 
-// Nueva función para navegar a la página de la receta
 const goToRecipe = (recipeId: number) => {
   router.push(`/receta/${recipeId}`)
 }
