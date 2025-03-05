@@ -1,53 +1,53 @@
 <template>
-  <div class="profile-container" v-if="isAuthenticated">
-    <div class="profile-header">
-      <div class="avatar-container">
-        <img v-if="userProfile.profileImage" :src="userProfile.profileImage" class="avatar" />
-        <div v-else class="avatar-placeholder">
+  <div class="profile" v-if="isAuthenticated">
+    <div class="profile__header">
+      <div class="profile__avatar-container">
+        <img v-if="userProfile.profileImage" :src="userProfile.profileImage" class="profile__avatar" />
+        <div v-else class="profile__avatar-placeholder">
           {{ getInitials(userProfile.name) }}
         </div>
       </div>
-      <div class="user-info">
-        <h1>{{ userProfile.name }}</h1>
-        <div class="stats">
-          <div class="stat">
-            <span class="stat-value">{{ dataFavoriteRecipes.length }} Recetas favoritas</span>
-            <span class="stat-value"> {{ dataRecipeByUser.length }} Recetas publicadas</span>
+      <div class="profile__user-info">
+        <h1 class="profile__name">{{ userProfile.name }}</h1>
+        <div class="profile__stats">
+          <div class="profile__stat">
+            <span class="profile__stat-value">{{ dataFavoriteRecipes.length }} Recetas favoritas</span>
+            <span class="profile__stat-value"> {{ dataRecipeByUser.length }} Recetas publicadas</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="profile-tabs">
+    <div class="profile__tabs">
       <button
         @click="activeTab = 'favorites'"
-        :class="{ active: activeTab === 'favorites' }"
-        class="tab-button"
+        :class="{ 'profile__tab-button--active': activeTab === 'favorites' }"
+        class="profile__tab-button"
       >
         Favoritos
       </button>
       <button
         @click="activeTab = 'myRecipes'"
-        :class="{ active: activeTab === 'myRecipes' }"
-        class="tab-button"
+        :class="{ 'profile__tab-button--active': activeTab === 'myRecipes' }"
+        class="profile__tab-button"
       >
         Mis Recetas
       </button>
     </div>
 
-    <div class="tab-content">
-      <div v-if="activeTab === 'favorites'" class="favorites-tab">
-        <div v-if="loadingFavoriteRecipes" class="loading">
-          <div class="spinner"></div>
+    <div class="profile__tab-content">
+      <div v-if="activeTab === 'favorites'" class="profile__favorites-tab">
+        <div v-if="loadingFavoriteRecipes" class="profile__loading">
+          <div class="profile__spinner"></div>
           <span>Cargando recetas favoritas...</span>
         </div>
-        <div v-else-if="dataFavoriteRecipes.length === 0" class="empty-state">
+        <div v-else-if="dataFavoriteRecipes.length === 0" class="profile__empty-state">
           <p>Aún no tienes recetas favoritas</p>
-          <button @click="goToExplore" class="primary-button">Explorar recetas</button>
+          <button @click="goToExplore" class="profile__button profile__button--primary">Explorar recetas</button>
         </div>
-        <div v-else class="recipes-grid">
-          <div v-for="recipe in dataFavoriteRecipes" :key="recipe.id" class="card-wrapper">
-            <div class="card-with-actions card-clickable">
+        <div v-else class="profile__recipes-grid">
+          <div v-for="recipe in dataFavoriteRecipes" :key="recipe.id" class="profile__card-wrapper">
+            <div class="profile__card-with-actions profile__card--clickable">
               <CardRecipePerfil
                 :time="recipe.time"
                 :title="recipe.name"
@@ -57,34 +57,34 @@
               />
               <button
                 @click="confirmDeleteFavorite(recipe.favoriteId)"
-                class="remove-favorite-button"
+                class="profile__remove-button"
               >
-                <span class="close-icon">×</span>
+                <span class="profile__close-icon">×</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-if="activeTab === 'myRecipes'" class="myRecipe-tab">
-        <div class="action-buttons">
-          <button @click="goToCreate" class="primary-button create-recipe-button">
-            <span class="plus-icon">+</span> Crear nueva receta
+      <div v-if="activeTab === 'myRecipes'" class="profile__my-recipe-tab">
+        <div class="profile__action-buttons">
+          <button @click="goToCreate" class="profile__button profile__button--primary profile__button--create">
+            <span class="profile__plus-icon">+</span> Crear nueva receta
           </button>
         </div>
 
-        <div v-if="loadingFavoriteRecipes" class="loading">
-          <div class="spinner"></div>
+        <div v-if="loadingFavoriteRecipes" class="profile__loading">
+          <div class="profile__spinner"></div>
           <span>Cargando mis recetas...</span>
         </div>
-        <div v-else-if="dataRecipeByUser.length === 0" class="empty-state">
+        <div v-else-if="dataRecipeByUser.length === 0" class="profile__empty-state">
           <p>Aún no tienes recetas creadas</p>
           <p>!!Crea una nueva!!</p>
         </div>
-        <div v-else class="recipes-grid">
-          <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="card-wrapper">
-            <div class="card-with-actions">
-              <div class="card-clickable">
+        <div v-else class="profile__recipes-grid">
+          <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="profile__card-wrapper">
+            <div class="profile__card-with-actions">
+              <div class="profile__card--clickable">
                 <CardRecipePerfil
                   :time="recipe.time"
                   :title="recipe.name"
@@ -92,8 +92,8 @@
                   :alt="`Imagen de la receta ${recipe.name}`"
                   :link="`/receta/${recipe.id}`"
                 />
-                <button @click.stop="confirmDeleteRecipe(recipe.id)" class="remove-favorite-button">
-                  <span class="close-icon">×</span>
+                <button @click.stop="confirmDeleteRecipe(recipe.id)" class="profile__remove-button">
+                  <span class="profile__close-icon">×</span>
                 </button>
               </div>
             </div>
@@ -103,31 +103,31 @@
     </div>
 
     <!--confirmación para eliminar favorito -->
-    <div v-if="showConfirmModal && modalType === 'favorite'" class="modal-overlay">
-      <div class="modal-container confirm-modal">
-        <div class="modal-header">
-          <h2>Eliminar de favoritos</h2>
-          <button @click="closeModal" class="close-button">×</button>
+    <div v-if="showConfirmModal && modalType === 'favorite'" class="profile__modal-overlay">
+      <div class="profile__modal profile__modal--confirm">
+        <div class="profile__modal-header">
+          <h2 class="profile__modal-title">Eliminar de favoritos</h2>
+          <button @click="closeModal" class="profile__modal-close">×</button>
         </div>
         <p>¿Estás seguro de que quieres eliminar esta receta de tus favoritos?</p>
-        <div class="modal-actions">
-          <button @click="closeModal" class="secondary-button">Cancelar</button>
-          <button @click="executeDeleteFavorite" class="primary-button danger">Eliminar</button>
+        <div class="profile__modal-actions">
+          <button @click="closeModal" class="profile__button profile__button--secondary">Cancelar</button>
+          <button @click="executeDeleteFavorite" class="profile__button profile__button--primary profile__button--danger">Eliminar</button>
         </div>
       </div>
     </div>
 
     <!--confirmación para eliminar receta -->
-    <div v-if="showConfirmModal && modalType === 'recipe'" class="modal-overlay">
-      <div class="modal-container confirm-modal">
-        <div class="modal-header">
-          <h2>Eliminar Receta</h2>
-          <button @click="closeModal" class="close-button">×</button>
+    <div v-if="showConfirmModal && modalType === 'recipe'" class="profile__modal-overlay">
+      <div class="profile__modal profile__modal--confirm">
+        <div class="profile__modal-header">
+          <h2 class="profile__modal-title">Eliminar Receta</h2>
+          <button @click="closeModal" class="profile__modal-close">×</button>
         </div>
         <p>¿Estás seguro de que quieres eliminar esta receta?</p>
-        <div class="modal-actions">
-          <button @click="closeModal" class="secondary-button">Cancelar</button>
-          <button @click="executeDeleteRecipe" class="primary-button danger">Eliminar</button>
+        <div class="profile__modal-actions">
+          <button @click="closeModal" class="profile__button profile__button--secondary">Cancelar</button>
+          <button @click="executeDeleteRecipe" class="profile__button profile__button--primary profile__button--danger">Eliminar</button>
         </div>
       </div>
     </div>
@@ -228,19 +228,44 @@ const confirmDeleteRecipe = (recipeId: number) => {
 
 const executeDeleteRecipe = async () => {
   if (recipeToDelete.value) {
-    await deleteRecipe(recipeToDelete.value)
+    try {
+      await deleteRecipe(recipeToDelete.value)
+
+      const index = dataRecipeByUser.findIndex((recipe) => recipe.id === recipeToDelete.value)
+      if (index !== -1) {
+        dataRecipeByUser.splice(index, 1)
+      }
+
+      console.log('Receta eliminada correctamente')
+    } catch (error) {
+      console.error('Error al eliminar la receta:', error)
+    } finally {
+      showConfirmModal.value = false
+      recipeToDelete.value = null
+    }
   }
-  showConfirmModal.value = false
-  recipeToDelete.value = null
 }
 
 const executeDeleteFavorite = async () => {
   if (favoriteToDelete.value) {
-    await deleteFavoriteById(favoriteToDelete.value)
-  }
+    try {
+      await deleteFavoriteById(favoriteToDelete.value)
 
-  showConfirmModal.value = false
-  favoriteToDelete.value = null
+      const index = dataFavoriteRecipes.findIndex(
+        (recipe) => recipe.favoriteId === favoriteToDelete.value,
+      )
+      if (index !== -1) {
+        dataFavoriteRecipes.splice(index, 1)
+      }
+
+      console.log('Favorito eliminado correctamente')
+    } catch (error) {
+      console.error('Error al eliminar el favorito:', error)
+    } finally {
+      showConfirmModal.value = false
+      favoriteToDelete.value = null
+    }
+  }
 }
 
 onMounted(async () => {
@@ -258,77 +283,84 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 
-.profile-container {
-  max-width: 1200px;
+.profile {
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   font-family: $body;
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-  gap: 2rem;
-
-  .avatar-container {
+  
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  
+  &__avatar-container {
     flex-shrink: 0;
-
-    .avatar,
-    .avatar-placeholder {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .avatar-placeholder {
-      background-color: $primary-yellow;
-      color: $black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      font-weight: bold;
-      font-family: $body;
-    }
+  }
+  
+  &__avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  &__avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: $primary-yellow;
+    color: $black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: $body;
+  }
+  
+  &__user-info {
+    width: 100%;
+  }
+  
+  &__name {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    font-family: $body;
+    color: $black;
+  }
+  
+  &__stats {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  &__stat {
+    display: flex;
+    flex-direction: column;
   }
 
-  .user-info {
-    flex-grow: 1;
-
-    h1 {
-      margin: 0 0 0.5rem;
-      font-size: 1.8rem;
-      font-family: $body;
-      color: $black;
-    }
-
-    .stats {
-      display: flex;
-      gap: 2rem;
-
-      .stat {
-        display: flex;
-        flex-direction: column;
-
-        .stat-value {
-          font-weight: 600;
-          font-size: 1rem;
-          color: $black;
-        }
-      }
-    }
+  &__stat-value {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: $black;
   }
-}
-
-.profile-tabs {
-  display: flex;
-  border-bottom: 1px solid $light-grey;
-  margin-bottom: 2rem;
-
-  .tab-button {
-    padding: 1rem 1.5rem;
+  
+  &__tabs {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid $light-grey;
+    margin-bottom: 1.5rem;
+  }
+  
+  &__tab-button {
+    padding: 0.75rem 1rem;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
@@ -337,107 +369,139 @@ onMounted(async () => {
     cursor: pointer;
     transition: all 0.2s;
     font-family: $body;
-
+    
     &:hover {
       color: #606060;
     }
-
-    &.active {
+    
+    &--active {
       color: #3c3c3c;
       border-bottom-color: $primary-yellow;
     }
   }
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 5px;
-
-  .create-recipe-button {
+  
+  &__action-buttons {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    justify-content: flex-start;
+    margin-bottom: 5px;
+  }
+  
+  &__button {
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    font-family: $body;
+    font-size: 0.9rem;
 
-    .plus-icon {
-      font-size: 1.2rem;
-      font-weight: bold;
+    &--primary {
+      background-color: $primary-yellow;
+      color: $black;
+      border: none;
+      
+      &:hover {
+        background-color: darken($primary-yellow, 10%);
+      }
+    }
+    
+    &--secondary {
+      background-color: $white;
+      color: $black;
+      border: 1px solid $light-grey;
+      
+      &:hover {
+        background-color: $light-grey;
+      }
+    }
+    
+    &--danger {
+      background-color: red;
+      color: $white;
+      
+      &:hover {
+        background-color: darken(red, 10%);
+      }
+    }
+    
+    &--create {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
   }
-}
-
-.tab-content {
-  min-height: 300px;
-
-  .loading {
+  
+  &__plus-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  &__tab-content {
+    min-height: 300px;
+  }
+  
+  &__loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(#3c3c3c, 0.3);
-      border-radius: 50%;
-      border-top-color: $black;
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 1rem;
-    }
+    padding: 2rem;
   }
-
-  .error-message {
-    background-color: rgba(red, 0.1);
-    color: red;
-    padding: 1rem;
-    border-radius: 4px;
-    text-align: center;
+  
+  &__spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(60, 60, 60, 0.3);
+    border-radius: 50%;
+    border-top-color: $black;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
   }
-
-  .empty-state {
+  
+  &__empty-state {
     text-align: center;
-    padding: 3rem;
-
+    padding: 2rem;
+    
     p {
       margin-bottom: 1rem;
       color: $black;
     }
   }
-}
-
-.recipes-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-
-  .card-wrapper {
+  
+  &__recipes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  
+  &__card-wrapper {
+    position: relative;
+    width: calc(50% - 7.5px);
+  }
+  
+  &__card-with-actions {
     position: relative;
   }
-
-  .card-with-actions {
-    position: relative;
-  }
-
-  .card-clickable {
+  
+  &__card--clickable {
     cursor: pointer;
     transition: transform 0.2s ease;
-
+    
     &:hover {
       transform: translateY(-5px);
     }
   }
-
-  .remove-favorite-button {
+  
+  &__remove-button {
     position: absolute;
-    top: 15px;
-    right: 5px;
+    top: 10px;
     background-color: $secondary-orange;
     color: white;
     border: none;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -445,152 +509,203 @@ onMounted(async () => {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 2;
 
-    .close-icon {
-      font-size: 18px;
-      line-height: 1;
-      font-weight: bold;
-    }
-
     &:hover {
-      background-color: $secondary-orange, 10%;
+      background-color: lighten($secondary-orange, 10%);
     }
   }
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-
-  .modal-container {
+  
+  &__close-icon {
+    font-size: 16px;
+    line-height: 1;
+    font-weight: bold;
+  }
+  
+  &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 0 1rem;
+  }
+  
+  &__modal {
     background-color: $white;
     border-radius: 8px;
-    width: 90%;
+    width: 100%;
     max-width: 500px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    
+    &--confirm {
+      max-width: 350px;
+      padding: 1rem;
+    }
+  }
+  
+  &__modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid $light-grey;
+  }
+  
+  &__modal-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-family: $heading;
+    color: $black;
+  }
 
-    &.confirm-modal {
+  &__modal-close {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: $black;
+    
+    &:hover {
+      color: $secondary-orange;
+    }
+  }
+  
+  &__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    padding: 0 1rem 1rem;
+  }
+  
+  @media (min-width: 480px) {
+    &__card-wrapper {
+      width: calc(33.333% - 10px);
+    }
+    
+    &__tab-button {
+      padding: 0.75rem 1.25rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    max-width: 1200px;
+    padding: 2rem;
+    
+    &__header {
+      flex-direction: row;
+      align-items: center;
+      text-align: left;
+      margin-bottom: 2rem;
+      gap: 2rem;
+    }
+    
+    &__avatar,
+    &__avatar-placeholder {
+      width: 120px;
+      height: 120px;
+    }
+    
+    &__avatar-placeholder {
+      font-size: 2.5rem;
+    }
+    
+    &__name {
+      font-size: 1.8rem;
+    }
+    
+    &__stats {
+      justify-content: flex-start;
+      gap: 2rem;
+    }
+    
+    &__stat-value {
+      font-size: 1rem;
+    }
+    
+    &__tabs {
+      overflow-x: visible;
+      white-space: normal;
+      margin-bottom: 2rem;
+    }
+    
+    &__tab-button {
+      padding: 1rem 1.5rem;
+    }
+    
+    &__loading {
+      padding: 3rem;
+    }
+    
+    &__spinner {
+      width: 40px;
+      height: 40px;
+    }
+    
+    &__empty-state {
+      padding: 3rem;
+    }
+    
+    &__recipes-grid {
+      gap: 20px;
+      justify-content: flex-start;
+    }
+    
+    &__card-wrapper {
+      width: calc(25% - 15px);
+    }
+    
+    &__remove-button {
+      top: 15px;
+      width: 24px;
+      height: 24px;
+    }
+    
+    &__close-icon {
+      font-size: 18px;
+    }
+    
+    &__modal--confirm {
       max-width: 400px;
       padding: 1.5rem;
     }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    
+    &__modal-header {
       padding: 1rem 1.5rem;
-      border-bottom: 1px solid $light-grey;
-
-      h2 {
-        margin: 0;
-        font-size: 1.3rem;
-        font-family: $heading;
-        color: $black;
-      }
-
-      .close-button {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: $black;
-
-        &:hover {
-          color: $secondary-orange;
-        }
-      }
     }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
+    
+    &__modal-title {
+      font-size: 1.3rem;
+    }
+    
+    &__modal-close {
+      font-size: 1.5rem;
+    }
+    
+    &__modal-actions {
       gap: 1rem;
       padding: 0 1.5rem 1.5rem;
     }
-  }
-}
-
-.primary-button {
-  padding: 0.5rem 1rem;
-  background-color: $primary-yellow;
-  color: $black;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  font-family: $body;
-
-  &:hover {
-    background-color: darken($primary-yellow, 10%);
-  }
-
-  &.danger {
-    background-color: red;
-    color: $white;
-
-    &:hover {
-      background-color: darken(red, 10%);
-    }
-  }
-}
-
-.secondary-button {
-  padding: 0.75rem 1.5rem;
-  background-color: $white;
-  color: $black;
-  border: 1px solid $light-grey;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  font-family: $body;
-
-  &:hover {
-    background-color: $light-grey;
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 768px) {
-  .profile-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1rem;
-
-    .user-info {
-      .stats {
-        justify-content: center;
+    
+    &__button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      
+      &--primary {
+        padding: 0.5rem 1rem;
       }
     }
   }
-}
-
-@media (max-width: 480px) {
-  .profile-tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-
-    .tab-button {
-      padding: 0.75rem 1rem;
+  
+  @media (min-width: 1200px) {
+    &__card-wrapper {
+      width: calc(20% - 16px);
     }
   }
 }
+
 </style>
