@@ -76,7 +76,7 @@ const handleLogin = async () => {
   await login()
 
   if (token.value) {
-    router.push('/recetas')
+    router.push('/perfil')
   } else {
     console.error('No se recibió un token válido')
   }
