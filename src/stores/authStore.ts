@@ -63,8 +63,14 @@ export const authStore = defineStore('auth', () => {
   }
 
   const logout = () => {
-    token.value = null
     localStorage.removeItem('authToken')
+    localStorage.removeItem('userId')
+    localStorage.removeItem('userRole')
+    localStorage.removeItem('username')
+    token.value = null
+    userId.value = null
+    userRole.value = null
+    username.value = null
   }
 
   const register = async (registerData: IRegister) => {
