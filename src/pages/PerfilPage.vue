@@ -41,16 +41,13 @@
           <div class="spinner"></div>
           <span>Cargando recetas favoritas...</span>
         </div>
-        <div v-else-if="error" class="error-message">
-          {{ error }}
-        </div>
         <div v-else-if="dataFavoriteRecipes.length === 0" class="empty-state">
           <p>Aún no tienes recetas favoritas</p>
           <button @click="goToExplore" class="primary-button">Explorar recetas</button>
         </div>
         <div v-else class="recipes-grid">
           <div v-for="recipe in dataFavoriteRecipes" :key="recipe.id" class="card-wrapper">
-            <div class="card-with-actions">
+            <div class="card-with-actions card-clickable">
               <CardRecipePerfil
                 :time="recipe.time"
                 :title="recipe.name"
@@ -80,9 +77,6 @@
           <div class="spinner"></div>
           <span>Cargando mis recetas...</span>
         </div>
-        <div v-else-if="error" class="error-message">
-          {{ error }}
-        </div>
         <div v-else-if="dataRecipeByUser.length === 0" class="empty-state">
           <p>Aún no tienes recetas creadas</p>
           <p>!!Crea una nueva!!</p>
@@ -90,7 +84,7 @@
         <div v-else class="recipes-grid">
           <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="card-wrapper">
             <div class="card-with-actions">
-              <div class="card-clickable" @click="goToRecipe(recipe.id)">
+              <div class="card-clickable">
                 <CardRecipePerfil
                   :time="recipe.time"
                   :title="recipe.name"
@@ -98,10 +92,10 @@
                   :alt="`Imagen de la receta ${recipe.name}`"
                   :link="`/receta/${recipe.id}`"
                 />
+                <button @click.stop="confirmDeleteRecipe(recipe.id)" class="remove-favorite-button">
+                  <span class="close-icon">×</span>
+                </button>
               </div>
-              <button @click.stop="confirmDeleteRecipe(recipe.id)" class="remove-favorite-button">
-                <span class="close-icon">×</span>
-              </button>
             </div>
           </div>
         </div>
@@ -146,7 +140,7 @@ import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
-import { useFavoriteStore } from '@/stores/favoriteStore' 
+import { useFavoriteStore } from '@/stores/favoriteStore'
 
 const auth = authStore()
 const recipeStore = useRecipeStore()
@@ -155,12 +149,12 @@ const router = useRouter()
 
 const { dataRecipeByUser, fetchRecipeByUser, deleteRecipe } = recipeStore
 
-const { 
-  dataFavoriteRecipes, 
-  loadingFavoriteRecipes,  
-  error, 
+const {
+  dataFavoriteRecipes,
+  loadingFavoriteRecipes,
+  error,
   fetchFavoriteRecipes,
-  deleteFavoriteById 
+  deleteFavoriteById,
 } = favoriteStore
 
 const activeTab = ref('favorites')
@@ -212,10 +206,6 @@ const goToExplore = () => {
 
 const goToCreate = () => {
   router.push('/recetas/publicar-receta')
-}
-
-const goToRecipe = (recipeId: number) => {
-  router.push(`/receta/${recipeId}`)
 }
 
 const closeModal = () => {
@@ -323,7 +313,7 @@ onMounted(async () => {
         flex-direction: column;
 
         .stat-value {
-          font-weight: bold;
+          font-weight: 600;
           font-size: 1rem;
           color: $black;
         }
@@ -349,11 +339,11 @@ onMounted(async () => {
     font-family: $body;
 
     &:hover {
-      color: $secondary-orange;
+      color: #606060;
     }
 
     &.active {
-      color: $secondary-orange;
+      color: #3c3c3c;
       border-bottom-color: $primary-yellow;
     }
   }
@@ -361,8 +351,8 @@ onMounted(async () => {
 
 .action-buttons {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1.5rem;
+  justify-content: flex-start;
+  margin-bottom: 5px;
 
   .create-recipe-button {
     display: flex;
@@ -389,9 +379,9 @@ onMounted(async () => {
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid rgba($primary-yellow, 0.3);
+      border: 3px solid rgba(#3c3c3c, 0.3);
       border-radius: 50%;
-      border-top-color: $primary-yellow;
+      border-top-color: $black;
       animation: spin 1s ease-in-out infinite;
       margin-bottom: 1rem;
     }
@@ -420,7 +410,6 @@ onMounted(async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
 
   .card-wrapper {
     position: relative;
@@ -463,7 +452,7 @@ onMounted(async () => {
     }
 
     &:hover {
-      background-color: darken($secondary-orange, 10%);
+      background-color: $secondary-orange, 10%;
     }
   }
 }
@@ -530,7 +519,7 @@ onMounted(async () => {
 }
 
 .primary-button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: $primary-yellow;
   color: $black;
   border: none;
