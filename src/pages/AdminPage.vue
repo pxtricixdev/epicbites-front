@@ -55,6 +55,12 @@
               <span>Crear Receta</span>
             </RouterLink>
           </li>
+          <li class="layout-menuitem">
+            <a href="#" class="layout-menuitem-link" @click="setActiveSection('register')">
+              <i class="pi pi-lock"></i>
+              <span>Registrar Admin</span>
+            </a>
+          </li>
         </ul>
       </div>
 
@@ -190,7 +196,7 @@
             >
               <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Úlimas reseña</span>
+                  <span class="text-xl font-bold">Últimas reseñas</span>
                 </div>
               </template>
 
@@ -215,6 +221,60 @@
               </Column>
             </DataTable>
           </div>
+        </div>
+        <!-- Registro de admin -->
+        <div v-if="activeSection === 'register'" class="section-container">
+          <Form
+            :validation-schema="validationSchema"
+            @submit="handleRegister"
+            class="register__form"
+            v-slot="{ resetForm }"
+          >
+            <div class="register__content">
+              <div class="register__inputs">
+                <FloatLabel class="register__card">
+                  <Field name="username" v-slot="{ field }">
+                    <InputText
+                      v-bind="field"
+                      class="register__card__inputext"
+                      id="username"
+                      v-model="registerForm.username"
+                    />
+                  </Field>
+                  <label class="register__card__label" for="username">Nombre de usuario</label>
+                </FloatLabel>
+                <ErrorMessage name="username" class="register__card__error" />
+
+                <FloatLabel class="register__card">
+                  <Field v-slot="{ field }" name="email">
+                    <InputText
+                      v-bind="field"
+                      class="register__card__inputext"
+                      id="email"
+                      v-model="registerForm.email"
+                    />
+                  </Field>
+                  <label class="register__card__label" for="email">Email</label>
+                </FloatLabel>
+                <ErrorMessage name="email" class="register__card__error" />
+
+                <FloatLabel class="register__card">
+                  <Field v-slot="{ field }" name="password">
+                    <InputText
+                      v-bind="field"
+                      class="register__card__inputext"
+                      id="password"
+                      type="password"
+                      v-model="registerForm.password"
+                    />
+                  </Field>
+                  <label class="register__card__label" for="password">Contraseña</label>
+                </FloatLabel>
+                <ErrorMessage name="password" class="register__card__error" />
+              </div>
+              <button class="register__button" type="submit">Enviar</button>
+            </div>
+          </Form>
         </div>
         <div v-if="activeSection === 'home'" class="section-container">
           <h2 class="section-title">Bienvenido al Panel de Administración</h2>
@@ -257,7 +317,6 @@
     <Dialog
       v-model:visible="deleteRecipeDialogVisible"
       modal
-      header="Confirmar eliminación"
       :style="{ width: '450px' }"
       :closable="false"
     >
@@ -284,7 +343,6 @@
     <Dialog
       v-model:visible="deleteReviewDialogVisible"
       modal
-      header="Confirmar eliminación"
       :style="{ width: '450px' }"
       :closable="false"
     >
@@ -311,11 +369,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Rating from 'primevue/rating'
 import Dialog from 'primevue/dialog'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import { z } from 'zod'
+import { toTypedSchema } from '@vee-validate/zod'
+import FloatLabel from 'primevue/floatlabel'
+import InputText from 'primevue/inputtext'
 
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
@@ -420,6 +483,31 @@ const proceedWithDeleteReview = async () => {
 const cancelDeleteReview = () => {
   deleteReviewDialogVisible.value = false
 }
+
+const validationSchema = toTypedSchema(
+  z.object({
+    username: z.string().min(3, 'El usuario debe tener al menos 3 caracteres'),
+    email: z.string().email('El email no es válido'),
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  }),
+)
+
+const auth = authStore()
+const { register, clearRegisterData } = auth
+
+const registerForm = reactive({
+  username: '',
+  email: '',
+  password: '',
+})
+
+const handleRegister = async () => {
+  await register(registerForm)
+  clearRegisterData()
+  registerForm.username = ''
+  registerForm.password = ''
+  registerForm.password = ''
+}
 </script>
 
 <style lang="scss" scoped>
@@ -486,8 +574,7 @@ const cancelDeleteReview = () => {
 
           &:hover,
           &.active {
-            background-color: rgba($primary-yellow, 0.2);
-            color: $secondary-orange;
+            background-color: #ececec;
           }
 
           i {
@@ -538,7 +625,7 @@ const cancelDeleteReview = () => {
         color: $black;
         font-size: 1rem;
         font-weight: 600;
-        font-family: $heading;
+        font-family: $body;
       }
 
       .card-icon {
@@ -548,23 +635,23 @@ const cancelDeleteReview = () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba($primary-yellow, 0.2);
+        background-color: #eeeeee;
         color: $secondary-orange;
 
         &.recipes,
         &.reviews {
-          background-color: rgba($primary-yellow, 0.2);
+          background-color: #eeeeee;
           color: $secondary-orange;
         }
       }
     }
 
     &-value {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: $black;
       margin-bottom: 0.25rem;
-      font-family: $heading;
+      font-family: $body;
     }
   }
 }
@@ -580,11 +667,11 @@ const cancelDeleteReview = () => {
   }
 
   &-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: $black;
     margin-bottom: 1rem;
-    font-family: $heading;
+    font-family: $body;
   }
 
   &-message {
@@ -596,12 +683,12 @@ const cancelDeleteReview = () => {
   }
 
   &-subtitle {
-    font-size: 1.25rem;
+    font-size: 1rem;
     margin-bottom: 10px;
     font-weight: 600;
     color: $black;
     margin-top: 1.5rem;
-    font-family: $heading;
+    font-family: $body;
   }
 
   &-list {
@@ -617,7 +704,7 @@ const cancelDeleteReview = () => {
       gap: 10px;
 
       strong {
-        font-weight: 700;
+        font-weight: 600;
       }
     }
   }
@@ -817,6 +904,95 @@ const cancelDeleteReview = () => {
 
   .recipe-table-container {
     padding: 1.5rem;
+  }
+}
+
+::v-deep(.p-datatable-header, .p-datatable-header-cell) {
+  background-color: $white !important;
+  color: $black !important;
+  border-style: none;
+}
+
+.register {
+  &__form {
+    border: 1px solid $secondary-orange;
+    border-radius: 10px;
+    padding: 30px 20px 20px 20px;
+    color: $black;
+    max-width: 280px;
+    box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__card {
+    &__inputext {
+      background-color: $white;
+      font-size: 12px;
+      font-weight: 400;
+      color: $black;
+      width: 100%;
+      border: 1px solid rgb(153, 153, 153);
+    }
+
+    &__label {
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    &__error {
+      color: red;
+      font-size: 12px;
+    }
+  }
+
+  &__register {
+    font-size: 10px;
+    margin-top: 5px;
+
+    a {
+      color: $secondary-orange;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__button {
+    background-color: $black;
+    color: $white;
+    border-radius: 5px;
+    border: 0;
+    padding: 5px 20px;
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 10px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-family: 600;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+      transition: ease-in-out 0.2s;
+    }
   }
 }
 </style>

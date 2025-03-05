@@ -103,6 +103,36 @@ export const authStore = defineStore('auth', () => {
     }
   }
 
+  const registerAdmin = async (registerData: IRegister) => {
+    loadingRegister.value = true
+    errorRegister.value = null
+
+    try {
+      const response = await fetch('https://localhost:7129/api/auth/registro-admin', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registerData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.message || `Error ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      return data
+    } catch (err: any) {
+      errorRegister.value = err.message
+      throw err
+    } finally {
+      loadingRegister.value = false
+    }
+  }
+
   const clearRegisterData = () => {
     dataRegister.value = { username: '', email: '', password: '' }
     errorRegister.value = null
@@ -121,5 +151,6 @@ export const authStore = defineStore('auth', () => {
     logout,
     register,
     clearRegisterData,
+    registerAdmin,
   }
 })
