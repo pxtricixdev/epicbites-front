@@ -61,6 +61,12 @@
               <span>Registrar Admin</span>
             </a>
           </li>
+          <li class="admin__menu-item">
+            <RouterLink to="/" class="admin__menu-link" @click="logout">
+              <i class="pi pi-user-minus"></i>
+              <span>Cerrar sesión</span>
+            </RouterLink>
+          </li>
         </ul>
       </div>
 
@@ -271,6 +277,7 @@
             </div>
           </Form>
         </div>
+
         <div v-if="activeSection === 'home'" class="admin__section-container">
           <h2 class="admin__section-title">Bienvenido al Panel de Administración</h2>
           <p class="admin__section-message">
@@ -382,7 +389,7 @@ import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { storeToRefs } from 'pinia'
 
-const { isAuthenticated, userRole } = authStore()
+const { isAuthenticated, userRole, logout } = authStore()
 const userData = ref({ total: 0 })
 const recipeData = ref({ total: 0 })
 const reviewData = ref({ total: 0 })
