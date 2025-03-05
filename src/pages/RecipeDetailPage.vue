@@ -56,7 +56,8 @@
       </div>
 
       <div v-if="reviewsByRecipe.length === 0" class="reviews__empty">
-        <p>No hay opiniones para esta receta todavía. ¡Sé el primero en comentar!</p>
+        <p>No hay opiniones para esta receta todavía.</p>
+        <p v-if="isAuthenticated">¡Sé el primero en comentar!</p>
       </div>
 
       <div v-if="reviewsByRecipe" class="reviews__list">
@@ -74,18 +75,52 @@
           <p class="reviews__date">{{ formatDate(review.reviewDate) }}</p>
         </div>
       </div>
+    </div>
 
+    <div v-if="isAuthenticated">
+      <form @submit="handlePost" class="reviews__form">
+        <div class="reviews__form__text">
+          <h3>Comparte tu experiencia</h3>
+          <p>
+            ¿Has probado esta receta? Nos encantaría conocer tu opinión. Tus comentarios ayudan a
+            otros cocineros a decidir si quieren prepararla.
+          </p>
+        </div>
+        <textarea
+          required
+          maxlength="300"
+          name="review"
+          id="review"
+          placeholder="Escribe tu reseña aquí"
+          v-model="reviewForm.text"
+        ></textarea>
+        <div class="reviews__form__score">
+          <label for="score">Puntua la receta: </label>
+          <select v-model="reviewForm.score" required name="score" id="score">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="reviews__form__button">
+          <button>Publicar</button>
+        </div>
+      </form>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, reactive, watch } from 'vue'
 import EstrellaRating from '@/components/SvgEstrella.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
+import { authStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+import type { IPostReview } from '@/stores/interfaces/IPostReview'
 const route = useRoute()
 
 const recipeStore = useRecipeStore()
@@ -94,7 +129,10 @@ const { fetchRecipeDetail } = recipeStore
 
 const reviewStore = useReviewStore()
 const { reviewsByRecipe, loadingReviewsByRecipe } = storeToRefs(reviewStore)
-const { fetchReviewsByRecipe, clearReviewsByRecipe } = reviewStore
+const { fetchReviewsByRecipe, clearReviewsByRecipe, createReview } = reviewStore
+
+const auth = authStore()
+const { isAuthenticated } = auth
 
 const loadData = async (id: string) => {
   clearReviewsByRecipe()
@@ -133,6 +171,36 @@ const formatDate = (dateString: Date) => {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+const reviewForm = reactive({
+  text: '',
+  date: new Date().toISOString(),
+  score: 1,
+  userId: auth.userId,
+  recipeId: Number(Array.isArray(route.params.id) ? route.params.id[0] : route.params.id),
+})
+
+const handlePost = async (e: Event) => {
+  e.preventDefault()
+
+  const reviewData = {
+    text: reviewForm.text,
+    date: reviewForm.date,
+    score: Number(reviewForm.score),
+    userId: Number(reviewForm.userId),
+    recipeId: Number(reviewForm.recipeId),
+  }
+
+  try {
+    await createReview(reviewData as IPostReview)
+
+    reviewForm.text = ''
+    reviewForm.score = 1
+    await fetchReviewsByRecipe(reviewData.recipeId)
+  } catch (error) {
+    console.error('Error al crear la reseña:', error)
+  }
 }
 </script>
 
@@ -380,6 +448,72 @@ const formatDate = (dateString: Date) => {
     font-weight: 500;
     margin-top: 5px;
     color: #a2a2a2;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+    color: $black;
+    background-color: #ffffff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    textarea,
+    select {
+      background-color: $white;
+
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    textarea {
+      padding: 8px 12px;
+      color: #777777;
+      font-size: 14px;
+    }
+
+    select {
+      padding-left: 10px;
+      padding-right: 5px;
+      color: $black;
+      font-size: 14px;
+    }
+
+    &__score {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      p {
+        font-size: 14px;
+      }
+    }
+
+    &__button {
+      margin: 10px auto;
+      button {
+        background-color: $primary-yellow;
+        color: $black;
+        border-radius: 5px;
+        border: none;
+        padding: 6px 25px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    }
   }
 }
 </style>

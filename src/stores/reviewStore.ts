@@ -117,13 +117,20 @@ export const useReviewStore = defineStore('reviews', () => {
     error.value = null
 
     try {
+      const requestBody = {
+        Text: dataReview.text,
+        Date: dataReview.date,
+        Score: dataReview.score,
+        UserId: dataReview.userId,
+        RecipeId: dataReview.recipeId,
+      }
       const response = await fetch('https://localhost:7129/api/comentarios', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dataReview),
+        body: JSON.stringify(requestBody),
       })
 
       if (!response.ok) {
@@ -135,6 +142,9 @@ export const useReviewStore = defineStore('reviews', () => {
 
       if (allReviews.value.length > 0) {
         allReviews.value.push(newReview)
+      }
+      if (currentRecipeId.value === dataReview.recipeId) {
+        await fetchReviewsByRecipe(dataReview.recipeId)
       }
 
       return newReview
