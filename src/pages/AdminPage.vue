@@ -1,62 +1,62 @@
 <template>
-  <div class="layout">
-    <div class="layout-notAuth" v-if="!isAuthenticated || userRole !== 'Admin'">
-      <p>
+  <div class="admin">
+    <div class="admin__not-auth" v-if="!isAuthenticated || userRole !== 'Admin'">
+      <p class="admin__message">
         <strong>Acceso restringido:</strong> Para administrar la web, es necesario iniciar sesión
         con una cuenta autorizada. Solo los usuarios con permisos de administrador pueden acceder a
         esta sección.
       </p>
       <br />
-      <p>
+      <p class="admin__message">
         Si ya tienes credenciales, por favor inicia sesión para continuar. En caso de no tener una
         cuenta de administrador, solicita acceso al equipo correspondiente.
       </p>
       <br />
-      <p>
+      <p class="admin__message">
         Para proceder con el inicio de sesión, haz clic
-        <RouterLink to="/admin">aquí</RouterLink>.
+        <RouterLink to="/admin" class="admin__link">aquí</RouterLink>.
       </p>
     </div>
-    <div v-else class="layout-authenticated">
+    <div v-else class="admin__authenticated">
       <!-- barra lateral -->
-      <div class="layout-sidebar" :class="{ active: sidebarActive }">
-        <ul class="layout-menu">
-          <li class="layout-menuitem">
-            <a href="#" class="layout-menuitem-link" @click="setActiveSection('home')">
+      <div class="admin__sidebar" :class="{ 'admin__sidebar--active': sidebarActive }">
+        <ul class="admin__menu">
+          <li class="admin__menu-item">
+            <a href="#" class="admin__menu-link" @click="setActiveSection('home')">
               <i class="pi pi-home"></i>
               <span>Home</span>
             </a>
           </li>
-          <li class="layout-menuitem">
-            <a href="#" class="layout-menuitem-link" @click="setActiveSection('users')">
+          <li class="admin__menu-item">
+            <a href="#" class="admin__menu-link" @click="setActiveSection('users')">
               <i class="pi pi-users"></i>
               <span>Users</span>
             </a>
           </li>
-          <li class="layout-menuitem">
-            <a href="#" class="layout-menuitem-link" @click="setActiveSection('recetas')">
+          <li class="admin__menu-item">
+            <a href="#" class="admin__menu-link" @click="setActiveSection('recetas')">
               <i class="pi pi-book"></i>
               <span>Recetas</span>
             </a>
           </li>
-          <li class="layout-menuitem">
-            <a href="#" class="layout-menuitem-link" @click="setActiveSection('review')">
+          <li class="admin__menu-item">
+            <a href="#" class="admin__menu-link" @click="setActiveSection('review')">
               <i class="pi pi-star"></i>
               <span>Review</span>
             </a>
           </li>
-          <li class="layout-menuitem">
+          <li class="admin__menu-item">
             <RouterLink
               to="/recetas/publicar-receta"
-              class="layout-menuitem-link"
+              class="admin__menu-link"
               @click="setActiveSection('/recetas/publicar-receta')"
             >
               <i class="pi pi-pencil"></i>
               <span>Crear Receta</span>
             </RouterLink>
           </li>
-          <li class="layout-menuitem">
-            <a href="#" class="layout-menuitem-link" @click="setActiveSection('register')">
+          <li class="admin__menu-item">
+            <a href="#" class="admin__menu-link" @click="setActiveSection('register')">
               <i class="pi pi-lock"></i>
               <span>Registrar Admin</span>
             </a>
@@ -65,42 +65,42 @@
       </div>
 
       <!-- principal  -->
-      <div class="layout-main" :class="{ 'sidebar-active': sidebarActive }">
-        <div class="layout-content">
-          <div class="dashboard-cards">
-            <div class="card">
-              <div class="card-header">
-                <h3>Users</h3>
-                <div class="card-icon">
+      <div class="admin__main" :class="{ 'admin__main--sidebar-active': sidebarActive }">
+        <div class="admin__content">
+          <div class="admin__dashboard-cards">
+            <div class="admin-card">
+              <div class="admin-card__header">
+                <h3 class="admin-card__title">Users</h3>
+                <div class="admin-card__icon">
                   <i class="pi pi-users"></i>
                 </div>
               </div>
-              <div class="card-value">{{ userData.total }}</div>
+              <div class="admin-card__value">{{ userData.total }}</div>
             </div>
 
-            <div class="card">
-              <div class="card-header">
-                <h3>Recetas</h3>
-                <div class="card-icon recipes">
+            <div class="admin-card">
+              <div class="admin-card__header">
+                <h3 class="admin-card__title">Recetas</h3>
+                <div class="admin-card__icon admin-card__icon--recipes">
                   <i class="pi pi-book"></i>
                 </div>
               </div>
-              <div class="card-value">{{ recipeData.total }}</div>
+              <div class="admin-card__value">{{ recipeData.total }}</div>
             </div>
 
-            <div class="card">
-              <div class="card-header">
-                <h3>Reviews</h3>
-                <div class="card-icon reviews">
+            <div class="admin-card">
+              <div class="admin-card__header">
+                <h3 class="admin-card__title">Reviews</h3>
+                <div class="admin-card__icon admin-card__icon--reviews">
                   <i class="pi pi-star"></i>
                 </div>
               </div>
-              <div class="card-value">{{ reviewData.total }}</div>
+              <div class="admin-card__value">{{ reviewData.total }}</div>
             </div>
           </div>
 
           <!-- Tabla de Recetas -->
-          <div v-if="activeSection === 'recetas'" class="recipe-table-container">
+          <div v-if="activeSection === 'recetas'" class="admin__table-container">
             <DataTable
               v-if="allRecipes.length > 0"
               :value="allRecipes"
@@ -125,7 +125,7 @@
                 <template #body="slotProps">
                   <img
                     :src="slotProps.data.image"
-                    class="recipe-image"
+                    class="admin__recipe-image"
                     :alt="slotProps.data.name"
                   />
                 </template>
@@ -143,11 +143,11 @@
               <Column header="Acciones">
                 <template #body="slotProps">
                   <button
-                    class="btn-delete"
+                    class="button button--delete"
                     @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
                   >
                     <i class="pi pi-trash"></i>
-                    <span class="btn-text">Eliminar</span>
+                    <span class="button__text">Eliminar</span>
                   </button>
                 </template>
               </Column>
@@ -155,7 +155,7 @@
           </div>
 
           <!-- Tabla de Users -->
-          <div v-if="activeSection === 'users'" class="recipe-table-container">
+          <div v-if="activeSection === 'users'" class="admin__table-container">
             <DataTable
               v-if="user.length > 0"
               :value="user"
@@ -181,7 +181,7 @@
           </div>
 
           <!-- Tabla de Reviews -->
-          <div v-if="activeSection === 'review'" class="recipe-table-container">
+          <div v-if="activeSection === 'review'" class="admin__table-container">
             <DataTable
               v-if="allReviews.length > 0"
               :value="allReviews"
@@ -211,11 +211,11 @@
               <Column header="Acciones">
                 <template #body="slotProps">
                   <button
-                    class="btn-delete"
+                    class="button button--delete"
                     @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
                   >
                     <i class="pi pi-trash"></i>
-                    <span class="btn-text">Eliminar</span>
+                    <span class="button__text">Eliminar</span>
                   </button>
                 </template>
               </Column>
@@ -223,88 +223,83 @@
           </div>
         </div>
         <!-- Registro de admin -->
-        <div v-if="activeSection === 'register'" class="section-container">
-          <Form
-            :validation-schema="validationSchema"
-            @submit="handleRegister"
-            class="register__form"
-            v-slot="{ resetForm }"
-          >
+        <div v-if="activeSection === 'register'" class="admin__section-container">
+          <Form :validation-schema="validationSchema" @submit="handleRegister" class="register">
             <div class="register__content">
               <div class="register__inputs">
-                <FloatLabel class="register__card">
+                <FloatLabel class="register__field">
                   <Field name="username" v-slot="{ field }">
                     <InputText
                       v-bind="field"
-                      class="register__card__inputext"
+                      class="register__input"
                       id="username"
                       v-model="registerForm.username"
                     />
                   </Field>
-                  <label class="register__card__label" for="username">Nombre de usuario</label>
+                  <label class="register__label" for="username">Nombre de usuario</label>
                 </FloatLabel>
-                <ErrorMessage name="username" class="register__card__error" />
+                <ErrorMessage name="username" class="register__error" />
 
-                <FloatLabel class="register__card">
+                <FloatLabel class="register__field">
                   <Field v-slot="{ field }" name="email">
                     <InputText
                       v-bind="field"
-                      class="register__card__inputext"
+                      class="register__input"
                       id="email"
                       v-model="registerForm.email"
                     />
                   </Field>
-                  <label class="register__card__label" for="email">Email</label>
+                  <label class="register__label" for="email">Email</label>
                 </FloatLabel>
-                <ErrorMessage name="email" class="register__card__error" />
+                <ErrorMessage name="email" class="register__error" />
 
-                <FloatLabel class="register__card">
+                <FloatLabel class="register__field">
                   <Field v-slot="{ field }" name="password">
                     <InputText
                       v-bind="field"
-                      class="register__card__inputext"
+                      class="register__input"
                       id="password"
                       type="password"
                       v-model="registerForm.password"
                     />
                   </Field>
-                  <label class="register__card__label" for="password">Contraseña</label>
+                  <label class="register__label" for="password">Contraseña</label>
                 </FloatLabel>
-                <ErrorMessage name="password" class="register__card__error" />
+                <ErrorMessage name="password" class="register__error" />
               </div>
               <button class="register__button" type="submit">Enviar</button>
             </div>
           </Form>
         </div>
-        <div v-if="activeSection === 'home'" class="section-container">
-          <h2 class="section-title">Bienvenido al Panel de Administración</h2>
-          <p class="section-message">
+        <div v-if="activeSection === 'home'" class="admin__section-container">
+          <h2 class="admin__section-title">Bienvenido al Panel de Administración</h2>
+          <p class="admin__section-message">
             Este es el centro de control donde puedes administrar la información clave del sistema,
             incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos importantes,
             realizar modificaciones y garantizar que todo funcione correctamente.
           </p>
 
-          <h3 class="section-subtitle">¿Qué puedes hacer desde este panel?</h3>
-          <p class="section-message">
+          <h3 class="admin__section-subtitle">¿Qué puedes hacer desde este panel?</h3>
+          <p class="admin__section-message">
             Desde aquí tienes acceso a diferentes secciones del sistema:
           </p>
-          <ul class="section-list">
-            <li>
+          <ul class="admin__section-list">
+            <li class="admin__section-list-item">
               👥 <strong>Usuarios</strong>: Gestiona la información de los usuarios registrados y
               sus roles.
             </li>
-            <li>
+            <li class="admin__section-list-item">
               📖 <strong>Recetas</strong>: Visualiza, edita y administra todas las recetas
               disponibles en la plataforma.
             </li>
-            <li>
+            <li class="admin__section-list-item">
               ⭐ <strong>Reseñas</strong>: Modera y supervisa las opiniones de los usuarios sobre
               las recetas.
             </li>
           </ul>
 
-          <h3 class="section-subtitle">Recuerda:</h3>
-          <p class="section-message">
+          <h3 class="admin__section-subtitle">Recuerda:</h3>
+          <p class="admin__section-message">
             El correcto uso de este panel es fundamental para mantener la calidad y seguridad del
             sistema. Cualquier modificación debe ser realizada con responsabilidad y pensando
             siempre en la mejor experiencia para los usuarios.
@@ -320,19 +315,19 @@
       :style="{ width: '450px' }"
       :closable="false"
     >
-      <div class="confirmation-content">
-        <i class="pi pi-exclamation-triangle confirmation-icon"></i>
-        <span class="confirmation-message">
+      <div class="confirmation">
+        <i class="pi pi-exclamation-triangle confirmation__icon"></i>
+        <span class="confirmation__message">
           ¿Estás seguro de que deseas eliminar la receta <strong>{{ recipeToDelete.name }}</strong
           >? Esta acción no se puede deshacer.
         </span>
       </div>
       <template #footer>
-        <button class="btn-cancel" @click="cancelDeleteRecipe">
+        <button class="button button--cancel" @click="cancelDeleteRecipe">
           <i class="pi pi-times"></i>
           <span>Cancelar</span>
         </button>
-        <button class="btn-confirm" @click="proceedWithDeleteRecipe">
+        <button class="button button--confirm" @click="proceedWithDeleteRecipe">
           <i class="pi pi-check"></i>
           <span>Confirmar</span>
         </button>
@@ -346,20 +341,20 @@
       :style="{ width: '450px' }"
       :closable="false"
     >
-      <div class="confirmation-content">
-        <i class="pi pi-exclamation-triangle confirmation-icon"></i>
-        <span class="confirmation-message">
+      <div class="confirmation">
+        <i class="pi pi-exclamation-triangle confirmation__icon"></i>
+        <span class="confirmation__message">
           ¿Estás seguro de que deseas eliminar la reseña de la receta
           <strong>{{ reviewToDelete.name }}</strong
           >? Esta acción no se puede deshacer.
         </span>
       </div>
       <template #footer>
-        <button class="btn-cancel" @click="cancelDeleteReview">
+        <button class="button button--cancel" @click="cancelDeleteReview">
           <i class="pi pi-times"></i>
           <span>Cancelar</span>
         </button>
-        <button class="btn-confirm" @click="proceedWithDeleteReview">
+        <button class="button button--confirm" @click="proceedWithDeleteReview">
           <i class="pi pi-check"></i>
           <span>Confirmar</span>
         </button>
@@ -513,7 +508,9 @@ const handleRegister = async () => {
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 
-.layout {
+@use '@/assets/styles/variables' as *;
+
+.admin {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -521,29 +518,34 @@ const handleRegister = async () => {
   position: relative;
   font-family: $body;
 
-  &-notAuth {
+  &__not-auth {
     text-align: center;
     color: $black;
     margin-top: 300px;
     font-size: 14px;
+  }
 
-    a {
-      color: $secondary-orange;
-      font-weight: 600;
+  &__message {
+    color: $black;
+    margin-bottom: 0.5rem;
+  }
 
-      &:hover {
-        text-decoration: underline;
-      }
+  &__link {
+    color: $secondary-orange;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 
-  &-authenticated {
+  &__authenticated {
     display: flex;
     min-height: calc(100vh - 80px);
     position: relative;
   }
 
-  &-sidebar {
+  &__sidebar {
     position: fixed;
     left: 0;
     top: 0;
@@ -555,109 +557,121 @@ const handleRegister = async () => {
     transition: transform 0.3s ease;
     overflow-y: auto;
 
-    .layout-menu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    @media (max-width: 767px) {
+      transform: translateX(-100%);
 
-      .layout-menuitem {
-        margin: 0;
-        padding: 0;
-
-        &-link {
-          display: flex;
-          align-items: center;
-          padding: 0.75rem 1rem;
-          color: $black;
-          text-decoration: none;
-          transition: background-color 0.2s;
-
-          &:hover,
-          &.active {
-            background-color: #ececec;
-          }
-
-          i {
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
-          }
-
-          span {
-            font-weight: 500;
-          }
-        }
+      &--active {
+        transform: translateX(0);
       }
+    }
+
+    @media (min-width: 768px) {
+      transform: translateX(0);
     }
   }
 
-  &-main {
+  &__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__menu-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: $black;
+    text-decoration: none;
+    transition: background-color 0.2s;
+
+    &:hover,
+    &.active {
+      background-color: #ececec;
+    }
+
+    i {
+      margin-right: 0.75rem;
+      font-size: 1.1rem;
+    }
+
+    span {
+      font-weight: 500;
+    }
+  }
+
+  &__main {
     padding: 1rem;
     flex: 1;
     transition: margin-left 0.3s ease;
     margin-left: 250px;
 
-    .layout-content {
-      width: 100%;
+    @media (max-width: 767px) {
+      margin-left: 0;
+
+      &--sidebar-active {
+        margin-left: 250px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      margin-left: 250px;
+      padding: 1.5rem;
+    }
+
+    @media (min-width: 1200px) {
+      padding: 2rem;
     }
   }
-}
 
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  &__content {
+    width: 100%;
+  }
 
-  .card {
+  &__dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 1200px) {
+      margin-bottom: 2rem;
+    }
+  }
+
+  &__table-container {
     background-color: $white;
     border-radius: 6px;
     padding: 1rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
 
-    &-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-
-      h3 {
-        margin: 0;
-        color: $black;
-        font-size: 1rem;
-        font-weight: 600;
-        font-family: $body;
-      }
-
-      .card-icon {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #eeeeee;
-        color: $secondary-orange;
-
-        &.recipes,
-        &.reviews {
-          background-color: #eeeeee;
-          color: $secondary-orange;
-        }
-      }
-    }
-
-    &-value {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: $black;
-      margin-bottom: 0.25rem;
-      font-family: $body;
+    @media (min-width: 1200px) {
+      padding: 1.5rem;
     }
   }
-}
 
-.section {
-  &-container {
+  &__recipe-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  &__section-container {
     background-color: $white;
     border-radius: 6px;
     padding: 1.5rem;
@@ -666,7 +680,7 @@ const handleRegister = async () => {
     max-width: 66.3%;
   }
 
-  &-title {
+  &__section-title {
     font-size: 1.2rem;
     font-weight: 700;
     color: $black;
@@ -674,7 +688,7 @@ const handleRegister = async () => {
     font-family: $body;
   }
 
-  &-message {
+  &__section-message {
     color: $black;
     font-size: 1rem;
     line-height: 1.6;
@@ -682,7 +696,7 @@ const handleRegister = async () => {
     max-width: 1200px;
   }
 
-  &-subtitle {
+  &__section-subtitle {
     font-size: 1rem;
     margin-bottom: 10px;
     font-weight: 600;
@@ -691,45 +705,73 @@ const handleRegister = async () => {
     font-family: $body;
   }
 
-  &-list {
+  &__section-list {
     list-style: none;
     padding: 0;
     max-width: 1200px;
+  }
 
-    li {
-      display: flex;
-      font-size: 1rem;
-      color: $black;
-      padding: 0.5rem 0;
-      gap: 10px;
+  &__section-list-item {
+    display: flex;
+    font-size: 1rem;
+    color: $black;
+    padding: 0.5rem 0;
+    gap: 10px;
 
-      strong {
-        font-weight: 600;
-      }
+    strong {
+      font-weight: 600;
     }
   }
 }
 
-.recipe-table-container {
+.admin-card {
   background-color: $white;
   border-radius: 6px;
   padding: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
-  margin-bottom: 1.5rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    margin: 0;
+    color: $black;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: $body;
+  }
+
+  &__icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eeeeee;
+    color: $secondary-orange;
+
+    &--recipes,
+    &--reviews {
+      background-color: #eeeeee;
+      color: $secondary-orange;
+    }
+  }
+
+  &__value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $black;
+    margin-bottom: 0.25rem;
+    font-family: $body;
+  }
 }
 
-.recipe-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto;
-  transition: transform 0.2s ease-in-out;
-}
-
-%btn-base {
+.button {
   font-family: $body;
   display: flex;
   align-items: center;
@@ -750,11 +792,8 @@ const handleRegister = async () => {
   &:active {
     transform: translateY(0px);
   }
-}
 
-.btn {
-  &-delete {
-    @extend %btn-base;
+  &--delete {
     background: linear-gradient(45deg, #ff5252, #ff7878);
     color: white;
     min-width: 110px;
@@ -769,8 +808,7 @@ const handleRegister = async () => {
     }
   }
 
-  &-cancel {
-    @extend %btn-base;
+  &--cancel {
     background: linear-gradient(45deg, #e0e0e0, #f5f5f5);
     color: #555;
 
@@ -780,8 +818,7 @@ const handleRegister = async () => {
     }
   }
 
-  &-confirm {
-    @extend %btn-base;
+  &--confirm {
     background: linear-gradient(45deg, #4caf50, #8bc34a);
     color: white;
 
@@ -790,140 +827,67 @@ const handleRegister = async () => {
       box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
     }
   }
+
+  &__text {
+    @media (max-width: 767px) {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      display: inline;
+    }
+  }
 }
 
 .confirmation {
-  &-content {
-    font-family: $body;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 1rem;
-  }
+  font-family: $body;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 1rem;
 
-  &-icon {
+  &__icon {
     font-size: 2rem;
     color: #ffa000;
     margin-bottom: 1rem;
-  }
 
-  &-message {
-    font-size: 1rem;
-    color: $black;
-    line-height: 1.5;
-  }
-}
-
-// Media Queries
-@media (max-width: 767px) {
-  .layout-sidebar {
-    transform: translateX(-100%);
-
-    &.active {
-      transform: translateX(0);
-    }
-  }
-
-  .layout-main {
-    margin-left: 0;
-
-    &.sidebar-active {
-      margin-left: 250px;
-    }
-  }
-
-  .btn-text {
-    display: none;
-  }
-
-  .btn {
-    &-delete,
-    &-cancel,
-    &-confirm {
-      padding: 0.5rem;
-      min-width: auto;
-    }
-  }
-
-  .confirmation {
-    &-content {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    &-icon {
-      margin-right: 0;
-      margin-bottom: 1rem;
-    }
-  }
-}
-
-@media (min-width: 768px) {
-  .layout-sidebar {
-    transform: translateX(0);
-  }
-
-  .layout-main {
-    margin-left: 250px;
-    padding: 1.5rem;
-  }
-
-  .dashboard-cards {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .confirmation {
-    &-content {
-      flex-direction: row;
-      text-align: left;
-      padding: 1rem 2rem;
-    }
-
-    &-icon {
+    @media (min-width: 768px) {
       margin-right: 1rem;
       margin-bottom: 0;
     }
   }
 
-  .btn-text {
-    display: inline;
-  }
-}
-
-@media (min-width: 1200px) {
-  .layout-main {
-    padding: 2rem;
+  &__message {
+    font-size: 1rem;
+    color: $black;
+    line-height: 1.5;
   }
 
-  .dashboard-cards {
-    margin-bottom: 2rem;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    text-align: center;
   }
 
-  .recipe-table-container {
-    padding: 1.5rem;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    text-align: left;
+    padding: 1rem 2rem;
   }
-}
-
-::v-deep(.p-datatable-header, .p-datatable-header-cell) {
-  background-color: $white !important;
-  color: $black !important;
-  border-style: none;
 }
 
 .register {
-  &__form {
-    border: 1px solid $secondary-orange;
-    border-radius: 10px;
-    padding: 30px 20px 20px 20px;
-    color: $black;
-    max-width: 280px;
-    box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    margin: 0 auto;
-  }
+  border: 1px solid $secondary-orange;
+  border-radius: 10px;
+  padding: 30px 20px 20px 20px;
+  color: $black;
+  max-width: 280px;
+  box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 
   &__content {
     display: flex;
@@ -936,42 +900,36 @@ const handleRegister = async () => {
     gap: 30px;
   }
 
-  &__form {
-    display: flex;
-    flex-direction: column;
+  &__field {
+    position: relative;
   }
 
-  &__card {
-    &__inputext {
-      background-color: $white;
-      font-size: 12px;
-      font-weight: 400;
-      color: $black;
-      width: 100%;
-      border: 1px solid rgb(153, 153, 153);
-    }
-
-    &__label {
-      font-size: 12px;
-      font-weight: 400;
-    }
-
-    &__error {
-      color: red;
-      font-size: 12px;
-    }
+  &__input {
+    background-color: $white;
+    font-size: 12px;
+    font-weight: 400;
+    color: $black;
+    width: 100%;
+    border: 1px solid rgb(153, 153, 153);
   }
 
-  &__register {
+  &__label {
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  &__error {
+    color: red;
+    font-size: 12px;
+  }
+
+  &__link {
+    color: $secondary-orange;
     font-size: 10px;
     margin-top: 5px;
 
-    a {
-      color: $secondary-orange;
-
-      &:hover {
-        text-decoration: underline;
-      }
+    &:hover {
+      text-decoration: underline;
     }
   }
 
@@ -986,13 +944,28 @@ const handleRegister = async () => {
     margin-top: 10px;
     font-size: 14px;
     text-transform: uppercase;
-    font-family: 600;
+    font-weight: 600;
     cursor: pointer;
 
     &:hover {
       opacity: 0.8;
       transition: ease-in-out 0.2s;
     }
+  }
+}
+
+::v-deep(.p-datatable-header, .p-datatable-header-cell) {
+  background-color: $white !important;
+  color: $black !important;
+  border-style: none;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
