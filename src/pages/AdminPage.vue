@@ -61,20 +61,8 @@
               <span>Cerrar Sesión</span>
             </a>
           </li>
-          <li class="admin__menu-item">
-            <RouterLink
-              to="/registro"
-              class="admin__menu-link"
-              @click="setActiveSection('/registro/admin')"
-            >
-              <i class="pi pi-user"></i>
-              <span>Crear un admin</span>
-            </RouterLink>
-          </li> 
-          
         </ul>
       </div>
-
       <!-- principal  -->
       <div class="admin__main">
         <div class="admin__content">
