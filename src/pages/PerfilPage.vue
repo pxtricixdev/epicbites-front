@@ -1,53 +1,61 @@
 <template>
-  <div class="profile-container" v-if="isAuthenticated">
-    <div class="profile-header">
-      <div class="avatar-container">
-        <img v-if="userProfile.profileImage" :src="userProfile.profileImage" class="avatar" />
-        <div v-else class="avatar-placeholder">
+  <div class="profile" v-if="isAuthenticated">
+    <div class="profile__header">
+      <div class="profile__avatar-container">
+        <img
+          v-if="userProfile.profileImage"
+          :src="userProfile.profileImage"
+          class="profile__avatar"
+        />
+        <div v-else class="profile__avatar-placeholder">
           {{ getInitials(userProfile.name) }}
         </div>
       </div>
-      <div class="user-info">
-        <h1>{{ userProfile.name }}</h1>
-        <div class="stats">
-          <div class="stat">
-            <span class="stat-value">{{ dataFavoriteRecipes.length }} Recetas favoritas</span>
-            <span class="stat-value"> {{ dataRecipeByUser.length }} Recetas publicadas</span>
+      <div class="profile__info">
+        <h1 class="profile__name">{{ userProfile.name }}</h1>
+        <div class="profile__stats">
+          <div class="profile__stat-item">
+            <span class="profile__stat-value"
+              >{{ dataFavoriteRecipes.length }} Recetas favoritas</span
+            >
+            <span class="profile__stat-value"
+              >{{ dataRecipeByUser.length }} Recetas publicadas</span
+            >
           </div>
         </div>
       </div>
     </div>
 
-    <div class="profile-tabs">
+    <div class="profile__tabs">
       <button
         @click="activeTab = 'favorites'"
-        :class="{ active: activeTab === 'favorites' }"
-        class="tab-button"
+        :class="{ 'profile__tab-button--active': activeTab === 'favorites' }"
+        class="profile__tab-button"
       >
         Favoritos
       </button>
       <button
         @click="activeTab = 'myRecipes'"
-        :class="{ active: activeTab === 'myRecipes' }"
-        class="tab-button"
+        :class="{ 'profile__tab-button--active': activeTab === 'myRecipes' }"
+        class="profile__tab-button"
       >
         Mis Recetas
       </button>
     </div>
 
-    <div class="tab-content">
-      <div v-if="activeTab === 'favorites'" class="favorites-tab">
-        <div v-if="loadingFavoriteRecipes" class="loading">
-          <div class="spinner"></div>
+    <div class="profile__tab-content">
+      <div v-if="activeTab === 'favorites'" class="profile__favorites">
+        <div v-if="loadingFavoriteRecipes" class="profile__loading">
+          <div class="profile__spinner"></div>
           <span>Cargando recetas favoritas...</span>
         </div>
-        <div v-else-if="dataFavoriteRecipes.length === 0" class="empty-state">
-          <p>Aún no tienes recetas favoritas</p>
-          <button @click="goToExplore" class="primary-button">Explorar recetas</button>
+        <div v-else-if="dataFavoriteRecipes.length === 0" class="profile__empty-state">
+          <p class="profile__empty-text">Aún no tienes recetas favoritas</p>
+          <button @click="goToExplore" class="button button--primary">Explorar recetas</button>
         </div>
-        <div v-else class="recipes-grid">
-          <div v-for="recipe in dataFavoriteRecipes" :key="recipe.id" class="card-wrapper">
-            <div class="card-with-actions card-clickable">
+        <div v-else class="profile__recipes-grid">
+          <div v-for="recipe in dataFavoriteRecipes" :key="recipe.id" class="profile__card-wrapper">
+            <div class="profile__card profile__card--with-actions profile__card--clickable">
               <CardRecipePerfil
                 :time="recipe.time"
                 :title="recipe.name"
@@ -57,34 +65,34 @@
               />
               <button
                 @click="confirmDeleteFavorite(recipe.favoriteId)"
-                class="remove-favorite-button"
+                class="profile__remove-button"
               >
-                <span class="close-icon">×</span>
+                <span class="profile__close-icon">×</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-if="activeTab === 'myRecipes'" class="myRecipe-tab">
-        <div class="action-buttons">
-          <button @click="goToCreate" class="primary-button create-recipe-button">
-            <span class="plus-icon">+</span> Crear nueva receta
+      <div v-if="activeTab === 'myRecipes'" class="profile__my-recipes">
+        <div class="profile__action-buttons">
+          <button @click="goToCreate" class="button button--primary button--create">
+            <span class="button__icon button__icon--plus">+</span> Crear nueva receta
           </button>
         </div>
 
-        <div v-if="loadingFavoriteRecipes" class="loading">
-          <div class="spinner"></div>
+        <div v-if="loadingFavoriteRecipes" class="profile__loading">
+          <div class="profile__spinner"></div>
           <span>Cargando mis recetas...</span>
         </div>
-        <div v-else-if="dataRecipeByUser.length === 0" class="empty-state">
-          <p>Aún no tienes recetas creadas</p>
-          <p>!!Crea una nueva!!</p>
+        <div v-else-if="dataRecipeByUser.length === 0" class="profile__empty-state">
+          <p class="profile__empty-text">Aún no tienes recetas creadas</p>
+          <p class="profile__empty-text">!!Crea una nueva!!</p>
         </div>
-        <div v-else class="recipes-grid">
-          <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="card-wrapper">
-            <div class="card-with-actions">
-              <div class="card-clickable">
+        <div v-else class="profile__recipes-grid">
+          <div v-for="recipe in dataRecipeByUser" :key="recipe.id" class="profile__card-wrapper">
+            <div class="profile__card profile__card--with-actions">
+              <div class="profile__card profile__card--clickable">
                 <CardRecipePerfil
                   :time="recipe.time"
                   :title="recipe.name"
@@ -92,8 +100,8 @@
                   :alt="`Imagen de la receta ${recipe.name}`"
                   :link="`/receta/${recipe.id}`"
                 />
-                <button @click.stop="confirmDeleteRecipe(recipe.id)" class="remove-favorite-button">
-                  <span class="close-icon">×</span>
+                <button @click.stop="confirmDeleteRecipe(recipe.id)" class="profile__remove-button">
+                  <span class="profile__close-icon">×</span>
                 </button>
               </div>
             </div>
@@ -103,31 +111,37 @@
     </div>
 
     <!--confirmación para eliminar favorito -->
-    <div v-if="showConfirmModal && modalType === 'favorite'" class="modal-overlay">
-      <div class="modal-container confirm-modal">
-        <div class="modal-header">
-          <h2>Eliminar de favoritos</h2>
-          <button @click="closeModal" class="close-button">×</button>
+    <div v-if="showConfirmModal && modalType === 'favorite'" class="modal">
+      <div class="modal__container modal__container--confirm">
+        <div class="modal__header">
+          <h2 class="modal__title">Eliminar de favoritos</h2>
+          <button @click="closeModal" class="modal__close-button">×</button>
         </div>
-        <p>¿Estás seguro de que quieres eliminar esta receta de tus favoritos?</p>
-        <div class="modal-actions">
-          <button @click="closeModal" class="secondary-button">Cancelar</button>
-          <button @click="executeDeleteFavorite" class="primary-button danger">Eliminar</button>
+        <p class="modal__text">
+          ¿Estás seguro de que quieres eliminar esta receta de tus favoritos?
+        </p>
+        <div class="modal__actions">
+          <button @click="closeModal" class="button button--secondary">Cancelar</button>
+          <button @click="executeDeleteFavorite" class="button button--primary button--danger">
+            Eliminar
+          </button>
         </div>
       </div>
     </div>
 
     <!--confirmación para eliminar receta -->
-    <div v-if="showConfirmModal && modalType === 'recipe'" class="modal-overlay">
-      <div class="modal-container confirm-modal">
-        <div class="modal-header">
-          <h2>Eliminar Receta</h2>
-          <button @click="closeModal" class="close-button">×</button>
+    <div v-if="showConfirmModal && modalType === 'recipe'" class="modal">
+      <div class="modal__container modal__container--confirm">
+        <div class="modal__header">
+          <h2 class="modal__title">Eliminar Receta</h2>
+          <button @click="closeModal" class="modal__close-button">×</button>
         </div>
-        <p>¿Estás seguro de que quieres eliminar esta receta?</p>
-        <div class="modal-actions">
-          <button @click="closeModal" class="secondary-button">Cancelar</button>
-          <button @click="executeDeleteRecipe" class="primary-button danger">Eliminar</button>
+        <p class="modal__text">¿Estás seguro de que quieres eliminar esta receta?</p>
+        <div class="modal__actions">
+          <button @click="closeModal" class="button button--secondary">Cancelar</button>
+          <button @click="executeDeleteRecipe" class="button button--primary button--danger">
+            Eliminar
+          </button>
         </div>
       </div>
     </div>
@@ -149,13 +163,8 @@ const router = useRouter()
 
 const { dataRecipeByUser, fetchRecipeByUser, deleteRecipe } = recipeStore
 
-const {
-  dataFavoriteRecipes,
-  loadingFavoriteRecipes,
-  error,
-  fetchFavoriteRecipes,
-  deleteFavoriteById,
-} = favoriteStore
+const { dataFavoriteRecipes, loadingFavoriteRecipes, fetchFavoriteRecipes, deleteFavoriteById } =
+  favoriteStore
 
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
@@ -258,76 +267,96 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 
-.profile-container {
+.profile {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   font-family: $body;
-}
 
-.profile-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-  gap: 2rem;
+  &__header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 2rem;
 
-  .avatar-container {
-    flex-shrink: 0;
-
-    .avatar,
-    .avatar-placeholder {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .avatar-placeholder {
-      background-color: $primary-yellow;
-      color: $black;
-      display: flex;
+    @media (max-width: 768px) {
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      font-weight: bold;
-      font-family: $body;
+      text-align: center;
+      gap: 1rem;
     }
   }
 
-  .user-info {
+  &__avatar-container {
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  &__avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: $primary-yellow;
+    color: $black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: $body;
+  }
+
+  &__info {
     flex-grow: 1;
 
-    h1 {
-      margin: 0 0 0.5rem;
-      font-size: 1.8rem;
-      font-family: $body;
-      color: $black;
-    }
-
-    .stats {
-      display: flex;
-      gap: 2rem;
-
-      .stat {
-        display: flex;
-        flex-direction: column;
-
-        .stat-value {
-          font-weight: 600;
-          font-size: 1rem;
-          color: $black;
-        }
+    @media (max-width: 768px) {
+      .stats {
+        justify-content: center;
       }
     }
   }
-}
 
-.profile-tabs {
-  display: flex;
-  border-bottom: 1px solid $light-grey;
-  margin-bottom: 2rem;
+  &__name {
+    margin: 0 0 0.5rem;
+    font-size: 1.8rem;
+    font-family: $body;
+    color: $black;
+  }
 
-  .tab-button {
+  &__stats {
+    display: flex;
+    gap: 2rem;
+  }
+
+  &__stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__stat-value {
+    font-weight: 600;
+    font-size: 1rem;
+    color: $black;
+  }
+
+  &__tabs {
+    display: flex;
+    border-bottom: 1px solid $light-grey;
+    margin-bottom: 2rem;
+
+    @media (max-width: 480px) {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+
+  &__tab-button {
     padding: 1rem 1.5rem;
     background: none;
     border: none;
@@ -342,93 +371,86 @@ onMounted(async () => {
       color: #606060;
     }
 
-    &.active {
+    &--active {
       color: #3c3c3c;
       border-bottom-color: $primary-yellow;
     }
-  }
-}
 
-.action-buttons {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 5px;
-
-  .create-recipe-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    .plus-icon {
-      font-size: 1.2rem;
-      font-weight: bold;
+    @media (max-width: 480px) {
+      padding: 0.75rem 1rem;
     }
   }
-}
 
-.tab-content {
-  min-height: 300px;
+  &__tab-content {
+    min-height: 300px;
+  }
 
-  .loading {
+  &__action-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 5px;
+  }
+
+  &__loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 3rem;
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(#3c3c3c, 0.3);
-      border-radius: 50%;
-      border-top-color: $black;
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 1rem;
-    }
   }
 
-  .error-message {
-    background-color: rgba(red, 0.1);
-    color: red;
-    padding: 1rem;
-    border-radius: 4px;
-    text-align: center;
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(#3c3c3c, 0.3);
+    border-radius: 50%;
+    border-top-color: $black;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
   }
 
-  .empty-state {
+  &__empty-state {
     text-align: center;
     padding: 3rem;
-
-    p {
-      margin-bottom: 1rem;
-      color: $black;
-    }
-  }
-}
-
-.recipes-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-
-  .card-wrapper {
-    position: relative;
   }
 
-  .card-with-actions {
-    position: relative;
+  &__empty-text {
+    margin-bottom: 1rem;
+    color: $black;
   }
 
-  .card-clickable {
-    cursor: pointer;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: translateY(-5px);
+  &__recipes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+      justify-content: center;
     }
   }
 
-  .remove-favorite-button {
+  &__card-wrapper {
+    position: relative;
+  }
+
+  &__card {
+    position: relative;
+
+    &--with-actions {
+      position: relative;
+    }
+
+    &--clickable {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+    }
+  }
+
+  &__remove-button {
     position: absolute;
     top: 15px;
     right: 5px;
@@ -445,19 +467,71 @@ onMounted(async () => {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 2;
 
-    .close-icon {
-      font-size: 18px;
-      line-height: 1;
-      font-weight: bold;
+    &:hover {
+      background-color: darken($secondary-orange, 10%);
     }
+  }
+
+  &__close-icon {
+    font-size: 18px;
+    line-height: 1;
+    font-weight: bold;
+  }
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: $body;
+
+  &--primary {
+    background-color: $primary-yellow;
+    color: $black;
+    border: none;
 
     &:hover {
-      background-color: $secondary-orange, 10%;
+      background-color: darken($primary-yellow, 10%);
+    }
+  }
+
+  &--secondary {
+    background-color: $white;
+    color: $black;
+    border: 1px solid $light-grey;
+
+    &:hover {
+      background-color: $light-grey;
+    }
+  }
+
+  &--danger {
+    background-color: red;
+    color: $white;
+
+    &:hover {
+      background-color: darken(red, 10%);
+    }
+  }
+
+  &--create {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+
+  &__icon {
+    &--plus {
+      font-size: 1.2rem;
+      font-weight: bold;
     }
   }
 }
 
-.modal-overlay {
+.modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -469,7 +543,7 @@ onMounted(async () => {
   justify-content: center;
   z-index: 100;
 
-  .modal-container {
+  &__container {
     background-color: $white;
     border-radius: 8px;
     width: 90%;
@@ -477,85 +551,49 @@ onMounted(async () => {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
 
-    &.confirm-modal {
+    &--confirm {
       max-width: 400px;
       padding: 1.5rem;
     }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid $light-grey;
-
-      h2 {
-        margin: 0;
-        font-size: 1.3rem;
-        font-family: $heading;
-        color: $black;
-      }
-
-      .close-button {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: $black;
-
-        &:hover {
-          color: $secondary-orange;
-        }
-      }
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      padding: 0 1.5rem 1.5rem;
-    }
-  }
-}
-
-.primary-button {
-  padding: 0.5rem 1rem;
-  background-color: $primary-yellow;
-  color: $black;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  font-family: $body;
-
-  &:hover {
-    background-color: darken($primary-yellow, 10%);
   }
 
-  &.danger {
-    background-color: red;
-    color: $white;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $light-grey;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-family: $heading;
+    color: $black;
+  }
+
+  &__close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: $black;
 
     &:hover {
-      background-color: darken(red, 10%);
+      color: $secondary-orange;
     }
   }
-}
 
-.secondary-button {
-  padding: 0.75rem 1.5rem;
-  background-color: $white;
-  color: $black;
-  border: 1px solid $light-grey;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  font-family: $body;
+  &__text {
+    color: $black;
+    margin: 1rem 0;
+  }
 
-  &:hover {
-    background-color: $light-grey;
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 0 1.5rem 1.5rem;
   }
 }
 
@@ -565,32 +603,6 @@ onMounted(async () => {
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 768px) {
-  .profile-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1rem;
-
-    .user-info {
-      .stats {
-        justify-content: center;
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .profile-tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-
-    .tab-button {
-      padding: 0.75rem 1rem;
-    }
   }
 }
 </style>
