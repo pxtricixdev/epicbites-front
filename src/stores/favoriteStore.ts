@@ -2,14 +2,15 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { authStore } from '@/stores/authStore'
 import type { IGetFavoriteRecipes } from './interfaces/IGetFavoriteRecipes'
-
+import type { IPostFavorite } from './interfaces/IPostFavorite'
 
 export const useFavoriteStore = defineStore('favorites', () => {
   const dataFavoriteRecipes = ref<IGetFavoriteRecipes[]>([])
-  const deleteFavoriteRecipes = ref<any | null>(null);
+  const deleteFavoriteRecipes = ref<any | null>(null)
 
-  const loadingDelete = ref(false);
+  const loadingDelete = ref(false)
   const loadingFavoriteRecipes = ref(false)
+  const loadingCreate = ref(false)
 
   const auth = authStore()
 
@@ -36,7 +37,7 @@ export const useFavoriteStore = defineStore('favorites', () => {
       })
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}`) 
+        throw new Error(`Error ${response.status}`)
       }
 
       dataFavoriteRecipes.value = await response.json()
@@ -48,40 +49,79 @@ export const useFavoriteStore = defineStore('favorites', () => {
   }
 
   const deleteFavoriteById = async (id: number) => {
-    loadingDelete.value = true;
-    error.value = null;
-    deleteFavoriteRecipes.value = null;
+    loadingDelete.value = true
+    error.value = null
+    deleteFavoriteRecipes.value = null
 
     try {
       const response = await fetch(`https://localhost:7129/api/favoritos/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
+          accept: 'application/json',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${auth.token}`,
         },
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}`);
+        throw new Error(`Error ${response.status}`)
       }
 
-      deleteFavoriteRecipes.value = await response.json();
-
+      deleteFavoriteRecipes.value = await response.json()
     } catch (err: any) {
-      error.value = err.message;
+      error.value = err.message
     } finally {
-      loadingDelete.value = false;
+      loadingDelete.value = false
     }
-  };
+  }
+
+  const createFavorite = async (dataFavorite: IPostFavorite) => {
+    loadingCreate.value = true
+    error.value = null
+
+    try {
+      const requestBody = {
+        date: dataFavorite.date,
+        userId: dataFavorite.userId,
+        recipeId: dataFavorite.recipeId,
+      }
+      const response = await fetch('https://localhost:7129/api/favoritos', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.message || `Error ${response.status}`)
+      }
+
+      const newFavorite = await response.json()
+
+      if (dataFavoriteRecipes.value.length > 0) {
+        dataFavoriteRecipes.value.push(newFavorite)
+      }
+
+      return newFavorite
+    } catch (err: any) {
+      error.value = err.message
+      throw err
+    } finally {
+      loadingCreate.value = false
+    }
+  }
 
   return {
     dataFavoriteRecipes,
     loadingFavoriteRecipes,
     deleteFavoriteRecipes,
-    error,  
-   
+    error,
+
     fetchFavoriteRecipes,
-    deleteFavoriteById
+    deleteFavoriteById,
+    createFavorite,
   }
 })

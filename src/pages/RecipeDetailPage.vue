@@ -22,6 +22,9 @@
                 <span class="recipe-page__time">⏳ {{ recipeDetail.time }} min</span>
                 <span class="recipe-page__calories">🔥 {{ recipeDetail.calories }} kcal</span>
               </div>
+              <div class="recipe-page__favorite" v-if="isAuthenticated">
+                <button @click="handlePostFavorite">Favoritos ❤️</button>
+              </div>
             </div>
             <div class="recipe-page__ingredients">
               <h2>🛒 <span>Ingredientes</span></h2>
@@ -121,6 +124,9 @@ import { authStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import type { IPostReview } from '@/stores/interfaces/IPostReview'
+import { useFavoriteStore } from '@/stores/favoriteStore'
+import type { IPostFavorite } from '@/stores/interfaces/IPostFavorite'
+
 const route = useRoute()
 
 const recipeStore = useRecipeStore()
@@ -130,6 +136,9 @@ const { fetchRecipeDetail } = recipeStore
 const reviewStore = useReviewStore()
 const { reviewsByRecipe, loadingReviewsByRecipe } = storeToRefs(reviewStore)
 const { fetchReviewsByRecipe, clearReviewsByRecipe, createReview } = reviewStore
+
+const favoriteStore = useFavoriteStore()
+const { createFavorite } = favoriteStore
 
 const auth = authStore()
 const { isAuthenticated } = auth
@@ -200,6 +209,28 @@ const handlePost = async (e: Event) => {
     await fetchReviewsByRecipe(reviewData.recipeId)
   } catch (error) {
     console.error('Error al crear la reseña:', error)
+  }
+}
+
+const favoriteForm = reactive({
+  date: new Date().toISOString(),
+  userId: auth.userId,
+  recipeId: Number(Array.isArray(route.params.id) ? route.params.id[0] : route.params.id),
+})
+
+const handlePostFavorite = async (e: Event) => {
+  e.preventDefault()
+
+  const reviewFavorite = {
+    date: favoriteForm.date,
+    userId: favoriteForm.userId,
+    recipeId: favoriteForm.recipeId,
+  }
+
+  try {
+    await createFavorite(reviewFavorite as IPostFavorite)
+  } catch (error) {
+    console.error('Error al añadir a favoritos', error)
   }
 }
 </script>
@@ -285,6 +316,27 @@ const handlePost = async (e: Event) => {
     border-radius: 8px;
     font-weight: bold;
     font-size: 16px;
+  }
+
+  &__favorite {
+    button {
+      border: 1px solid #ff2c2c;
+      background-color: transparent;
+      padding: 6px 10px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.1s ease-in-out;
+      color: #ff2c2c;
+
+      &:hover {
+        background-color: #fff1f1;
+      }
+    }
   }
 
   &__ingredients {
