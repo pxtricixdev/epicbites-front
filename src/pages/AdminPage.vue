@@ -63,7 +63,7 @@
           </li>
           <li class="admin__menu-item">
             <RouterLink to="/" class="admin__menu-link" @click="logout">
-              <i class="pi pi-user-minus"></i>
+              <i class="pi pi-sign-out"></i>
               <span>Cerrar sesión</span>
             </RouterLink>
           </li>
