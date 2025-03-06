@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import type { ILogin } from '@/stores/interfaces/ILogin'
 import type { IAuthResponse } from '@/stores/interfaces/IAuthResponse'
 import type { IRegister } from './interfaces/IRegister'
+import { useRecipeStore } from '@/stores/recipeStore'
+import { useFavoriteStore } from '@/stores/favoriteStore'
 
 export const authStore = defineStore('auth', () => {
   const dataLogin = ref<ILogin>({ email: '', password: '' })
@@ -71,6 +73,11 @@ export const authStore = defineStore('auth', () => {
     userId.value = null
     userRole.value = null
     username.value = null
+
+    const favoriteStore = useFavoriteStore()
+    const recipeStore = useRecipeStore()
+    favoriteStore.resetUserFavorites()
+    recipeStore.resetRecipesMadeByUser()
   }
 
   const register = async (registerData: IRegister) => {

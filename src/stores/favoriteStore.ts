@@ -114,6 +114,11 @@ export const useFavoriteStore = defineStore('favorites', () => {
     }
   }
 
+  const resetUserFavorites = () => {
+    dataFavoriteRecipes.value = []
+    loadingFavoriteRecipes.value = false
+  }
+
   return {
     dataFavoriteRecipes,
     loadingFavoriteRecipes,
@@ -123,5 +128,6 @@ export const useFavoriteStore = defineStore('favorites', () => {
     fetchFavoriteRecipes,
     deleteFavoriteById,
     createFavorite,
+    resetUserFavorites,
   }
 })

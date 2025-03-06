@@ -117,7 +117,6 @@ export const useRecipeStore = defineStore('recipes', () => {
       }
 
       allRecipes.value = allRecipes.value.filter((recipe) => recipe.id !== id)
-      
     } catch (err: any) {
       error.value = err.message
       throw err
@@ -191,7 +190,12 @@ export const useRecipeStore = defineStore('recipes', () => {
       loadingRecipeByUser.value = false
     }
   }
-  
+
+  const resetRecipesMadeByUser = () => {
+    dataRecipeByUser.value = []
+    loadingRecipeByUser.value = false
+  }
+
   return {
     allRecipes,
     recipeDetail,
@@ -210,6 +214,7 @@ export const useRecipeStore = defineStore('recipes', () => {
     fetchMostRatedRecipes,
     deleteRecipe,
     createRecipe,
-    fetchRecipeByUser
+    fetchRecipeByUser,
+    resetRecipesMadeByUser,
   }
 })
