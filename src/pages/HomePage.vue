@@ -23,7 +23,7 @@
           title="Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
           :link="`/receta/${randomRecipe}`"
-          image="/images/coockingsection2.jpg"
+          image="/images/coockingsection2.webp"
           backgroundColor="#000"
           textColor="#fff"
         />
@@ -33,7 +33,7 @@
           title="Explora sabores increíbles"
           subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
           :link="`/receta/${randomRecipe}`"
-          image="/images/coockingsection1.jpg"
+          image="/images/coockingsection1.webp"
           backgroundColor="#E7E34F"
           textColor="#000"
         />
