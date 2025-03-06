@@ -32,7 +32,7 @@ defineProps<{
 
 .card {
   font-family: $body;
-  height: 270px;
+  height: 300px;
   width: 190px;
   display: flex;
   flex-direction: column;

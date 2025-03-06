@@ -72,7 +72,6 @@ const responsiveOptions = ref([
   }
 }
 ::v-deep(.p-carousel-indicator-list) {
-  margin-top: 15px;
   opacity: 0.6;
 }
 </style>
