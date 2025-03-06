@@ -22,6 +22,7 @@
                 <span class="recipe-page__time">⏳ {{ recipeDetail.time }} min</span>
                 <span class="recipe-page__calories">🔥 {{ recipeDetail.calories }} kcal</span>
               </div>
+              <Toaster richColors />
               <div class="recipe-page__favorite" v-if="isAuthenticated">
                 <button @click="handlePostFavorite">Favoritos ❤️</button>
               </div>
@@ -126,6 +127,7 @@ import { useRoute } from 'vue-router'
 import type { IPostReview } from '@/stores/interfaces/IPostReview'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import type { IPostFavorite } from '@/stores/interfaces/IPostFavorite'
+import { Toaster, toast } from 'vue-sonner'
 
 const route = useRoute()
 
@@ -229,6 +231,7 @@ const handlePostFavorite = async (e: Event) => {
 
   try {
     await createFavorite(reviewFavorite as IPostFavorite)
+    toast.success('Receta añadida a favoritos')
   } catch (error) {
     console.error('Error al añadir a favoritos', error)
   }
