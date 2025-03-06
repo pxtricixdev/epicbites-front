@@ -38,7 +38,7 @@ defineProps<{
   }
 
   &__left {
-    background-image: url('/images/pexels-jonathanborba-2878745.jpg'),
+    background-image: url('/images/pexels-jonathanborba-2878745.webp'),
       linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5));
     background-blend-mode: darken;
     background-position: center;
