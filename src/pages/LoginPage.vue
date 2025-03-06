@@ -95,6 +95,7 @@ const handleLogin = async () => {
     max-width: 280px;
     margin: 10px auto;
     text-align: center;
+    margin-top: 30px;
 
     &__title {
       font-weight: 600;
