@@ -29,6 +29,7 @@
                 id="name"
                 type="text"
                 v-model="recipeForm.name"
+                required
               />
             </div>
 
@@ -40,12 +41,13 @@
                 type="text"
                 v-model="recipeForm.description"
                 placeholder="Un arroz cremoso con un toque de mar, fácil y delicioso"
+                required
               />
             </div>
 
             <div class="post-recipe__meal-section">
               <label for="meal">Selecciona el momento del día:</label>
-              <select id="meal" v-model="recipeForm.meal">
+              <select required id="meal" v-model="recipeForm.meal">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Desayuno">Desayuno</option>
                 <option value="Almuerzo">Almuerzo</option>
@@ -57,7 +59,7 @@
 
             <div class="post-recipe__diet-section">
               <label for="diet">¿Qué tipo de dieta sigue esta receta?</label>
-              <select id="diet" v-model="recipeForm.diet">
+              <select required id="diet" v-model="recipeForm.diet">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Vegetariana">Vegetariana</option>
                 <option value="Vegana">Vegana</option>
@@ -71,7 +73,7 @@
 
             <div class="post-recipe__flavour-section">
               <label for="flavour">¿Cuál es el sabor predominante?</label>
-              <select id="flavour" v-model="recipeForm.flavour">
+              <select required id="flavour" v-model="recipeForm.flavour">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Dulce">Dulce</option>
                 <option value="Salado">Salado</option>
@@ -88,17 +90,24 @@
                 id="calories"
                 type="text"
                 v-model="recipeForm.calories"
+                required
               />
             </div>
 
             <div class="post-recipe__time-section">
               <label for="time">Tiempo total de preparación (en minutos):</label>
-              <input placeholder="Ej: 20" id="time" type="text" v-model="recipeForm.time" />
+              <input
+                required
+                placeholder="Ej: 20"
+                id="time"
+                type="text"
+                v-model="recipeForm.time"
+              />
             </div>
 
             <div class="post-recipe__title-section">
               <label for="difficulty">Dificultad de la receta:</label>
-              <select id="difficulty" v-model="recipeForm.difficulty">
+              <select required id="difficulty" v-model="recipeForm.difficulty">
                 <option value="" disabled selected>-- Elige una opción --</option>
                 <option value="Facil">Fácil</option>
                 <option value="Media">Media</option>
@@ -108,12 +117,12 @@
 
             <div class="post-recipe__image-section">
               <label for="image">Sube una imagen de tu receta:</label>
-              <input type="file" @change="handleFileUpload" accept="image/*" />
+              <input required type="file" @change="handleFileUpload" accept="image/*" />
             </div>
 
             <div class="post-recipe__steps-section">
               <label for="steps">Instrucciones paso a paso:</label>
-              <Editor v-model="recipeForm.steps" editorStyle="height: 320px" />
+              <Editor aria-required="true" v-model="recipeForm.steps" editorStyle="height: 320px" />
             </div>
           </div>
 
@@ -126,6 +135,7 @@
                 class="post-recipe__ingredients-section__item"
               >
                 <input
+                  required
                   type="text"
                   v-model="ingredient.ingredientName"
                   placeholder="Nombre del ingrediente"
@@ -134,6 +144,7 @@
                   <div class="post-recipe__ingredients-section__quantity">
                     <label for="quantity">Cantidad: </label>
                     <input
+                      required
                       id="quantity"
                       type="number"
                       v-model.number="ingredient.quantity"
@@ -143,7 +154,7 @@
 
                   <div class="post-recipe__ingredients-section__unit">
                     <label for="unit">Unidad de medida</label>
-                    <select id="unit" v-model="ingredient.unit">
+                    <select required id="unit" v-model="ingredient.unit">
                       <option value="" disabled selected>-- Elige una opción --</option>
                       <option value="g">g</option>
                       <option value="ml">ml</option>
