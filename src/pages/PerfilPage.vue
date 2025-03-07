@@ -237,20 +237,46 @@ const confirmDeleteRecipe = (recipeId: number) => {
 
 const executeDeleteRecipe = async () => {
   if (recipeToDelete.value) {
-    await deleteRecipe(recipeToDelete.value)
+    try {
+      await deleteRecipe(recipeToDelete.value)
+
+      const index = dataRecipeByUser.findIndex((recipe) => recipe.id === recipeToDelete.value)
+      if (index !== -1) {
+        dataRecipeByUser.splice(index, 1)
+      }
+
+      console.log('Receta eliminada correctamente')
+    } catch (error) {
+      console.error('Error al eliminar la receta:', error)
+    } finally {
+      showConfirmModal.value = false
+      recipeToDelete.value = null
+    }
   }
-  showConfirmModal.value = false
-  recipeToDelete.value = null
 }
 
 const executeDeleteFavorite = async () => {
   if (favoriteToDelete.value) {
-    await deleteFavoriteById(favoriteToDelete.value)
-  }
+    try {
+      await deleteFavoriteById(favoriteToDelete.value)
 
-  showConfirmModal.value = false
-  favoriteToDelete.value = null
+      const index = dataFavoriteRecipes.findIndex(
+        (recipe) => recipe.favoriteId === favoriteToDelete.value,
+      )
+      if (index !== -1) {
+        dataFavoriteRecipes.splice(index, 1)
+      }
+
+      console.log('Favorito eliminado correctamente')
+    } catch (error) {
+      console.error('Error al eliminar el favorito:', error)
+    } finally {
+      showConfirmModal.value = false
+      favoriteToDelete.value = null
+    }
+  }
 }
+
 
 onMounted(async () => {
   if (!auth.isAuthenticated) {
