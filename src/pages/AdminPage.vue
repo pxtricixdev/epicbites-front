@@ -230,6 +230,7 @@
         </div>
         <!-- Registro de admin -->
         <div v-if="activeSection === 'register'" class="admin__section-container">
+          <p>Rellena el formulario para registrar un administrador</p>
           <Form :validation-schema="validationSchema" @submit="handleRegister" class="register">
             <div class="register__content">
               <div class="register__inputs">
@@ -685,6 +686,15 @@ const handleRegister = async () => {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-top: 2rem;
     max-width: 66.3%;
+    color: $black;
+    text-align: center;
+
+    p {
+      padding-bottom: 10px;
+      font-size: 16px;
+      width: 65%;
+      margin: 0 auto;
+    }
   }
 
   &__section-title {
