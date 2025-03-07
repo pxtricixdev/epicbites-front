@@ -117,7 +117,7 @@
 
             <div class="post-recipe__image-section">
               <label for="image">Sube una imagen de tu receta:</label>
-              <input required type="file" @change="handleFileUpload" accept="image/*" />
+              <input required type="file" @change="handleImageFile" accept="image/*" />
             </div>
 
             <div class="post-recipe__steps-section">
@@ -213,6 +213,8 @@ const userId = ref<number | null>(
   localStorage.getItem('userId') ? parseInt(localStorage.getItem('userId')!) : null,
 )
 
+const imageFile = ref(null)
+
 const recipeForm = reactive({
   name: '',
   description: '',
@@ -222,7 +224,7 @@ const recipeForm = reactive({
   calories: 0,
   time: 0,
   difficulty: 'Facil',
-  image: '',
+  image: imageFile,
   steps: '',
   userId: userId,
   ingredients: [] as IIngredients[],
@@ -243,15 +245,11 @@ const removeIngredient = (index: number) => {
   }
 }
 
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
+const handleImageFile = (event: Event) => {
+  const target = event.target
   const file = target.files ? target.files[0] : null
   if (file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      recipeForm.image = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
+    imageFile.value = file
   }
 }
 
@@ -266,7 +264,7 @@ const handlePost = async () => {
   }
 
   try {
-    await createRecipe(recipeForm as IPostRecipe)
+    await createRecipe(recipeForm as IPostRecipe, imageFile.value)
     toast.success('Receta añadida con éxito')
     setTimeout(() => {
       router.push('/recetas')

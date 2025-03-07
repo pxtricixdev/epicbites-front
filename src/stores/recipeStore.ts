@@ -125,18 +125,25 @@ export const useRecipeStore = defineStore('recipes', () => {
     }
   }
 
-  const createRecipe = async (recipeData: IPostRecipe) => {
+  const createRecipe = async (recipeData: IPostRecipe, imageFile: File) => {
     loadingCreate.value = true
     error.value = null
 
     try {
+      const formData = new FormData()
+
+      if (imageFile) {
+        formData.append('image', imageFile)
+      }
+
+      formData.append('recipeData', JSON.stringify(recipeData))
+
       const response = await fetch('https://localhost:7129/api/recetas', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(recipeData),
+        body: formData,
       })
 
       if (!response.ok) {
