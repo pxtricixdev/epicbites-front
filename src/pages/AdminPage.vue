@@ -71,6 +71,7 @@
       </div>
 
       <!-- principal  -->
+      <Toaster richColors position="bottom-right" />
       <div class="admin__main" :class="{ 'admin__main--sidebar-active': sidebarActive }">
         <div class="admin__content">
           <div class="admin__dashboard-cards">
@@ -382,13 +383,16 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
-
+import { Toaster, toast } from 'vue-sonner'
+import { useRouter } from 'vue-router'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
 import { useGetAllUsers } from '@/composables/useGetAllUsers'
 import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { storeToRefs } from 'pinia'
+
+const router = useRouter()
 
 const { isAuthenticated, userRole, logout } = authStore()
 const userData = ref({ total: 0 })
@@ -505,7 +509,12 @@ const registerForm = reactive({
 })
 
 const handleRegister = async () => {
-  await register(registerForm)
+  try {
+    await register(registerForm)
+    toast.success('Admin registrado con éxito')
+  } catch {
+    toast.error('No se ha podido registrar el usuario')
+  }
   clearRegisterData()
   registerForm.username = ''
   registerForm.password = ''
