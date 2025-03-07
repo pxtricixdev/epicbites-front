@@ -169,7 +169,7 @@
             </div>
           </div>
         </div>
-
+        <Toaster richColors />
         <div class="post-recipe__add-recipe__button">
           <button class="post-recipe__add-recipe" type="submit">
             Crear receta <UtensilsCrossedIcon :size="16" />
@@ -184,16 +184,18 @@
 import type { IIngredients } from '@/stores/interfaces/IGetAllRecipes'
 import { authStore } from '@/stores/authStore'
 import { useRecipeStore } from '@/stores/recipeStore'
-import { storeToRefs } from 'pinia'
 import { UtensilsCrossedIcon } from 'lucide-vue-next'
 import Editor from 'primevue/editor'
 import { ref, reactive } from 'vue'
 import type { IPostRecipe } from '@/stores/interfaces/IPostRecipe'
+import { Toaster, toast } from 'vue-sonner'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const { isAuthenticated } = authStore()
 
 const recipeStore = useRecipeStore()
-const { loadingCreate } = storeToRefs(recipeStore)
 const { createRecipe } = recipeStore
 
 const userId = ref<number | null>(
@@ -252,7 +254,15 @@ const handlePost = async () => {
     recipeForm.time = Number(recipeForm.time)
   }
 
-  await createRecipe(recipeForm as IPostRecipe)
+  try {
+    await createRecipe(recipeForm as IPostRecipe)
+    toast.success('Receta añadida con éxito')
+    setTimeout(() => {
+      router.push('/recetas')
+    }, 1200)
+  } catch {
+    toast.error('Error al añadir la receta')
+  }
 }
 </script>
 
