@@ -74,10 +74,8 @@ const responsiveOptions = ref([
 ::v-deep(.p-carousel-indicator-list) {
   display: none;
   opacity: 0.6;
-}
 
-@media (min-width: 768px) {
-  ::v-deep(.p-carousel-indicator-list) {
+  @media (min-width: 768px) {
     display: flex;
     flex-direction: row;
   }
