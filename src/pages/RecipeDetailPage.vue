@@ -244,14 +244,19 @@ const handlePostFavorite = async (e: Event) => {
 
 .recipe-page {
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 40px auto 10px auto;
   padding: 20px;
   font-family: $body;
 
   &__top-content {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 70px;
+
+    @media (min-width: 768px) {
+      align-items: flex-start;
+    }
   }
 
   &__loading {
@@ -323,6 +328,15 @@ const handlePostFavorite = async (e: Event) => {
   }
 
   &__favorite {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    @media (min-width: 768px) {
+      justify-content: flex-start;
+    }
+
     button {
       border: 1px solid #ff2c2c;
       background-color: transparent;
@@ -347,7 +361,7 @@ const handlePostFavorite = async (e: Event) => {
     width: 100%;
     max-width: 500px;
     text-align: left;
-    margin-top: 60px;
+    margin-top: 30px;
   }
 
   &__steps {

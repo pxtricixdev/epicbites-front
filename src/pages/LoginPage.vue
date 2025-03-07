@@ -120,7 +120,7 @@ const handleLogin = async () => {
     max-width: 280px;
     box-shadow: -2px 3px 51px -18px rgba(0, 0, 0, 0.1);
     width: 90%;
-    margin: 20px auto 10px auto;
+    margin: 20px auto 30px auto;
   }
 
   &__content {
