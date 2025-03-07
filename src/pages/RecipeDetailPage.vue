@@ -234,6 +234,7 @@ const handlePostFavorite = async (e: Event) => {
     toast.success('Receta añadida a favoritos')
   } catch (error) {
     console.error('Error al añadir a favoritos', error)
+    toast.error('Error al añadir la receta a favoritos')
   }
 }
 </script>
