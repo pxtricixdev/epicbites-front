@@ -254,23 +254,29 @@ const handleImageFile = (event: Event) => {
 }
 
 const handlePost = async () => {
-  recipeForm.ingredients = ingredients.value
-
-  if (recipeForm.calories) {
-    recipeForm.calories = Number(recipeForm.calories)
+  // crea una copia del objeto sin la  image
+  const { image, ...recipeDataWithoutImage } = recipeForm;
+  
+  // ponemos los ingredientes
+  recipeDataWithoutImage.ingredients = ingredients.value;
+  
+  // Convierte valores a números
+  if (recipeDataWithoutImage.calories) {
+    recipeDataWithoutImage.calories = Number(recipeDataWithoutImage.calories);
   }
-  if (recipeForm.time) {
-    recipeForm.time = Number(recipeForm.time)
+  if (recipeDataWithoutImage.time) {
+    recipeDataWithoutImage.time = Number(recipeDataWithoutImage.time);
   }
 
   try {
-    await createRecipe(recipeForm as IPostRecipe, imageFile.value)
-    toast.success('Receta añadida con éxito')
+    // Pasa el objeto sin la image
+    await createRecipe(recipeDataWithoutImage as IPostRecipe, imageFile.value);
+    toast.success('Receta añadida con éxito');
     setTimeout(() => {
-      router.push('/recetas')
-    }, 1200)
+      router.push('/recetas');
+    }, 1200);
   } catch {
-    toast.error('Error al añadir la receta')
+    toast.error('Error al añadir la receta');
   }
 }
 </script>
