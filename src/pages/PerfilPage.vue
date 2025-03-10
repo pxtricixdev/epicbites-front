@@ -155,16 +155,19 @@ import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
+import { storeToRefs } from 'pinia'
 
 const auth = authStore()
 const recipeStore = useRecipeStore()
 const favoriteStore = useFavoriteStore()
 const router = useRouter()
 
-const { dataRecipeByUser, fetchRecipeByUser, deleteRecipe } = recipeStore
+const { fetchRecipeByUser, deleteRecipe } = recipeStore
 
-const { dataFavoriteRecipes, loadingFavoriteRecipes, fetchFavoriteRecipes, deleteFavoriteById } =
-  favoriteStore
+const { fetchFavoriteRecipes, deleteFavoriteById } = favoriteStore
+
+const { dataRecipeByUser }  = storeToRefs(recipeStore)
+const { dataFavoriteRecipes, loadingFavoriteRecipes } = storeToRefs(favoriteStore)
 
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
