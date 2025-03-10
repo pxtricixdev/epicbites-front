@@ -161,7 +161,7 @@
                       <option value="cdita">cdita</option>
                       <option value="cda">cda</option>
                       <option value="taza">taza</option>
-                      <option value="taza">pieza</option>
+                      <option value="pieza">pieza</option>
                     </select>
                   </div>
                 </div>
@@ -255,28 +255,28 @@ const handleImageFile = (event: Event) => {
 
 const handlePost = async () => {
   // crea una copia del objeto sin la  image
-  const { image, ...recipeDataWithoutImage } = recipeForm;
-  
+  const { image, ...recipeDataWithoutImage } = recipeForm
+
   // ponemos los ingredientes
-  recipeDataWithoutImage.ingredients = ingredients.value;
-  
+  recipeDataWithoutImage.ingredients = ingredients.value
+
   // Convierte valores a números
   if (recipeDataWithoutImage.calories) {
-    recipeDataWithoutImage.calories = Number(recipeDataWithoutImage.calories);
+    recipeDataWithoutImage.calories = Number(recipeDataWithoutImage.calories)
   }
   if (recipeDataWithoutImage.time) {
-    recipeDataWithoutImage.time = Number(recipeDataWithoutImage.time);
+    recipeDataWithoutImage.time = Number(recipeDataWithoutImage.time)
   }
 
   try {
     // Pasa el objeto sin la image
-    await createRecipe(recipeDataWithoutImage as IPostRecipe, imageFile.value);
-    toast.success('Receta añadida con éxito');
+    await createRecipe(recipeDataWithoutImage as IPostRecipe, imageFile.value)
+    toast.success('Receta añadida con éxito')
     setTimeout(() => {
-      router.push('/recetas');
-    }, 1200);
+      router.push('/recetas')
+    }, 1200)
   } catch {
-    toast.error('Error al añadir la receta');
+    toast.error('Error al añadir la receta')
   }
 }
 </script>
