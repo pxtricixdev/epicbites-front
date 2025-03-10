@@ -166,7 +166,7 @@ const { fetchRecipeByUser, deleteRecipe } = recipeStore
 
 const { fetchFavoriteRecipes, deleteFavoriteById } = favoriteStore
 
-const { dataRecipeByUser }  = storeToRefs(recipeStore)
+const { dataRecipeByUser } = storeToRefs(recipeStore)
 const { dataFavoriteRecipes, loadingFavoriteRecipes } = storeToRefs(favoriteStore)
 
 const activeTab = ref('favorites')
@@ -279,7 +279,6 @@ const executeDeleteFavorite = async () => {
     }
   }
 }
-
 
 onMounted(async () => {
   if (!auth.isAuthenticated) {
@@ -426,6 +425,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     padding: 3rem;
+    color: $black;
   }
 
   &__spinner {
@@ -452,7 +452,7 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    
+
     @media (max-width: 768px) {
       justify-content: center;
     }

@@ -10,7 +10,6 @@
         <RouterLink class="header__nav__item" to="/">Home</RouterLink>
         <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
         <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
-        <RouterLink class="header__nav__item" to="/perfil">Mi Perfil</RouterLink>
       </nav>
 
       <div class="header__content__buttons">
@@ -21,6 +20,14 @@
             <X :size="28" v-else color="black" />
           </span>
         </button>
+        <RouterLink
+          v-if="isAuthenticated && isDesktop"
+          class="header__content__button-user"
+          to="/perfil"
+        >
+          Perfil
+          <UserRoundPen :size="16" color="black" />
+        </RouterLink>
         <button v-if="isAuthenticated" @click="handleAuth" class="header__content__button-logout">
           Logout
         </button>
@@ -46,7 +53,7 @@
             Sobre Nosotros
             <ArrowRight :size="18" color="#E57309" />
           </RouterLink>
-          <RouterLink class="header__nav__item" to="/perfil">
+          <RouterLink v-if="isAuthenticated" class="header__nav__item" to="/perfil">
             Mi perfil
             <ArrowRight :size="18" color="#E57309" />
           </RouterLink>
@@ -58,7 +65,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { ArrowRight, Menu, X } from 'lucide-vue-next'
+import { ArrowRight, Menu, X, UserRoundPen } from 'lucide-vue-next'
 import LogoCanvas from '@/components/LogoCanvas.vue'
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
@@ -162,11 +169,14 @@ onUnmounted(() => {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
     width: 100%;
 
     &__buttons {
       display: flex;
-      flex-direction: row-reverse;
+      flex-direction: row;
       gap: 15px;
     }
 
@@ -176,6 +186,24 @@ onUnmounted(() => {
       cursor: pointer;
       padding: 0;
       height: 30px;
+    }
+
+    &__button-user {
+      border: 1px solid #e7e34f;
+      border-radius: 10px;
+      width: 90px;
+      font-size: 14px;
+      color: #000000;
+      transition: 0.1s ease-in-out;
+      display: inline-flex;
+      margin: auto;
+      gap: 5px;
+      justify-content: center;
+      padding: 3px 0;
+
+      &:hover {
+        background-color: #e7e24f40;
+      }
     }
 
     &__button-logout {
