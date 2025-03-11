@@ -23,8 +23,11 @@
                 <span class="recipe-page__calories">🔥 {{ recipeDetail.calories }} kcal</span>
               </div>
               <Toaster richColors />
-              <div class="recipe-page__favorite" v-if="isAuthenticated">
-                <button @click="handlePostFavorite">Favoritos ❤️</button>
+              <div class="recipe-page__buttons" :style="{ gap: !isAuthenticated ? '0px' : '20px' }">
+                <div class="recipe-page__favorite">
+                  <button v-if="isAuthenticated" @click="handlePostFavorite">Favoritos ❤️</button>
+                </div>
+                <RecipePrintButton />
               </div>
             </div>
             <div class="recipe-page__ingredients">
@@ -128,6 +131,7 @@ import type { IPostReview } from '@/stores/interfaces/IPostReview'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import type { IPostFavorite } from '@/stores/interfaces/IPostFavorite'
 import { Toaster, toast } from 'vue-sonner'
+import RecipePrintButton from '@/components/RecipePrintButton.vue'
 
 const route = useRoute()
 
@@ -273,6 +277,11 @@ const handlePostFavorite = async (e: Event) => {
     text-align: center;
   }
 
+  &__buttons {
+    display: flex;
+    flex-direction: row;
+  }
+
   &__image {
     width: 100%;
     max-width: 350px;
@@ -350,9 +359,10 @@ const handlePostFavorite = async (e: Event) => {
       font-size: 14px;
       transition: 0.1s ease-in-out;
       color: #ff2c2c;
+      font-weight: 500;
 
       &:hover {
-        background-color: #fff1f1;
+        background-color: #f7d1d1;
       }
     }
   }
