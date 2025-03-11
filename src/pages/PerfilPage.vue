@@ -23,6 +23,9 @@
             >
           </div>
         </div>
+        <button @click="openEditProfileModal" class="profile__edit-button">
+          <span class="profile__edit-icon"></span> Editar perfil
+        </button>
       </div>
     </div>
 
@@ -110,6 +113,73 @@
       </div>
     </div>
 
+    <!-- editar perfil -->
+    <div v-if="showEditProfileModal" class="modal">
+      <div class="modal__container">
+        <div class="modal__header">
+          <h2 class="modal__title">Editar perfil</h2>
+          <button @click="closeEditProfileModal" class="modal__close-button">×</button>
+        </div>
+        <div class="modal__content">
+          <form @submit.prevent="updateUserProfile" class="profile__form">
+            <div class="profile__form-group">
+              <label for="username" class="profile__form-label">Nombre de usuario</label>
+              <input
+                type="text"
+                id="username"
+                v-model="editForm.username"
+                class="profile__form-input"
+                placeholder="Nombre de usuario"
+              />
+            </div>
+
+            <div class="profile__form-group">
+              <label for="email" class="profile__form-label">Email</label>
+              <input
+                type="text"
+                id="email"
+                v-model="editForm.email"
+                class="profile__form-input"
+                placeholder="Email"
+              />
+            </div>
+            
+            <div class="profile__form-group">
+              <label for="password" class="profile__form-label">Nueva contraseña</label>
+              <input
+                type="password"
+                id="password"
+                v-model="editForm.password"
+                class="profile__form-input"
+                placeholder="Nueva contraseña"
+              />  
+            </div>
+            
+            <div v-if="updateError" class="profile__form-error">
+              {{ updateError }}
+            </div>
+            
+            <div v-if="updateSuccess" class="profile__form-success">
+              {{ updateSuccess }}
+            </div>
+            
+            <div class="modal__actions">
+              <button type="button" @click="closeEditProfileModal" class="button button--secondary">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="button button--primary"
+                :disabled="isUpdating"
+              >
+                {{ isUpdating ? 'Actualizando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!--confirmación para eliminar favorito -->
     <div v-if="showConfirmModal && modalType === 'favorite'" class="modal">
       <div class="modal__container modal__container--confirm">
@@ -151,34 +221,50 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { authStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
 import CardRecipePerfil from '@/components/CardRecipePerfil.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { storeToRefs } from 'pinia'
+import type { IPutUser } from '@/stores/interfaces/IPutUser'
+import { Toaster, toast } from 'vue-sonner'
 
 const auth = authStore()
+const userStore = useUserStore()
 const recipeStore = useRecipeStore()
 const favoriteStore = useFavoriteStore()
 const router = useRouter()
 
 const { fetchRecipeByUser, deleteRecipe } = recipeStore
-
 const { fetchFavoriteRecipes, deleteFavoriteById } = favoriteStore
+const { updateUser } = userStore
 
 const { dataRecipeByUser } = storeToRefs(recipeStore)
 const { dataFavoriteRecipes, loadingFavoriteRecipes } = storeToRefs(favoriteStore)
 
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
+const showEditProfileModal = ref(false)
 const modalType = ref<'favorite' | 'recipe'>('favorite')
 const favoriteToDelete = ref<number | null>(null)
 const recipeToDelete = ref<number | null>(null)
+const isUpdating = ref(false)
+const updateError = ref('')
+const updateSuccess = ref('')
+
 const userProfile = ref({
   id: '',
   name: '',
   email: '',
   profileImage: '',
+})
+
+// form editar perfil
+const editForm = ref({
+  username: '',
+  email: '',
+  password: '',
 })
 
 const isAuthenticated = computed(() => auth.isAuthenticated)
@@ -224,6 +310,71 @@ const closeModal = () => {
   showConfirmModal.value = false
 }
 
+const openEditProfileModal = () => {
+  updateError.value = ''
+  updateSuccess.value = ''
+  
+  // pintar los datos que tenemos 
+  editForm.value = {
+    username: '',
+    email: '',
+    password: '',
+  }
+  
+  showEditProfileModal.value = true
+}
+
+const closeEditProfileModal = () => {
+  showEditProfileModal.value = false
+}
+
+const updateUserProfile = async () => {
+  updateError.value = ''
+  updateSuccess.value = ''
+  isUpdating.value = true
+  
+  try {
+    const username = editForm.value.username.trim()
+    if (!username) {
+      throw new Error('El nombre de usuario es obligatorio')
+    } else if (username.length < 3) {
+      throw new Error('El usuario debe tener al menos 3 caracteres')
+    }
+
+    const password = editForm.value.password.trim()
+    if (!password) {
+      throw new Error('La contraseña es obligatoria')
+    } else if (password.length < 6) {
+      throw new Error('La contraseña debe tener al menos 6 caracteres')
+    }
+  
+    const userData: IPutUser = {
+      id: parseInt(userProfile.value.id),
+      username: editForm.value.username,
+      email: editForm.value.email,
+      password: editForm.value.password
+    }
+    
+    try {
+      const result = await updateUser(userData)
+    } catch (err: any) {
+
+    }
+
+
+    userProfile.value.name = editForm.value.username
+
+    editForm.value.password = ''
+    
+    updateSuccess.value = 'Perfil actualizado correctamente'
+    
+  } catch (err: any) {
+    updateError.value = err.message || 'Error al actualizar el perfil'
+  } finally {
+    isUpdating.value = false
+  }
+}
+
 const confirmDeleteFavorite = (favoriteId: number) => {
   console.log(`Confirmando eliminar favorito con ID: ${favoriteId}`)
   favoriteToDelete.value = favoriteId
@@ -243,9 +394,9 @@ const executeDeleteRecipe = async () => {
     try {
       await deleteRecipe(recipeToDelete.value)
 
-      const index = dataRecipeByUser.findIndex((recipe) => recipe.id === recipeToDelete.value)
+      const index = dataRecipeByUser.value.findIndex((recipe) => recipe.id === recipeToDelete.value)
       if (index !== -1) {
-        dataRecipeByUser.splice(index, 1)
+        dataRecipeByUser.value.splice(index, 1)
       }
 
       console.log('Receta eliminada correctamente')
@@ -263,11 +414,11 @@ const executeDeleteFavorite = async () => {
     try {
       await deleteFavoriteById(favoriteToDelete.value)
 
-      const index = dataFavoriteRecipes.findIndex(
+      const index = dataFavoriteRecipes.value.findIndex(
         (recipe) => recipe.favoriteId === favoriteToDelete.value,
       )
       if (index !== -1) {
-        dataFavoriteRecipes.splice(index, 1)
+        dataFavoriteRecipes.value.splice(index, 1)
       }
 
       console.log('Favorito eliminado correctamente')
@@ -360,6 +511,7 @@ onMounted(async () => {
   &__stats {
     display: flex;
     gap: 2rem;
+    margin-bottom: 1rem;
   }
 
   &__stat-item {
@@ -371,6 +523,67 @@ onMounted(async () => {
     font-weight: 600;
     font-size: 1rem;
     color: $black;
+  }
+
+  &__edit-button {
+    background: none;
+    border: 1px solid $light-grey;
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+    color: $black;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    &:hover {
+      background-color: $light-grey;
+    }
+  }
+
+
+ 
+  &__form {
+    padding: 1rem;
+  }
+
+  &__form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  &__form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: $black;
+  }
+
+  &__form-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid $light-grey;
+    border-radius: 4px;
+    font-family: $body;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-yellow;
+    }
+  }
+
+  &__form-error {
+    color: red;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+
+  &__form-success {
+    color: green;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
   }
 
   &__tabs {
@@ -524,6 +737,11 @@ onMounted(async () => {
     &:hover {
       background-color: darken($primary-yellow, 10%);
     }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   }
 
   &--secondary {
@@ -597,7 +815,7 @@ onMounted(async () => {
   &__title {
     margin: 0;
     font-size: 1.3rem;
-    font-family: $heading;
+    font-family: $body;
     color: $black;
   }
 
@@ -613,6 +831,10 @@ onMounted(async () => {
     }
   }
 
+  &__content {
+    padding: 1rem 1.5rem;
+  }
+
   &__text {
     color: $black;
     margin: 1rem 0;
@@ -622,16 +844,8 @@ onMounted(async () => {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    padding: 0 1.5rem 1.5rem;
+    margin-top: 1.5rem;
   }
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
 </style>

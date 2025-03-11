@@ -387,7 +387,7 @@ import { Toaster, toast } from 'vue-sonner'
 import { useRouter } from 'vue-router'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
-import { useGetAllUsers } from '@/composables/useGetAllUsers'
+import { useUserStore } from '@/stores/userStore'
 import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { storeToRefs } from 'pinia'
@@ -414,7 +414,9 @@ const reviewStore = useReviewStore()
 const { allReviews } = storeToRefs(reviewStore)
 const { fetchAllReviews, deleteReview } = reviewStore
 
-const { dataUsers, fetchUsers } = useGetAllUsers()
+const userStore  = useUserStore()
+const { allUsers } = storeToRefs(userStore)
+const { fetchUsers } = userStore
 const user = ref<IGetAllUsers[]>([])
 
 const deleteRecipeDialogVisible = ref(false)
@@ -432,7 +434,7 @@ onMounted(async () => {
   recipeData.value.total = allRecipes.value.length
 
   await fetchUsers()
-  user.value = dataUsers.value
+  user.value = allUsers.value
   userData.value.total = user.value.length
 
   await fetchAllReviews()
