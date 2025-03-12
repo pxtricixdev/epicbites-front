@@ -16,7 +16,7 @@ export interface IPostRecipe {
   calories: number
   time: number
   difficulty: 'Facil' | 'Media' | 'Dificil'
-  image: string
+  image?: string
   steps: string
   ingredients: IIngredients[]
 }

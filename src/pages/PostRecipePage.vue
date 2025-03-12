@@ -213,7 +213,7 @@ const userId = ref<number | null>(
   localStorage.getItem('userId') ? parseInt(localStorage.getItem('userId')!) : null,
 )
 
-const imageFile = ref(null)
+const imageFile = ref<File | null>(null)
 
 const recipeForm = reactive({
   name: '',
@@ -246,7 +246,7 @@ const removeIngredient = (index: number) => {
 }
 
 const handleImageFile = (event: Event) => {
-  const target = event.target
+  const target = event.target as HTMLInputElement
   const file = target.files ? target.files[0] : null
   if (file) {
     imageFile.value = file
@@ -254,13 +254,10 @@ const handleImageFile = (event: Event) => {
 }
 
 const handlePost = async () => {
-  // crea una copia del objeto sin la  image
   const { image, ...recipeDataWithoutImage } = recipeForm
 
-  // ponemos los ingredientes
   recipeDataWithoutImage.ingredients = ingredients.value
 
-  // Convierte valores a números
   if (recipeDataWithoutImage.calories) {
     recipeDataWithoutImage.calories = Number(recipeDataWithoutImage.calories)
   }
@@ -269,7 +266,11 @@ const handlePost = async () => {
   }
 
   try {
-    // Pasa el objeto sin la image
+    if (!imageFile.value) {
+      toast.error('Por favor, selecciona una imagen para la receta')
+      return
+    }
+
     await createRecipe(recipeDataWithoutImage as IPostRecipe, imageFile.value)
     toast.success('Receta añadida con éxito')
     setTimeout(() => {
