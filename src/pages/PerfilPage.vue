@@ -175,6 +175,7 @@
                 {{ isUpdating ? 'Actualizando...' : 'Guardar cambios' }}
               </button>
             </div>
+          <Toaster richColors />
           </form>
         </div>
       </div>
@@ -330,9 +331,9 @@ const closeEditProfileModal = () => {
 
 const updateUserProfile = async () => {
   updateError.value = ''
-  updateSuccess.value = ''
+  updateSuccess.value = '' 
   isUpdating.value = true
-  
+
   try {
     const username = editForm.value.username.trim()
     if (!username) {
@@ -347,7 +348,7 @@ const updateUserProfile = async () => {
     } else if (password.length < 6) {
       throw new Error('La contraseña debe tener al menos 6 caracteres')
     }
-  
+
     const userData: IPutUser = {
       id: parseInt(userProfile.value.id),
       username: editForm.value.username,
@@ -355,21 +356,35 @@ const updateUserProfile = async () => {
       password: editForm.value.password
     }
     
-    try {
-      const result = await updateUser(userData)
-    } catch (err: any) {
-
-    }
-
-
+    const result = await updateUser(userData)
+    
+    // actualizar los datos del storage si va bien 
     userProfile.value.name = editForm.value.username
-
+    localStorage.setItem('username', editForm.value.username)
     editForm.value.password = ''
     
-    updateSuccess.value = 'Perfil actualizado correctamente'
+    toast.success('Perfil actualizado correctamente')
+    
+    setTimeout(() => {
+      closeEditProfileModal()
+    }, 1200)
     
   } catch (err: any) {
-    updateError.value = err.message || 'Error al actualizar el perfil'
+    console.error('Error:', err);
+    // mostrar que error es 
+    if (err.message.includes('Duplicate entry') || err.message.includes('Username')) {
+      toast.error('Este nombre de usuario ya está en uso')
+      updateError.value = 'Este nombre de usuario ya está en uso'
+    } else if (err.message.includes('Email') || err.message.includes('email')) {
+      toast.error('Este correo electrónico ya está en uso')
+      updateError.value = 'Este correo electrónico ya está en uso'
+    } else if (err.message.includes('contraseña') || err.message.includes('usuario')) {
+      toast.error(err.message)
+      updateError.value = err.message
+    } else {
+      toast.error(`Error al actualizar: ${err.message}`)
+      updateError.value = `Error al actualizar: ${err.message}`
+    }
   } finally {
     isUpdating.value = false
   }

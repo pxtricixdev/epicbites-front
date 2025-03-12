@@ -41,15 +41,15 @@ export const useUserStore = defineStore('users', () => {
         }
     }
 
-    const updateUser = async (userData: IPutUser) => {
+      const updateUser = async (userData: IPutUser) => {
         if (!auth.isAuthenticated) {
             error.value = 'Usuario no autenticado'
             return
-          }
+        }
       
-          const userId = auth.userId
-          loadingPutUser.value = true
-          error.value = null
+        const userId = auth.userId
+        loadingPutUser.value = true
+        error.value = null
     
         try {
           const response = await fetch(`https://localhost:7129/api/users/${userId}`, {
@@ -64,15 +64,25 @@ export const useUserStore = defineStore('users', () => {
           })
     
           if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${await response.text()}`)
+            const errorData = await response.text()
+            throw new Error(errorData || `Error ${response.status}`)
+          }
+    
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const contentLength = response.headers.get('content-length')
+            if (contentLength && parseInt(contentLength) > 0) {
+              return await response.json()
+            }
           }
           
-          return await response.json()
-
+          return {}
+          
         } catch (err: any) {
           error.value = err.message
+          throw err
         } finally {
-        loadingPutUser.value = false
+          loadingPutUser.value = false
         }
     }
 
