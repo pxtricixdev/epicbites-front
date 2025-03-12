@@ -371,22 +371,28 @@ const updateUserProfile = async () => {
     
   } catch (err: any) {
     console.error('Error:', err);
-    // mostrar que error es 
-    if (err.message.includes('Duplicate entry') || err.message.includes('Username')) {
-      toast.error('Este nombre de usuario ya está en uso')
-      updateError.value = 'Este nombre de usuario ya está en uso'
-    } else if (err.message.includes('Email') || err.message.includes('email')) {
-      toast.error('Este correo electrónico ya está en uso')
-      updateError.value = 'Este correo electrónico ya está en uso'
-    } else if (err.message.includes('contraseña') || err.message.includes('usuario')) {
-      toast.error(err.message)
-      updateError.value = err.message
-    } else {
-      toast.error(`Error al actualizar: ${err.message}`)
-      updateError.value = `Error al actualizar: ${err.message}`
+    
+    const errorMsg = err.message.toLowerCase();
+    let errorToShow = '';
+    
+    if (errorMsg.includes('email') || errorMsg.includes('correo')) {
+      errorToShow = 'Este correo electrónico ya está en uso';
     }
+    else if (errorMsg.includes('duplicate entry') || errorMsg.includes('username') || errorMsg.includes('nombre de usuario')) {
+      errorToShow = 'Este nombre de usuario ya está en uso';
+    }
+    else if (errorMsg.includes('contraseña') || errorMsg.includes('usuario')) {
+      errorToShow = err.message;
+    }
+    else {
+      errorToShow = `Error al actualizar: ${err.message}`;
+    }
+    
+    toast.error(errorToShow);
+    updateError.value = errorToShow;
+    
   } finally {
-    isUpdating.value = false
+    isUpdating.value = false  
   }
 }
 
@@ -725,7 +731,7 @@ onMounted(async () => {
     z-index: 2;
 
     &:hover {
-      background-color: darken($secondary-orange, 10%);
+      background-color: ($secondary-orange, 10%);
     }
   }
 
@@ -750,7 +756,7 @@ onMounted(async () => {
     border: none;
 
     &:hover {
-      background-color: darken($primary-yellow, 10%);
+      background-color: ($primary-yellow, 10%);
     }
 
     &:disabled {
@@ -774,7 +780,7 @@ onMounted(async () => {
     color: $white;
 
     &:hover {
-      background-color: darken(red, 10%);
+      background-color: (red, 10%);
     }
   }
 
