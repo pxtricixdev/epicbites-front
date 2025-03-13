@@ -42,6 +42,9 @@
             :link="`/receta/${recipe.id}`"
           />
         </div>
+        <div v-if="filteredRecipes.length === 0">
+          <p>No hay recetas que coincidan con tu búsqueda...</p>
+        </div>
       </div>
     </div>
   </section>
