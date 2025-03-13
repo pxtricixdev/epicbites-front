@@ -142,22 +142,23 @@ import { Image } from 'primevue'
 .nuestro-equipo {
   text-align: center;
   padding: 40px 20px;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+  margin-bottom: 50px;
 
   &__title {
     font-size: 28px;
     font-weight: bold;
     color: $secondary-orange;
     font-family: $heading;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
   }
 
   &__container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 40px;
   }
 }
 

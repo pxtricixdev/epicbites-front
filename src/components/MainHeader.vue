@@ -118,6 +118,7 @@ onUnmounted(() => {
   width: 100%;
   z-index: 1000;
   top: 0;
+  box-shadow: 0px 2px 10px rgba(18, 18, 18, 0.05);
 
   &__nav {
     display: block;
