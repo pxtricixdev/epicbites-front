@@ -170,7 +170,7 @@
               <button type="button" @click="closeEditProfileModal" class="button button--secondary">
                 Cancelar
               </button>
-              <button type="submit" class="button button--primary" :disabled="isUpdating">
+              <button type="submit" class="button" :disabled="isUpdating">
                 {{ isUpdating ? 'Actualizando...' : 'Guardar cambios' }}
               </button>
             </div>
@@ -192,8 +192,12 @@
         </p>
         <div class="modal__actions">
           <button @click="closeModal" class="button button--secondary">Cancelar</button>
-          <button @click="executeDeleteFavorite" class="button button--primary button--danger">
-            Eliminar
+          <button
+            @click="executeDeleteFavorite"
+            class="button button--danger"
+            :disabled="isDeleting"
+          >
+            {{ isDeleting ? 'Borrando...' : 'Eliminar' }}
           </button>
         </div>
       </div>
@@ -209,8 +213,8 @@
         <p class="modal__text">¿Estás seguro de que quieres eliminar esta receta?</p>
         <div class="modal__actions">
           <button @click="closeModal" class="button button--secondary">Cancelar</button>
-          <button @click="executeDeleteRecipe" class="button button--primary button--danger">
-            Eliminar
+          <button @click="executeDeleteRecipe" class="button button--danger" :disabled="isDeleting">
+            {{ isDeleting ? 'Borrando...' : 'Eliminar' }}
           </button>
         </div>
       </div>
@@ -252,6 +256,7 @@ const recipeToDelete = ref<number | null>(null)
 const isUpdating = ref(false)
 const updateError = ref('')
 const updateSuccess = ref('')
+const isDeleting = ref(false)
 
 const userProfile = ref({
   id: '',
@@ -406,6 +411,7 @@ const confirmDeleteRecipe = (recipeId: number) => {
 
 const executeDeleteRecipe = async () => {
   if (recipeToDelete.value) {
+    isDeleting.value = true
     try {
       await deleteRecipe(recipeToDelete.value)
 
@@ -418,12 +424,14 @@ const executeDeleteRecipe = async () => {
     } finally {
       showConfirmModal.value = false
       recipeToDelete.value = null
+      isDeleting.value = false
     }
   }
 }
 
 const executeDeleteFavorite = async () => {
   if (favoriteToDelete.value) {
+    isDeleting.value = true
     try {
       await deleteFavoriteById(favoriteToDelete.value)
 
@@ -438,6 +446,7 @@ const executeDeleteFavorite = async () => {
     } finally {
       showConfirmModal.value = false
       favoriteToDelete.value = null
+      isDeleting.value = false
     }
   }
 }
@@ -737,11 +746,11 @@ onMounted(async () => {
   font-weight: 500;
   transition: all 0.2s;
   font-family: $body;
+  border: none;
 
   &--primary {
     background-color: $primary-yellow;
     color: $black;
-    border: none;
 
     &:hover {
       background-color: #eae56c;
@@ -817,7 +826,7 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding-bottom: 5px;
     border-bottom: 1px solid $light-grey;
   }
 
@@ -836,7 +845,7 @@ onMounted(async () => {
     color: $black;
 
     &:hover {
-      color: $secondary-orange;
+      color: $light-grey;
     }
   }
 

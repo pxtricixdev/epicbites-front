@@ -65,7 +65,7 @@ import { useRouter } from 'vue-router'
 const validationSchema = toTypedSchema(
   z.object({
     email: z.string().email('El email no es válido'),
-    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    password: z.string(),
   }),
 )
 
