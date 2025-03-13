@@ -34,7 +34,7 @@ defineProps<{ recipes: Array<IGetMostRatedRecipes> }>()
 const responsiveOptions = ref([
   {
     breakpoint: '1400px',
-    numVisible: 2,
+    numVisible: 4,
     numScroll: 1,
   },
   {

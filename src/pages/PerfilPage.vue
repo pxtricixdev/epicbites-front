@@ -129,7 +129,7 @@
                 id="username"
                 v-model="editForm.username"
                 class="profile__form-input"
-                placeholder="Nombre de usuario"
+                placeholder="Nuevo usuario"
                 required
               />
             </div>
@@ -141,7 +141,7 @@
                 id="email"
                 v-model="editForm.email"
                 class="profile__form-input"
-                placeholder="Email"
+                placeholder="Nuevo email"
                 required
               />
             </div>
@@ -851,7 +851,7 @@ onMounted(async () => {
 
   &__actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-around;
     gap: 1rem;
     margin-top: 1.5rem;
   }
