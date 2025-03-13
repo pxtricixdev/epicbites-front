@@ -154,9 +154,6 @@ const loadData = async (id: string) => {
 
   await fetchRecipeDetail(id)
   await fetchReviewsByRecipe(id)
-
-  console.log('Datos de la receta:', recipeDetail.value)
-  console.log('Reviews de la receta:', reviewsByRecipe.value)
 }
 
 onMounted(async () => {

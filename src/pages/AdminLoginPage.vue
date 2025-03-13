@@ -72,7 +72,6 @@ const { dataLogin, token, error, userRole, isAuthenticated } = storeToRefs(auth)
 const { login } = auth
 
 const router = useRouter()
-console.log(token.value)
 
 const handleLogin = async () => {
   await login()
