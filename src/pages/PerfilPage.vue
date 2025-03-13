@@ -130,6 +130,7 @@
                 v-model="editForm.username"
                 class="profile__form-input"
                 placeholder="Nombre de usuario"
+                required
               />
             </div>
 
@@ -141,9 +142,10 @@
                 v-model="editForm.email"
                 class="profile__form-input"
                 placeholder="Email"
+                required
               />
             </div>
-            
+
             <div class="profile__form-group">
               <label for="password" class="profile__form-label">Nueva contraseña</label>
               <input
@@ -152,30 +154,27 @@
                 v-model="editForm.password"
                 class="profile__form-input"
                 placeholder="Nueva contraseña"
-              />  
+                required
+              />
             </div>
-            
+
             <div v-if="updateError" class="profile__form-error">
               {{ updateError }}
             </div>
-            
+
             <div v-if="updateSuccess" class="profile__form-success">
               {{ updateSuccess }}
             </div>
-            
+
             <div class="modal__actions">
               <button type="button" @click="closeEditProfileModal" class="button button--secondary">
                 Cancelar
               </button>
-              <button 
-                type="submit" 
-                class="button button--primary"
-                :disabled="isUpdating"
-              >
+              <button type="submit" class="button button--primary" :disabled="isUpdating">
                 {{ isUpdating ? 'Actualizando...' : 'Guardar cambios' }}
               </button>
             </div>
-          <Toaster richColors />
+            <Toaster richColors />
           </form>
         </div>
       </div>
@@ -314,14 +313,14 @@ const closeModal = () => {
 const openEditProfileModal = () => {
   updateError.value = ''
   updateSuccess.value = ''
-  
-  // pintar los datos que tenemos 
+
+  // pintar los datos que tenemos
   editForm.value = {
     username: '',
     email: '',
     password: '',
   }
-  
+
   showEditProfileModal.value = true
 }
 
@@ -331,7 +330,7 @@ const closeEditProfileModal = () => {
 
 const updateUserProfile = async () => {
   updateError.value = ''
-  updateSuccess.value = '' 
+  updateSuccess.value = ''
   isUpdating.value = true
 
   try {
@@ -353,58 +352,53 @@ const updateUserProfile = async () => {
       id: parseInt(userProfile.value.id),
       username: editForm.value.username,
       email: editForm.value.email,
-      password: editForm.value.password
+      password: editForm.value.password,
     }
-    
-    const result = await updateUser(userData)
-    
-    // actualizar los datos del storage si va bien 
+
+    await updateUser(userData)
+
+    // actualizar los datos del storage si va bien
     userProfile.value.name = editForm.value.username
     localStorage.setItem('username', editForm.value.username)
     editForm.value.password = ''
-    
+
     toast.success('Perfil actualizado correctamente')
-    
+
     setTimeout(() => {
       closeEditProfileModal()
     }, 1200)
-    
   } catch (err: any) {
-    console.error('Error:', err);
-    
-    const errorMsg = err.message.toLowerCase();
-    let errorToShow = '';
-    
-    if (errorMsg.includes('email') || errorMsg.includes('correo')) {
-      errorToShow = 'Este correo electrónico ya está en uso';
+    console.error('Error:', err)
+
+    const errorMsg = err.message.toLowerCase()
+    let errorToShow = ''
+
+    if (errorMsg.includes('email')) {
+      errorToShow = 'Este correo electrónico ya está en uso'
+    } else if (
+      errorMsg.includes('duplicate entry') ||
+      errorMsg.includes('username') ||
+      errorMsg.includes('nombre de usuario')
+    ) {
+      errorToShow = 'Este nombre de usuario ya está en uso'
+    } else if (errorMsg.includes('contraseña') || errorMsg.includes('usuario')) {
+      errorToShow = err.message
+    } else {
+      errorToShow = `Error al actualizar: ${err.message}`
     }
-    else if (errorMsg.includes('duplicate entry') || errorMsg.includes('username') || errorMsg.includes('nombre de usuario')) {
-      errorToShow = 'Este nombre de usuario ya está en uso';
-    }
-    else if (errorMsg.includes('contraseña') || errorMsg.includes('usuario')) {
-      errorToShow = err.message;
-    }
-    else {
-      errorToShow = `Error al actualizar: ${err.message}`;
-    }
-    
-    toast.error(errorToShow);
-    updateError.value = errorToShow;
-    
+    updateError.value = errorToShow
   } finally {
-    isUpdating.value = false  
+    isUpdating.value = false
   }
 }
 
 const confirmDeleteFavorite = (favoriteId: number) => {
-  console.log(`Confirmando eliminar favorito con ID: ${favoriteId}`)
   favoriteToDelete.value = favoriteId
   modalType.value = 'favorite'
   showConfirmModal.value = true
 }
 
 const confirmDeleteRecipe = (recipeId: number) => {
-  console.log(`Confirmando eliminar la receta con ID: ${recipeId}`)
   recipeToDelete.value = recipeId
   modalType.value = 'recipe'
   showConfirmModal.value = true
@@ -419,8 +413,6 @@ const executeDeleteRecipe = async () => {
       if (index !== -1) {
         dataRecipeByUser.value.splice(index, 1)
       }
-
-      console.log('Receta eliminada correctamente')
     } catch (error) {
       console.error('Error al eliminar la receta:', error)
     } finally {
@@ -441,8 +433,6 @@ const executeDeleteFavorite = async () => {
       if (index !== -1) {
         dataFavoriteRecipes.value.splice(index, 1)
       }
-
-      console.log('Favorito eliminado correctamente')
     } catch (error) {
       console.error('Error al eliminar el favorito:', error)
     } finally {
@@ -564,8 +554,6 @@ onMounted(async () => {
     }
   }
 
-
- 
   &__form {
     padding: 1rem;
   }
@@ -756,7 +744,7 @@ onMounted(async () => {
     border: none;
 
     &:hover {
-      background-color: ($primary-yellow, 10%);
+      background-color: #eae56c;
     }
 
     &:disabled {
@@ -869,4 +857,8 @@ onMounted(async () => {
   }
 }
 
+input {
+  background-color: $white;
+  color: black;
+}
 </style>
