@@ -56,40 +56,6 @@
       </div>
     </div>
   </section>
-
-  <!--
-  <section class="contact-form">
-    <h2 class="contact-form__title">¿Quieres compartir algo con nosotros?</h2>
-    <p class="contact-form__description">
-      Déjanos tu correo y número de teléfono junto con un mensaje. Nos pondremos en contacto contigo
-      lo antes posible.
-    </p>
-   <form class="contact-form__form">
-      <div class="contact-form__group">
-        <label for="email">Correo Electrónico</label>
-        <input type="email" id="email" name="email" placeholder="ejemplo@email.com" required />
-      </div>
-
-      <div class="contact-form__group">
-        <label for="phone">Teléfono</label>
-        <input type="tel" id="phone" name="phone" placeholder="+34 600 123 456" required />
-      </div>
-
-      <div class="contact-form__group">
-        <label for="message">Mensaje</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="4"
-          placeholder="Escribe tu mensaje aquí..."
-          required
-        ></textarea>
-      </div>
-
-      <button type="submit" class="contact-form__button">Enviar</button>
-    </form>
-  </section>
-  -->
 </template>
 
 <script setup lang="ts">
