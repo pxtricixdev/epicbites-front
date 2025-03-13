@@ -1,5 +1,8 @@
 <template>
-  <div class="login">
+  <div v-if="isAuthenticated">
+    {{ router.push('/') }}
+  </div>
+  <div v-else class="login">
     <div class="login__welcome">
       <p class="login__welcome__title">¡Bienvenido al panel de administración!</p>
       <p class="login__welcome__subtitle">
@@ -65,7 +68,7 @@ const validationSchema = toTypedSchema(
 )
 
 const auth = authStore()
-const { dataLogin, token, error, userRole } = storeToRefs(auth)
+const { dataLogin, token, error, userRole, isAuthenticated } = storeToRefs(auth)
 const { login } = auth
 
 const router = useRouter()
