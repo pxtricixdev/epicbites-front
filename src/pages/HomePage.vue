@@ -13,7 +13,7 @@
         <p>Cargando...</p>
       </div>
       <div class="home-page__recipes__cards">
-        <RecipeCarousel :recipes="mostRatedRecipes" />
+        <RecipeCarousel :recipes="mostRatedRecipes.slice(0, 11)" />
       </div>
     </section>
 
@@ -107,11 +107,8 @@ const { fetchAllReviews } = reviewStore
 
 onMounted(async () => {
   await fetchAllRecipes()
-  console.log('Todas las recetas:', allRecipes.value)
   await fetchMostRatedRecipes()
-  console.log('Las recetas mejor valoradas:', mostRatedRecipes.value)
   await fetchAllReviews()
-  console.log('Los comentarios:', allReviews.value)
 
   vegetarianRecipes.value = allRecipes.value.filter(
     (recipe) => recipe.diet.toLowerCase() === 'vegetariana',
@@ -120,9 +117,6 @@ onMounted(async () => {
   fastRecipes.value = allRecipes.value.filter((recipe) => recipe.time <= 20)
 
   randomRecipe.value = allRecipes.value[Math.floor(Math.random() * allRecipes.value.length)].id
-
-  console.log('Las recetas vegetarianas', vegetarianRecipes.value)
-  console.log('Las recetas rápidas', fastRecipes.value)
 })
 </script>
 

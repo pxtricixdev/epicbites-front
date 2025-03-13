@@ -3,8 +3,9 @@
     <Carousel
       :value="recipes"
       :numVisible="5"
-      :numScroll="3"
+      :numScroll="2"
       :responsiveOptions="responsiveOptions"
+      :circular="true"
     >
       <template #item="{ data: recipe }">
         <div class="recipe-card">
