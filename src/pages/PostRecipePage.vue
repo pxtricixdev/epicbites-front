@@ -64,9 +64,9 @@
                 <option value="Vegetariana">Vegetariana</option>
                 <option value="Vegana">Vegana</option>
                 <option value="Omnivoro">Omnívoro</option>
-                <option value="Sin gluten">Sin gluten</option>
+                <option value="SinGluten">Sin Gluten</option>
                 <option value="Mediterranea">Mediterránea</option>
-                <option value="Sin Lactosa">Sin Lactosa</option>
+                <option value="SinLactosa">Sin Lactosa</option>
                 <option value="Proteina">Proteína</option>
               </select>
             </div>
@@ -158,6 +158,7 @@
                       <option value="" disabled selected>-- Elige una opción --</option>
                       <option value="g">g</option>
                       <option value="ml">ml</option>
+                      <option value="l">l</option>
                       <option value="cdita">cdita</option>
                       <option value="cda">cda</option>
                       <option value="taza">taza</option>
