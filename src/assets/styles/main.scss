@@ -17,10 +17,10 @@ body {
 //Change root variables for PrimeVue
 :root {
   --p-floatlabel-focus-color: black !important;
-  --p-inputtext-focus-border-color: #E57309 !important;
+  --p-inputtext-focus-border-color: #E7E34F !important;
   --p-inputtext-color: black !important;
   --p-filled: white !important;
-  --swiper-navigation-color: #E57309 !important;
+  --swiper-navigation-color: #E7E34F !important;
   --p-carousel-indicator-active-background: black !important;
   --p-carousel-indicator-background: rgb(151, 151, 151) !important;
   --p-editor-toolbar-item-hover-color: black !important;
@@ -31,4 +31,16 @@ body {
   --p-datatable-row-color: black !important;
   --p-paginator-background: white !important;
   --p-dialog-background: white !important;
+  --p-radiobutton-background: white !important;
+  --p-radiobutton-checked-border-color: #E7E34F !important;
+  --p-radiobutton-checked-background: #E7E34F !important;
+  --p-radiobutton-checked-hover-border-color: #E7E34F !important;
+  --p-radiobutton-checked-focus-border-color: #E7E34F !important;
+  --p-radiobutton-focus-ring-color: #E7E34F !important;
+  --p-radiobutton-checked-background: #E7E34F !important;
+  --p-radiobutton-checked-hover-background: #E7E34F !important;
+  --p-radiobutton-icon-checked-color: rgb(39, 39, 39) !important;
+  --p-radiobutton-width: 1rem !important;
+  --p-radiobutton-height: 1rem !important;
+  --p-radiobutton-icon-size: 0.5rem !important;
 }

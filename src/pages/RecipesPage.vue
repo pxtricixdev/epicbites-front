@@ -26,6 +26,28 @@
           v-model="searchRecipe"
           placeholder="Busca la receta por nombre, categoría.."
         />
+        <div class="card-recipe__timePreparation">
+          <p>Por tiempo de preparación:</p>
+          <div class="card-recipe__radiobutton">
+            <div>
+              <RadioButton v-model="timeRecipe" inputId="time1" name="less15" value="less15" />
+              <label for="time1">Menos de 15'</label>
+            </div>
+            <div>
+              <RadioButton
+                v-model="timeRecipe"
+                inputId="time2"
+                name="between15and30"
+                value="between15and30"
+              />
+              <label for="time2">Entre 15' y 30'</label>
+            </div>
+            <div>
+              <RadioButton v-model="timeRecipe" inputId="time3" name="more30" value="more30" />
+              <label for="time3">Más de 30'</label>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="card-recipe__container">
@@ -43,7 +65,7 @@
           />
         </div>
         <div v-if="filteredRecipes.length === 0">
-          <p>No hay recetas que coincidan con tu búsqueda...</p>
+          <p>No hay recetas que coincidan con tu búsqueda</p>
         </div>
       </div>
     </div>
@@ -57,6 +79,7 @@ import { onMounted, computed, ref } from 'vue'
 import CardRecipeInfo from '@/components/CardRecipeInfo.vue'
 import { useRoute } from 'vue-router'
 import { CookingPot } from 'lucide-vue-next'
+import RadioButton from 'primevue/radiobutton'
 
 const route = useRoute()
 const category = computed(() => route.params.category)
@@ -70,6 +93,8 @@ onMounted(async () => {
 })
 
 const searchRecipe = ref('')
+
+const timeRecipe = ref('')
 
 const filteredRecipes = computed(() => {
   if (!allRecipes.value) return []
@@ -92,7 +117,23 @@ const filteredRecipes = computed(() => {
       recipe.flavour.toLowerCase().includes(searchInput) ||
       recipe.difficulty.toLowerCase().includes(searchInput)
 
-    return matchesCategory && matchesSearch
+    const preparationTime = recipe.time
+    let matchesTime = true
+
+    if (timeRecipe.value) {
+      switch (timeRecipe.value) {
+        case 'less15':
+          matchesTime = preparationTime < 15
+          break
+        case 'between15and30':
+          matchesTime = preparationTime >= 15 && preparationTime <= 30
+          break
+        case 'more30':
+          matchesTime = preparationTime > 30
+          break
+      }
+    }
+    return matchesCategory && matchesSearch && matchesTime
   })
 })
 </script>
@@ -118,6 +159,30 @@ const filteredRecipes = computed(() => {
     color: $black;
     gap: 10px;
     justify-content: center;
+  }
+
+  &__timePreparation {
+    margin: 0 auto;
+    p {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  }
+
+  &__radiobutton {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    font-size: 12px;
+    margin-top: 10px;
+
+    & div {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+    }
   }
 
   &__text {
@@ -180,7 +245,8 @@ const filteredRecipes = computed(() => {
 
     &__title,
     &__search,
-    &__text {
+    &__text,
+    &__timePreparation {
       text-align: left;
       margin-left: 50px;
     }
