@@ -9,7 +9,7 @@ export const useUserStore = defineStore('users', () => {
   const putUser = ref<IPutUser[]>([])
 
   const loadingAllUsers = ref(false)
-  const loadingPutUser = ref(false)
+  const loadingPatchUser = ref(false)
 
   const auth = authStore()
 
@@ -40,26 +40,38 @@ export const useUserStore = defineStore('users', () => {
     }
   }
 
-  const updateUser = async (userData: IPutUser) => {
+  const updateUser = async (userData: Partial<IPutUser>, userId?: number) => {
     if (!auth.isAuthenticated) {
       error.value = 'Usuario no autenticado'
       return
     }
 
-    const userId = auth.userId
-    loadingPutUser.value = true
+    // si no se proporciona un ID específico, usar el del usuario autenticado
+    const targetUserId = userId || auth.userId
+    loadingPatchUser.value = true
     error.value = null
 
     try {
-      const response = await fetch(`https://localhost:7129/api/users/${userId}`, {
-        method: 'PUT',
+      // crear un array para el Patch
+      const patchOperations = Object.entries(userData).map(([key, value]) => ({
+        op: "replace",
+        path: `/${key}`,
+        value: value
+      }))
+
+      // ver que haya operaciones hay algoo que actualizar
+      if (patchOperations.length === 0) {
+        throw new Error('No hay campos para actualizar')
+      }
+
+      const response = await fetch(`https://localhost:7129/api/users/${targetUserId}`, {
+        method: 'PATCH',
         headers: {
           accept: 'text/plain',
-          'Content-Type': 'application/json',
-
+          'Content-Type': 'application/json-patch+json',
           Authorization: `Bearer ${auth.token}`,
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(patchOperations),
       })
 
       if (!response.ok) {
@@ -80,7 +92,7 @@ export const useUserStore = defineStore('users', () => {
       error.value = err.message
       throw err
     } finally {
-      loadingPutUser.value = false
+      loadingPatchUser.value = false
     }
   }
 

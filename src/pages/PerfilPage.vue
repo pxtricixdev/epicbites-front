@@ -117,7 +117,6 @@
     <div v-if="showEditProfileModal" class="modal">
       <div class="modal__container">
         <div class="modal__header">
-          <h2 class="modal__title">Editar perfil</h2>
           <button @click="closeEditProfileModal" class="modal__close-button">×</button>
         </div>
         <div class="modal__content">
@@ -129,20 +128,18 @@
                 id="username"
                 v-model="editForm.username"
                 class="profile__form-input"
-                placeholder="Nuevo usuario"
-                required
+                placeholder="Nuevo usuario (opcional)"
               />
             </div>
 
             <div class="profile__form-group">
               <label for="email" class="profile__form-label">Email</label>
               <input
-                type="text"
+                type="email"
                 id="email"
                 v-model="editForm.email"
                 class="profile__form-input"
-                placeholder="Nuevo email"
-                required
+                placeholder="Nuevo email (opcional)"
               />
             </div>
 
@@ -153,10 +150,11 @@
                 id="password"
                 v-model="editForm.password"
                 class="profile__form-input"
-                placeholder="Nueva contraseña"
-                required
+                placeholder="Nueva contraseña (opcional)"
               />
             </div>
+
+            <div class="profile__form-info"><strong>Solo se actualizarán los campos que completes</strong></div>
 
             <div v-if="updateError" class="profile__form-error">
               {{ updateError }}
@@ -170,7 +168,7 @@
               <button type="button" @click="closeEditProfileModal" class="button button--secondary">
                 Cancelar
               </button>
-              <button type="submit" class="button" :disabled="isUpdating">
+              <button type="submit" class="button" :disabled="isUpdating || !hasChanges">
                 {{ isUpdating ? 'Actualizando...' : 'Guardar cambios' }}
               </button>
             </div>
@@ -274,6 +272,15 @@ const editForm = ref({
 
 const isAuthenticated = computed(() => auth.isAuthenticated)
 
+// Veri si hay algún cambio en el formulario
+const hasChanges = computed(() => {
+  return (
+    editForm.value.username.trim() !== '' ||
+    editForm.value.email.trim() !== '' ||
+    editForm.value.password.trim() !== ''
+  )
+})
+
 // foto de perfil
 const getInitials = (name: string) => {
   if (!name) return ''
@@ -319,7 +326,7 @@ const openEditProfileModal = () => {
   updateError.value = ''
   updateSuccess.value = ''
 
-  // pintar los datos que tenemos
+  // limpiar el form
   editForm.value = {
     username: '',
     email: '',
@@ -339,33 +346,47 @@ const updateUserProfile = async () => {
   isUpdating.value = true
 
   try {
+    // validar los campos que no estén vacíos
     const username = editForm.value.username.trim()
-    if (!username) {
-      throw new Error('El nombre de usuario es obligatorio')
-    } else if (username.length < 3) {
+    if (username && username.length < 3) {
       throw new Error('El usuario debe tener al menos 3 caracteres')
     }
 
     const password = editForm.value.password.trim()
-    if (!password) {
-      throw new Error('La contraseña es obligatoria')
-    } else if (password.length < 6) {
+    if (password && password.length < 6) {
       throw new Error('La contraseña debe tener al menos 6 caracteres')
     }
 
-    const userData: IPutUser = {
-      id: parseInt(userProfile.value.id),
-      username: editForm.value.username,
-      email: editForm.value.email,
-      password: editForm.value.password,
+    // Crear un objeto para usar el patch, el id no se incluye 
+    const updateData: Partial<IPutUser> = {}
+
+    // incluir los campos que tienen valor
+    if (username) {
+      updateData.username = username
+    }
+    
+    if (editForm.value.email.trim()) {
+      updateData.email = editForm.value.email.trim()
+    }
+    
+    if (password) {
+      updateData.password = password
     }
 
-    await updateUser(userData)
+    // ver que hay un campo relleno
+    if (Object.keys(updateData).length === 0) {
+      throw new Error('Debes modificar al menos un campo para enviar la actualización')
+    }
 
-    // actualizar los datos del storage si va bien
-    userProfile.value.name = editForm.value.username
-    localStorage.setItem('username', editForm.value.username)
-    editForm.value.password = ''
+    // aqui se pasa el id del usuario
+    const userId = parseInt(userProfile.value.id)
+    await updateUser(updateData, userId)
+
+    // actualizar datos
+    if (username) {
+      userProfile.value.name = username
+      localStorage.setItem('username', username)
+    }
 
     toast.success('Perfil actualizado correctamente')
 
@@ -375,7 +396,7 @@ const updateUserProfile = async () => {
   } catch (err: any) {
     console.error('Error:', err)
 
-    const errorMsg = err.message.toLowerCase()
+    const errorMsg = err.message.toLowerCase() || ''
     let errorToShow = ''
 
     if (errorMsg.includes('email')) {
