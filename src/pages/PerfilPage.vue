@@ -23,9 +23,14 @@
             >
           </div>
         </div>
-        <button @click="openEditProfileModal" class="profile__edit-button">
-          <span class="profile__edit-icon"></span> Editar perfil
-        </button>
+        <div class="profile__edit">
+          <button @click="openEditProfileModal" class="profile__edit-button">
+            <span class="profile__edit-icon"></span> Editar perfil
+          </button>
+          <button @click="deleteAccount" class="profile__delete-button">
+            <span class="profile__edit-icon"></span> Borrar cuenta
+          </button>
+        </div>
       </div>
     </div>
 
@@ -154,11 +159,13 @@
               />
             </div>
 
-            <div class="profile__" style="color: black; font-size: 14px;">*Solo se actualizarán los campos que completes</div>
+            <div class="profile__" style="color: black; font-size: 14px">
+              *Solo se actualizarán los campos que completes
+            </div>
 
             <div v-if="updateError" class="profile__form-error">
               {{ updateError }}
-            </div>  
+            </div>
 
             <div v-if="updateSuccess" class="profile__form-success">
               {{ updateSuccess }}
@@ -240,7 +247,7 @@ const router = useRouter()
 
 const { fetchRecipeByUser, deleteRecipe } = recipeStore
 const { fetchFavoriteRecipes, deleteFavoriteById } = favoriteStore
-const { updateUser } = userStore
+const { updateUser, deleteUser } = userStore
 
 const { dataRecipeByUser } = storeToRefs(recipeStore)
 const { dataFavoriteRecipes, loadingFavoriteRecipes } = storeToRefs(favoriteStore)
@@ -357,18 +364,18 @@ const updateUserProfile = async () => {
       throw new Error('La contraseña debe tener al menos 6 caracteres')
     }
 
-    // Crear un objeto para usar el patch, el id no se incluye 
+    // Crear un objeto para usar el patch, el id no se incluye
     const updateData: Partial<IPutUser> = {}
 
     // incluir los campos que tienen valor
     if (username) {
       updateData.username = username
     }
-    
+
     if (editForm.value.email.trim()) {
       updateData.email = editForm.value.email.trim()
     }
-    
+
     if (password) {
       updateData.password = password
     }
@@ -416,6 +423,14 @@ const updateUserProfile = async () => {
   } finally {
     isUpdating.value = false
   }
+}
+
+const deleteAccount = async () => {
+  deleteUser(auth.userId)
+
+  setTimeout(() => {
+    router.push('/')
+  }, 1200)
 }
 
 const confirmDeleteFavorite = (favoriteId: number) => {
@@ -566,16 +581,21 @@ onMounted(async () => {
     color: $black;
   }
 
-  &__edit-button {
+  &__edit {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+  }
+  &__edit-button,
+  &__delete-button {
     background: none;
     border: 1px solid $light-grey;
     border-radius: 4px;
     padding: 0.3rem 0.8rem;
-    font-size: 0.9rem;
+    font-size: 12px;
     color: $black;
     cursor: pointer;
     transition: all 0.2s;
-    display: inline-flex;
     align-items: center;
     gap: 0.3rem;
 
@@ -852,7 +872,7 @@ onMounted(async () => {
     flex-direction: row-reverse;
   }
 
-  &__title {  
+  &__title {
     margin: 0;
     font-size: 1.3rem;
     font-family: $body;

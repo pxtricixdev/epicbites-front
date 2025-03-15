@@ -10,6 +10,7 @@ export const useUserStore = defineStore('users', () => {
 
   const loadingAllUsers = ref(false)
   const loadingPatchUser = ref(false)
+  const loadingDelete = ref(false)
 
   const auth = authStore()
 
@@ -54,9 +55,9 @@ export const useUserStore = defineStore('users', () => {
     try {
       // crear un array para el Patch
       const patchOperations = Object.entries(userData).map(([key, value]) => ({
-        op: "replace",
+        op: 'replace',
         path: `/${key}`,
-        value: value
+        value: value,
       }))
 
       // ver que haya operaciones hay algoo que actualizar
@@ -96,11 +97,39 @@ export const useUserStore = defineStore('users', () => {
     }
   }
 
+  const deleteUser = async (id: number) => {
+    loadingDelete.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`https://localhost:7129/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`)
+      }
+
+      allUsers.value = allUsers.value.filter((users) => users.id !== id)
+    } catch (err: any) {
+      error.value = err.message
+      throw err
+    } finally {
+      auth.logout()
+      loadingDelete.value = false
+    }
+  }
+
   return {
     allUsers,
     putUser,
 
     fetchUsers,
     updateUser,
+    deleteUser,
   }
 })
