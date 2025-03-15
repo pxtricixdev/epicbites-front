@@ -95,7 +95,7 @@
         </div>
         <textarea
           required
-          maxlength="300"
+          maxlength="600"
           name="review"
           id="review"
           placeholder="Escribe tu reseña aquí"
