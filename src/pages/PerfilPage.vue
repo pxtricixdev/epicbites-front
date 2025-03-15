@@ -154,11 +154,11 @@
               />
             </div>
 
-            <div class="profile__form-info"><strong>Solo se actualizarán los campos que completes</strong></div>
+            <div class="profile__" style="color: black; font-size: 14px;">*Solo se actualizarán los campos que completes</div>
 
             <div v-if="updateError" class="profile__form-error">
               {{ updateError }}
-            </div>
+            </div>  
 
             <div v-if="updateSuccess" class="profile__form-success">
               {{ updateSuccess }}
@@ -849,9 +849,10 @@ onMounted(async () => {
     align-items: center;
     padding-bottom: 5px;
     border-bottom: 1px solid $light-grey;
+    flex-direction: row-reverse;
   }
 
-  &__title {
+  &__title {  
     margin: 0;
     font-size: 1.3rem;
     font-family: $body;
@@ -864,6 +865,7 @@ onMounted(async () => {
     font-size: 1.5rem;
     cursor: pointer;
     color: $black;
+    padding: 10px;
 
     &:hover {
       color: $light-grey;
