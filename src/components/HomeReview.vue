@@ -72,6 +72,11 @@ defineProps<{
     color: $black;
     margin-bottom: 5px;
     padding-top: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__author {

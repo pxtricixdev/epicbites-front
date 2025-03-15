@@ -21,6 +21,10 @@
                 </span>
                 <span class="recipe-page__time">⏳ {{ recipeDetail.time }} min</span>
                 <span class="recipe-page__calories">🔥 {{ recipeDetail.calories }} kcal</span>
+                <span class="recipe-page__difficulty">
+                  {{ getDifficultyEmoji(recipeDetail.difficulty) }}
+                  {{ recipeDetail.difficulty }}</span
+                >
               </div>
               <Toaster richColors />
               <div class="recipe-page__buttons" :style="{ gap: !isAuthenticated ? '0px' : '20px' }">
@@ -138,6 +142,12 @@ const route = useRoute()
 const recipeStore = useRecipeStore()
 const { recipeDetail, loadingDetail } = storeToRefs(recipeStore)
 const { fetchRecipeDetail } = recipeStore
+
+const getDifficultyEmoji = (difficulty: string) => {
+  if (difficulty === 'Facil') return '🟢'
+  else if (difficulty === 'Media') return '🟠'
+  else return '🔴'
+}
 
 const reviewStore = useReviewStore()
 const { reviewsByRecipe, loadingReviewsByRecipe } = storeToRefs(reviewStore)
@@ -326,7 +336,8 @@ const handlePostFavorite = async (e: Event) => {
 
   &__score,
   &__time,
-  &__calories {
+  &__calories,
+  &__difficulty {
     padding: 6px 12px;
     border-radius: 8px;
     font-weight: bold;
