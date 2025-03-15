@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div v-if="isAuthenticated">
+    <div v-if="isAuthenticated && !isReviewed">
       <form @submit="handlePost" class="reviews__form">
         <div class="reviews__form__text">
           <h3>Comparte tu experiencia</h3>
@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, watch } from 'vue'
+import { onMounted, reactive, watch, ref } from 'vue'
 import EstrellaRating from '@/components/SvgEstrella.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
@@ -159,11 +159,18 @@ const { createFavorite } = favoriteStore
 const auth = authStore()
 const { isAuthenticated } = auth
 
+const isReviewed = ref(false)
+
+const checkIfUserHasReviewARecipe = () => {
+  isReviewed.value = reviewsByRecipe.value.some((review) => review.userName === auth.username)
+}
+
 const loadData = async (id: string) => {
   clearReviewsByRecipe()
 
   await fetchRecipeDetail(id)
   await fetchReviewsByRecipe(id)
+  checkIfUserHasReviewARecipe()
 }
 
 onMounted(async () => {
@@ -220,6 +227,7 @@ const handlePost = async (e: Event) => {
     reviewForm.text = ''
     reviewForm.score = 1
     await fetchReviewsByRecipe(reviewData.recipeId)
+    checkIfUserHasReviewARecipe()
   } catch (error) {
     console.error('Error al crear la reseña:', error)
   }
