@@ -60,7 +60,7 @@
 
   <section class="reviews">
     <div class="reviews__container">
-      <h2 class="reviews__title"><EstrellaRating /> <span>Opiniones</span> <EstrellaRating /></h2>
+      <h2 class="reviews__title"><span>Opiniones</span></h2>
 
       <div v-if="loadingReviewsByRecipe" class="reviews__loading">
         <p>Cargando opiniones...</p>
@@ -78,7 +78,7 @@
               <strong class="reviews__username">{{ review.userName }}</strong>
             </div>
             <div class="reviews__rating">
-              <EstrellaRating />
+                  <EstrellaRating />
               <span>{{ review.reviewScore }}</span>
             </div>
           </div>
@@ -106,14 +106,8 @@
           v-model="reviewForm.text"
         ></textarea>
         <div class="reviews__form__score">
-          <label for="score">Puntua la receta: </label>
-          <select v-model="reviewForm.score" required name="score" id="score">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+          <label for="score">Puntúa la receta: </label>
+          <StarRating v-model="reviewForm.score" />
         </div>
         <div class="reviews__form__button">
           <button>Publicar</button>
@@ -126,6 +120,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, watch, ref } from 'vue'
 import EstrellaRating from '@/components/SvgEstrella.vue'
+import StarRating from '@/components/StarRating.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
 import { authStore } from '@/stores/authStore'

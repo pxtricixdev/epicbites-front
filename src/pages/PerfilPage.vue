@@ -426,7 +426,11 @@ const updateUserProfile = async () => {
 }
 
 const deleteAccount = async () => {
-  deleteUser(auth.userId)
+  if (auth.userId !== null) {
+    deleteUser(auth.userId)
+  } else {
+    console.error('User ID is null, cannot delete account.')
+  }
 
   setTimeout(() => {
     router.push('/')
