@@ -78,7 +78,7 @@
               <strong class="reviews__username">{{ review.userName }}</strong>
             </div>
             <div class="reviews__rating">
-                  <EstrellaRating />
+              <EstrellaRating />
               <span>{{ review.reviewScore }}</span>
             </div>
           </div>
@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div v-if="isAuthenticated && !isReviewed">
+    <div v-if="isAuthenticated && !isReviewed && !isTheUserTheOwner">
       <form @submit="handlePost" class="reviews__form">
         <div class="reviews__form__text">
           <h3>Comparte tu experiencia</h3>
@@ -155,9 +155,14 @@ const auth = authStore()
 const { isAuthenticated } = auth
 
 const isReviewed = ref(false)
+const isTheUserTheOwner = ref(false)
 
 const checkIfUserHasReviewARecipe = () => {
   isReviewed.value = reviewsByRecipe.value.some((review) => review.userName === auth.username)
+}
+
+const checkIfUserHasPostTheRecipe = () => {
+  isTheUserTheOwner.value = recipeDetail.value?.userName === auth.username
 }
 
 const loadData = async (id: string) => {
@@ -165,6 +170,7 @@ const loadData = async (id: string) => {
 
   await fetchRecipeDetail(id)
   await fetchReviewsByRecipe(id)
+  checkIfUserHasPostTheRecipe()
   checkIfUserHasReviewARecipe()
 }
 
