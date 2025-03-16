@@ -298,7 +298,7 @@
               sus roles.
             </li>
             <li class="admin__section-list-item">
-              📖 <strong>Recetas</strong>: Visualiza, edita y administra todas las recetas
+              📖 <strong>Recetas</strong>:  Administra todas las recetas
               disponibles en la plataforma.
             </li>
             <li class="admin__section-list-item">
@@ -745,6 +745,7 @@ const handleRegister = async () => {
     color: $black;
     padding: 0.5rem 0;
     gap: 10px;
+    justify-content: center;
 
     strong {
       font-weight: 600;

@@ -114,6 +114,8 @@ const policySections = [
 .policy {
   padding: 20px;
   font-family: $body;
+  max-width: 1200px;
+  margin: 0 auto;
 
   &__header {
     text-align: center;

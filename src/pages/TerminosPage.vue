@@ -90,6 +90,8 @@ const termsSections = [
     padding: 20px;
     color: $secondary-orange;
     font-family: $body;
+    max-width: 1200px;
+    margin: 0 auto;
 
     &__header {
         text-align: center;
