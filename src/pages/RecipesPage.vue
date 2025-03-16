@@ -30,6 +30,10 @@
           <p>Por tiempo de preparación:</p>
           <div class="card-recipe__radiobutton">
             <div>
+              <RadioButton v-model="timeRecipe" inputId="all" name="timeFilter" value="" />
+              <label for="all">Todas</label>
+            </div>
+            <div>
               <RadioButton v-model="timeRecipe" inputId="time1" name="less15" value="less15" />
               <label for="time1">Menos de 15'</label>
             </div>
