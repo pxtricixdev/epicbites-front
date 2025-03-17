@@ -166,7 +166,7 @@ const filteredRecipes = computed(() => {
   }
 
   &__timePreparation {
-    margin: 0 auto;
+    margin: 0 15px;
     p {
       font-size: 14px;
       margin-top: 10px;
@@ -229,6 +229,7 @@ const filteredRecipes = computed(() => {
     justify-content: center;
     margin: 20px auto 80px auto;
     color: $black;
+    text-align: center;
   }
 
   &__title {
