@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: epicbites-web-svc
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: <ARN of your certificate from the aws create certicate command>
+    # Only run TLS on the port named "https" below.
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: 'https'
+spec:
+  selector:
+    app: epicbites-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    - name: https
+      port: 443
+      targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epicbites-web-deploy
+  labels:
+    app: epicbites-web
+spec:
+  selector:
+    matchLabels:
+      app: epicbites-web
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: epicbites-web
+        tier: frontend
+    spec:
+      containers:
+        - name: epicbites-web
+          image: patriciaabad9/lumifilm-front:10.0
+          ports:
+            - containerPort: 80
