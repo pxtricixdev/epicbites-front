@@ -40,6 +40,6 @@ spec:
     spec:
       containers:
         - name: epicbites-web
-          image: patriciaabad9/lumifilm-front:10.0
+          image: patriciaabad/epicbites-web
           ports:
             - containerPort: 80
