@@ -20,7 +20,7 @@
     <section class="home-page__feature">
       <div class="feature-container">
         <FeatureSection
-          title="Inspírate y cocina!"
+          title="!Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
           :link="`/receta/${randomRecipe}`"
           image="/images/coockingsection2.webp"

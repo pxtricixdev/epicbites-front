@@ -5,6 +5,7 @@
         <p>Cargando...</p>
       </div>
       <div v-if="recipeDetail" class="recipe-page__container">
+        <!-- Contenido existente sin cambios -->
         <div class="recipe-page__top-content">
           <div class="recipe-page__image">
             <img :src="recipeDetail.image" alt="Imagen de la receta" />
@@ -54,10 +55,44 @@
             </ul>
           </div>
         </div>
+        <div class="recipe-notes">
+          <h2 class="recipe-notes__title">📝 <span>Mis notas personales</span></h2>
+          <div v-if="isAuthenticated" class="recipe-notes__form">
+            <textarea
+              v-model="noteText"
+              placeholder="Añade una nota personal para esta receta..."
+              class="recipe-notes__textarea"
+            ></textarea>
+            <button
+              @click="handleCreateNote"
+              class="recipe-notes__button"
+              :disabled="!noteText.trim() || loadingCreateNote"
+            >
+              {{ loadingCreateNote ? 'Guardando...' : 'Guardar nota' }}
+            </button>
+          </div>
+          <div v-if="loadingNotes" class="recipe-notes__loading">
+            <p>Cargando notas...</p>
+          </div>
+
+          <div v-else-if="userNotes.length > 0" class="recipe-notes__list">
+            <NoteCard
+              v-for="note in userNotes"
+              :key="note.id"
+              :text="note.noteText"
+              @delete="showDeleteConfirmation(note.id)"
+            />
+          </div>
+          <div v-else class="recipe-notes__empty">
+            <p>No tienes notas para esta receta</p>
+            <p v-if="isAuthenticated">Añade una nota para recordar tus cambios personales.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- Resto del componente sin cambios -->
   <section class="reviews">
     <div class="reviews__container">
       <h2 class="reviews__title"><span>Opiniones</span></h2>
@@ -115,6 +150,28 @@
       </form>
     </div>
   </section>
+
+  <!-- Diálogo de confirmación integrado directamente en la página -->
+  <div v-if="showConfirmDialog" class="delete-confirm-overlay">
+    <div class="delete-confirm-dialog">
+      <h3 class="delete-confirm-dialog__title">Confirmar eliminación</h3>
+      <p class="delete-confirm-dialog__message">¿Estás seguro de que quieres eliminar esta nota?</p>
+      <div class="delete-confirm-dialog__buttons">
+        <button
+          @click="confirmDeleteNote"
+          class="delete-confirm-dialog__button delete-confirm-dialog__button--confirm"
+        >
+          Sí
+        </button>
+        <button
+          @click="cancelDeleteNote"
+          class="delete-confirm-dialog__button delete-confirm-dialog__button--cancel"
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -124,6 +181,7 @@ import StarRating from '@/components/StarRating.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
 import { authStore } from '@/stores/authStore'
+import { useRecipeNoteStore } from '@/stores/noteStore'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import type { IPostReview } from '@/stores/interfaces/IPostReview'
@@ -131,12 +189,25 @@ import { useFavoriteStore } from '@/stores/favoriteStore'
 import type { IPostFavorite } from '@/stores/interfaces/IPostFavorite'
 import { Toaster, toast } from 'vue-sonner'
 import RecipePrintButton from '@/components/RecipePrintButton.vue'
+import NoteCard from '@/components/NoteCard.vue'
 
 const route = useRoute()
+const recipeNoteStore = useRecipeNoteStore()
 
 const recipeStore = useRecipeStore()
 const { recipeDetail, loadingDetail } = storeToRefs(recipeStore)
 const { fetchRecipeDetail } = recipeStore
+
+const noteText = ref('')
+const loadingNotes = ref(false)
+const loadingCreateNote = ref(false)
+const userNotes = ref<
+  { id: number; userId: number; recipeId: number; noteText: string; createdDate: string }[]
+>([])
+
+// Variables para el diálogo de confirmación
+const showConfirmDialog = ref(false)
+const noteToDelete = ref<number | null>(null)
 
 const getDifficultyEmoji = (difficulty: string) => {
   if (difficulty === 'Facil') return '🟢'
@@ -165,11 +236,90 @@ const checkIfUserHasPostTheRecipe = () => {
   isTheUserTheOwner.value = recipeDetail.value?.userName === auth.username
 }
 
+const fetchUserNotes = async () => {
+  if (!auth.isAuthenticated || !auth.userId) return
+
+  loadingNotes.value = true
+  try {
+    await recipeNoteStore.fetchNotesByUser(auth.userId)
+    const recipeId = Number(Array.isArray(route.params.id) ? route.params.id[0] : route.params.id)
+    userNotes.value = recipeNoteStore.notesByUser.filter((note) => note.recipeId === recipeId)
+  } catch (err) {
+    console.error('Error al cargar notas:', err)
+  } finally {
+    loadingNotes.value = false
+  }
+}
+
+const handleCreateNote = async () => {
+  if (!noteText.value.trim() || loadingCreateNote.value) return
+
+  loadingCreateNote.value = true
+  try {
+    const recipeId = Number(Array.isArray(route.params.id) ? route.params.id[0] : route.params.id)
+    const newNote = await recipeNoteStore.createNote({
+      recipeId: recipeId,
+      noteText: noteText.value.trim(),
+      userId: auth.userId ?? 0,
+    })
+
+    // Añadir la nueva nota directamente al array sin tener que recargar todas
+    if (newNote && newNote.id) {
+      userNotes.value.unshift({
+        id: newNote.id,
+        userId: auth.userId ?? 0,
+        recipeId: recipeId,
+        noteText: noteText.value.trim(),
+        createdDate: new Date().toISOString(),
+      })
+    }
+
+    noteText.value = ''
+    toast.success('Nota guardada correctamente')
+  } catch (err) {
+    console.error('Error al crear la nota:', err)
+    toast.error('No se pudo guardar la nota')
+  } finally {
+    loadingCreateNote.value = false
+  }
+}
+
+// Métodos para el diálogo de confirmación
+const showDeleteConfirmation = (noteId: number) => {
+  noteToDelete.value = noteId
+  showConfirmDialog.value = true
+}
+
+const confirmDeleteNote = async () => {
+  if (noteToDelete.value === null) return
+
+  try {
+    await recipeNoteStore.deleteNote(noteToDelete.value)
+
+    // Eliminar la nota directamente del array sin recargar
+    userNotes.value = userNotes.value.filter((note) => note.id !== noteToDelete.value)
+
+    toast.success('Nota eliminada correctamente')
+  } catch (err) {
+    console.error('Error al eliminar la nota:', err)
+    toast.error('No se pudo eliminar la nota')
+  } finally {
+    showConfirmDialog.value = false
+    noteToDelete.value = null
+  }
+}
+
+const cancelDeleteNote = () => {
+  showConfirmDialog.value = false
+  noteToDelete.value = null
+}
+
 const loadData = async (id: string) => {
   clearReviewsByRecipe()
 
   await fetchRecipeDetail(id)
   await fetchReviewsByRecipe(id)
+  await fetchUserNotes()
   checkIfUserHasPostTheRecipe()
   checkIfUserHasReviewARecipe()
 }
@@ -262,6 +412,80 @@ const handlePostFavorite = async (e: Event) => {
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 
+/* Estilo del diálogo de confirmación */
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.delete-confirm-dialog {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-family: $body;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: $black;
+    font-family: $body;
+  }
+
+  &__message {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: $black;
+    font-family: $body;
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  &__button {
+    font-family: $body;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &--confirm {
+      background-color: #ff5252;
+      color: white;
+
+      &:hover {
+        background-color: #ff3838;
+      }
+    }
+
+    &--cancel {
+      background-color: #e0e0e0;
+      color: $black;
+
+      &:hover {
+        background-color: #d0d0d0;
+      }
+    }
+  }
+}
+
+/* Mantener los estilos existentes tal como están */
 .recipe-page {
   max-width: 1200px;
   margin: 40px auto 10px auto;
@@ -611,6 +835,118 @@ const handlePostFavorite = async (e: Event) => {
         cursor: pointer;
       }
     }
+  }
+}
+
+.recipe-notes {
+  margin: 30px 0;
+  font-family: $body;
+
+  &__title {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: $black;
+    font-family: $body;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    span {
+      font-weight: normal;
+    }
+  }
+
+  &__form {
+    background-color: $white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    resize: vertical;
+    font-size: 14px;
+    background-color: white;
+    color: $black;
+
+    &:focus {
+      outline: none;
+      border-color: $secondary-orange;
+    }
+  }
+
+  &__button {
+    align-self: flex-end;
+    background-color: $primary-yellow;
+    color: $black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+
+    &:disabled {
+      background-color: #e0e0e0;
+      color: #999;
+      cursor: not-allowed;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__item {
+    background-color: $white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    color: $black;
+    font-size: 14px;
+  }
+
+  &__text {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &__delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+
+    &:hover {
+      color: #ff5252;
+    }
+  }
+
+  &__loading,
+  &__empty {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #666;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
   }
 }
 </style>

@@ -7,7 +7,7 @@
 
       <!-- Menú para pantallas > 768 -->
       <nav class="header__nav-desktop" v-if="isDesktop">
-        <RouterLink class="header__nav__item" to="/">Home</RouterLink>
+        <RouterLink class="header__nav__item" to="/">Inicio</RouterLink>
         <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
         <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
       </nav>
@@ -29,9 +29,9 @@
           <UserRoundPen :size="16" color="black" />
         </RouterLink>
         <button v-if="isAuthenticated" @click="handleAuth" class="header__content__button-logout">
-          Logout
+          Cerrar sesión
         </button>
-        <RouterLink v-else to="/login" class="header__content__button-login"> Login </RouterLink>
+        <RouterLink v-else to="/login" class="header__content__button-login"> Iniciar sesión </RouterLink>
       </div>
     </div>
 
@@ -40,7 +40,7 @@
       <ul class="header__nav__list">
         <li>
           <RouterLink class="header__nav__item" to="/">
-            Home
+            Inicio
             <ArrowRight :size="18" color="#E57309" />
           </RouterLink>
         </li>
@@ -216,7 +216,7 @@ onUnmounted(() => {
       border: none;
       padding: 8px 20px !important;
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -235,7 +235,7 @@ onUnmounted(() => {
       border: none;
       padding: 5px 25px;
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
