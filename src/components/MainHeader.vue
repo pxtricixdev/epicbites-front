@@ -7,7 +7,6 @@
 
       <!-- Menú para pantallas > 768 -->
       <nav class="header__nav-desktop" v-if="isDesktop">
-        <RouterLink class="header__nav__item" to="/">Inicio</RouterLink>
         <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
         <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
       </nav>
@@ -31,7 +30,9 @@
         <button v-if="isAuthenticated" @click="handleAuth" class="header__content__button-logout">
           Cerrar sesión
         </button>
-        <RouterLink v-else to="/login" class="header__content__button-login"> Iniciar sesión </RouterLink>
+        <RouterLink v-else to="/login" class="header__content__button-login">
+          Iniciar sesión
+        </RouterLink>
       </div>
     </div>
 
@@ -112,7 +113,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   background-color: $white;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 12px 10px 12px;
   font-family: $body;
   position: sticky;
   width: 100%;
@@ -192,15 +193,17 @@ onUnmounted(() => {
     &__button-user {
       border: 1px solid #e7e34f;
       border-radius: 10px;
+      text-transform: uppercase;
+      font-weight: 600;
       width: 90px;
-      font-size: 14px;
+      font-size: 12px;
       color: #000000;
       transition: 0.1s ease-in-out;
       display: inline-flex;
       margin: auto;
       gap: 5px;
       justify-content: center;
-      padding: 3px 0;
+      padding: 5px !important;
 
       &:hover {
         background-color: #e7e24f40;
@@ -214,9 +217,9 @@ onUnmounted(() => {
       text-transform: uppercase;
       font-weight: 600;
       border: none;
-      padding: 8px 20px !important;
+      padding: 7px 20px !important;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -233,9 +236,9 @@ onUnmounted(() => {
       text-transform: uppercase;
       font-weight: 600;
       border: none;
-      padding: 5px 25px;
+      padding: 7px 20px;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
