@@ -24,7 +24,13 @@
           <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('home')">
               <i class="pi pi-home"></i>
-              <span>Home</span>
+              <span>Inicio</span>
+            </a>
+          </li>
+          <li class="admin__menu-item">
+            <a href="#" class="admin__menu-link" @click="setActiveSection('stats')">
+              <i class="pi pi-chart-bar"></i>
+              <span>Estadísticas</span>
             </a>
           </li>
           <li class="admin__menu-item">
@@ -42,7 +48,7 @@
           <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('review')">
               <i class="pi pi-star"></i>
-              <span>Review</span>
+              <span>Reseñas</span>
             </a>
           </li>
           <li class="admin__menu-item">
@@ -229,6 +235,45 @@
             </DataTable>
           </div>
         </div>
+
+        <div v-if="activeSection === 'stats'" class="admin__section-container admin__stats-container">
+  <h2 class="admin__section-title">Estadísticas</h2>
+  
+  <div v-if="isLoading" class="admin__loading">
+    <p class="admin__loading-text">Cargando datos estadísticos...</p>
+  </div>
+  
+  <div v-else-if="error" class="admin__error">
+    <p class="admin__error-text">Error al cargar datos: {{ error }}</p>
+  </div>
+  
+  <div v-else class="admin__charts-grid">
+    <!-- Dificultad de Recetas -->
+    <div class="admin__chart-card">
+      <h3 class="admin__chart-title">Recetas por Dificultad</h3>
+      <div class="admin__chart-wrapper">
+        <canvas v-if="!noDifficultyDataMessage" id="difficultyChart" ref="difficultyChartRef"></canvas>
+        <div v-else class="admin__no-data">
+          <i class="pi pi-exclamation-circle"></i>
+          <p>No hay datos de dificultad disponibles.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Valoraciones -->
+    <div class="admin__chart-card">
+      <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
+      <div class="admin__chart-wrapper">
+        <canvas v-if="!noRatingDataMessage" id="ratingsChart" ref="ratingsChartRef"></canvas>
+        <div v-else class="admin__no-data">
+          <i class="pi pi-exclamation-circle"></i>
+          <p>No hay datos de valoración disponibles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
         <!-- Registro de admin -->
         <div v-if="activeSection === 'register'" class="admin__section-container">
           <p>Rellena el formulario para registrar un administrador</p>
@@ -391,6 +436,7 @@ import { useUserStore } from '@/stores/userStore'
 import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { storeToRefs } from 'pinia'
+import useCharts from '@/data/useChart'
 
 const router = useRouter()
 
@@ -419,6 +465,23 @@ const { allUsers } = storeToRefs(userStore)
 const { fetchUsers } = userStore
 const user = ref<IGetAllUsers[]>([])
 
+// composable de gráficas
+const {
+  difficultyChartRef,
+  ratingsChartRef,
+  initializeCharts,
+  setupWatchers,
+  isLoading,
+  error
+} = useCharts(activeSection)
+
+const noRecipeDataMessage = ref(false) 
+const noUserDataMessage = ref(false)
+const noDifficultyDataMessage = ref(false)
+const noRatingDataMessage = ref(false)
+
+setupWatchers()
+
 const deleteRecipeDialogVisible = ref(false)
 const recipeToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
 
@@ -440,8 +503,11 @@ onMounted(async () => {
   await fetchAllReviews()
   mapReviews()
   reviewData.value.total = mappedReviews.value.length
+  
+  if (activeSection.value === 'stats') {
+    initializeCharts()
+  }
 })
-
 const mapReviews = () => {
   mappedReviews.value = allReviews.value.map((review) => ({
     id: review.id,
@@ -696,7 +762,7 @@ const handleRegister = async () => {
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-top: 2rem;
-    max-width: 66.3%;
+    max-width: 100%;
     color: $black;
     text-align: center;
 
@@ -903,6 +969,107 @@ const handleRegister = async () => {
     flex-direction: row;
     text-align: left;
     padding: 1rem 2rem;
+  }
+}
+
+.admin {
+  &__loading,
+  &__error,
+  &__no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: $black;
+  }
+
+  &__charts-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+    
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  &__chart-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+        
+    .admin__chart-wrapper {
+      width: 100%;
+      max-width: 320px;
+      height: 320px;    
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  &__chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: $black;
+  }
+  
+  &__loading-text,
+  &__error-text { 
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+  
+  &__error {
+    color: #f44336;
+  }
+  
+  &__no-data {
+    height: 300px;
+    color: #9e9e9e;
+    
+    i {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      margin: 0;
+      width: 100% !important;
+      text-align: center !important;
+    }
+  }
+
+  &__loading,
+  &__error {
+    min-height: 400px;
+    width: 100%;
+    
+    i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+  }
+    
+  &__debug-panel {
+    margin-top: 2rem;
+    padding: 1rem;  
+    border: 1px dashed 
+  }
+
+  &__stats-container {
+    padding: 2rem;
+    
+    @media (max-width: 767px) {
+      padding: 1rem;
+    }
   }
 }
 
