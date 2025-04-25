@@ -36,7 +36,7 @@
           <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('users')">
               <i class="pi pi-users"></i>
-              <span>Users</span>
+              <span>Usuarios</span>
             </a>
           </li>
           <li class="admin__menu-item">
@@ -83,7 +83,7 @@
           <div class="admin__dashboard-cards">
             <div class="admin-card">
               <div class="admin-card__header">
-                <h3 class="admin-card__title">Users</h3>
+                <h3 class="admin-card__title">Usuarios</h3>
                 <div class="admin-card__icon">
                   <i class="pi pi-users"></i>
                 </div>
@@ -103,7 +103,7 @@
 
             <div class="admin-card">
               <div class="admin-card__header">
-                <h3 class="admin-card__title">Reviews</h3>
+                <h3 class="admin-card__title">Reseñas</h3>
                 <div class="admin-card__icon admin-card__icon--reviews">
                   <i class="pi pi-star"></i>
                 </div>
@@ -148,7 +148,7 @@
 
               <Column field="difficulty" header="Dificultad"></Column>
 
-              <Column field="score" header="Reviews">
+              <Column field="score" header="Puntuación">
                 <template #body="slotProps">
                   <Rating :modelValue="slotProps.data.score" readonly />
                 </template>
