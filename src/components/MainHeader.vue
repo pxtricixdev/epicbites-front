@@ -9,6 +9,7 @@
       <nav class="header__nav-desktop" v-if="isDesktop">
         <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
         <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
+        <RouterLink class="header__nav__item" to="/weekly-menu">Menú semanal</RouterLink>
       </nav>
 
       <div class="header__content__buttons">
@@ -48,6 +49,10 @@
         <li>
           <RouterLink class="header__nav__item" to="/recetas">
             Todas las recetas
+            <ArrowRight :size="18" color="#E57309" />
+          </RouterLink>
+          <RouterLink class="header__nav__item" to="/weekly-menu">
+            Menú semanal
             <ArrowRight :size="18" color="#E57309" />
           </RouterLink>
           <RouterLink class="header__nav__item" to="/sobre-nosotros">
