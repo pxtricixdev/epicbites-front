@@ -84,7 +84,6 @@
 import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
-import HomeSection from '@/components/HomeSection.vue'
 import { onMounted, ref } from 'vue'
 import RecipeCarousel from '@/components/RecipeCarousel.vue'
 import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
