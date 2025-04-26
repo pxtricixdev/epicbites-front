@@ -20,7 +20,7 @@
     <section class="home-page__feature">
       <div class="feature-container">
         <FeatureSection
-          title="!Inspírate y cocina!"
+          title="¡Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
           :link="`/receta/${randomRecipe}`"
           image="/images/coockingsection2.webp"
@@ -30,10 +30,10 @@
       </div>
       <div class="feature-container">
         <FeatureSection
-          title="Explora sabores increíbles"
-          subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
-          :link="`/receta/${randomRecipe}`"
-          image="/images/coockingsection1.webp"
+          title="¡Planifica tus comidas fácilmente!"
+          subtitle="Diseña tu menú semanal y lleva el control de tus comidas de forma sencilla."
+          :link="'/weekly-menu'"
+          image="/images/mealpreping.webp"
           backgroundColor="#E7E34F"
           textColor="#000"
         />
@@ -84,6 +84,7 @@
 import Banner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
+import HomeSection from '@/components/HomeSection.vue'
 import { onMounted, ref } from 'vue'
 import RecipeCarousel from '@/components/RecipeCarousel.vue'
 import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
