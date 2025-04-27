@@ -1,7 +1,182 @@
 <template>
-  <div></div>
+  <div class="weekly-menu">
+    <div class="weekly-menu__text">
+      <h1 class="weekly-menu__title">Organiza tus comidas de la semana en un solo lugar</h1>
+      <p class="weekly-menu__subtitle">
+        Selecciona tus recetas favoritas y crea tu propio menú semanal personalizado. Ahorra tiempo,
+        lleva un control de tus comidas y disfruta de una alimentación variada y equilibrada sin
+        complicaciones.
+      </p>
+    </div>
+    <div class="weekly-menu__bullets">
+      <ul>
+        <li>Elige entre todas nuestras recetas disponibles.</li>
+        <li>Filtra las recetas según tus necesidades.</li>
+        <li>Asigna platos a cada día de la semana.</li>
+        <li>Guarda tu menú y visítalo cuando quieras.</li>
+      </ul>
+    </div>
+    <section class="weekly-menu__recipes">
+      <p class="weekly-menu__recipes__title">Recetas disponibles</p>
+      <input
+        class="weekly-menu__recipes__search"
+        type="text"
+        v-model="searchRecipe"
+        placeholder="Buscar recetas..."
+      />
+      <div class="weekly-menu__recipes__filter">
+        <p class="weekly-menu__recipes__filter__title">Filtros</p>
+        <div class="weekly-menu__recipes__filter__select">
+          <select required id="category" v-model="recipeCategory">
+            <option value="" disabled selected>Categoría</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+          </select>
+
+          <select required id="difficulty" v-model="recipeDifficulty">
+            <option value="" disabled selected>Dificultad</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+          </select>
+
+          <select required id="diet" v-model="recipeDiet">
+            <option value="" disabled selected>Dieta</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+          </select>
+
+          <select required id="meal" v-model="recipeMealType">
+            <option value="" disabled selected>Tipo de comida</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+          </select>
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useRecipeStore } from '@/stores/recipeStore'
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 
-<style lang="scss" scoped></style>
+const recipeStore = useRecipeStore()
+const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
+const { fetchAllRecipes } = recipeStore
+
+onMounted(async () => {
+  await fetchAllRecipes()
+})
+
+const searchRecipe = ref('')
+const recipeCategory = ref('')
+const recipeDifficulty = ref('')
+const recipeDiet = ref('')
+const recipeMealType = ref('')
+</script>
+
+<style lang="scss" scoped>
+@use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
+
+.weekly-menu {
+  font-family: $body;
+  color: $black;
+  max-width: 1200px;
+  margin: 40px 10px 20px 10px;
+
+  &__text {
+    display: block;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 18px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  &__bullets {
+    margin: 10px 0;
+    padding: 15px 30px;
+    background-color: #e5730930;
+    @include regular-text(13px);
+    border-radius: 8px;
+    max-width: 400px;
+    color: rgb(53, 53, 53);
+
+    li {
+      list-style: disc;
+      margin-bottom: 5px;
+
+      &::marker {
+        color: $secondary-orange;
+      }
+    }
+  }
+
+  &__recipes {
+    background-color: white;
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border-radius: 8px;
+    padding: 20px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    &__title {
+      @include semibold-text(18px);
+      color: rgb(37, 37, 37);
+    }
+
+    &__search {
+      background-color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      width: 300px;
+      font-family: $body;
+      font-size: 12px;
+      border: 1.5px solid $secondary-orange;
+      color: grey;
+
+      &::placeholder {
+        color: rgb(84, 84, 84);
+      }
+
+      &:focus {
+        outline: none;
+        border: 1.5px solid #e5730930;
+      }
+    }
+
+    select {
+      background-color: white;
+      color: black;
+      border-radius: 5px;
+      padding: 5px 5px 5px 5px;
+      width: 150px;
+      font-size: 12px;
+      border: 1.5px solid $secondary-orange;
+    }
+
+    &__filter {
+      &__title {
+        @include semibold-text(14px);
+        color: rgb(83, 83, 83);
+        margin-bottom: 5px;
+      }
+      &__select {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+    }
+  }
+}
+</style>
