@@ -51,6 +51,17 @@
             <option value="ml">ml</option>
           </select>
         </div>
+        <div>
+          <CardRecipeForMenu
+            title="Verduras al horno con pollo a la parrilla"
+            time="3"
+            difficulty="Medio"
+            meal="Desayuno"
+            src="/public/images/mealpreping.webp"
+            buttonText="Añadir"
+            link="/"
+          />
+        </div>
       </div>
     </section>
   </div>
@@ -60,6 +71,7 @@
 import { useRecipeStore } from '@/stores/recipeStore'
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
+import CardRecipeForMenu from '@/components/CardRecipeForMenu.vue'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
@@ -127,7 +139,7 @@ const recipeMealType = ref('')
     border-radius: 8px;
     padding: 20px 20px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
 
     &__title {

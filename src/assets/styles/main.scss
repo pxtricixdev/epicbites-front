@@ -43,4 +43,10 @@ body {
   --p-radiobutton-width: 1rem !important;
   --p-radiobutton-height: 1rem !important;
   --p-radiobutton-icon-size: 0.5rem !important;
+  --p-dialog-color: black !important;
+}
+
+.p-dialog,
+.p-dialog * {
+  font-family: 'Poppins', sans-serif !important;
 }
