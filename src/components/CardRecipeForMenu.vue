@@ -48,6 +48,7 @@
           </button>
         </div>
       </div>
+      <button class="modal__button">Añadir al menú</button>
     </Dialog>
   </div>
 </template>
@@ -89,8 +90,6 @@ const meals: string[] = ['Desayuno', 'Almuerzo', 'Comida', 'Merienda', 'Cena']
 
 const selectedDay = ref<string | null>(null)
 const selectedMeal = ref<string | null>(null)
-
-const isClicked = ref(false)
 </script>
 
 <style lang="scss" scoped>
@@ -200,6 +199,19 @@ const isClicked = ref(false)
           background-color: $light-grey;
         }
       }
+    }
+  }
+  &__button {
+    background-color: black;
+    border-radius: 5px;
+    border: none;
+    padding: 10px 15px;
+    color: white;
+    @include regular-text(14px);
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
     }
   }
 }
