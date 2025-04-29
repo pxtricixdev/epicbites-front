@@ -57,6 +57,8 @@
 import { CirclePlus } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
+import { daysOfWeek } from '@/data/menuData'
+import { meals } from '@/data/menuData'
 
 defineProps<{
   title: string
@@ -75,18 +77,6 @@ const isVisible = ref(false)
 const addRecipe = () => {
   emit('update:modelValue')
 }
-
-const daysOfWeek: string[] = [
-  'Lunes',
-  'Martes',
-  'Miércoles',
-  'Jueves',
-  'Viernes',
-  'Sábado',
-  'Domingo',
-]
-
-const meals: string[] = ['Desayuno', 'Almuerzo', 'Comida', 'Merienda', 'Cena']
 
 const selectedDay = ref<string | null>(null)
 const selectedMeal = ref<string | null>(null)

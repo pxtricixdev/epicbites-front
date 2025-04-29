@@ -16,54 +16,75 @@
         <li>Guarda tu menú y visítalo cuando quieras.</li>
       </ul>
     </div>
-    <section class="weekly-menu__recipes">
-      <p class="weekly-menu__recipes__title">Recetas disponibles</p>
-      <input
-        class="weekly-menu__recipes__search"
-        type="text"
-        v-model="searchRecipe"
-        placeholder="Buscar recetas..."
-      />
-      <div class="weekly-menu__recipes__filter">
-        <p class="weekly-menu__recipes__filter__title">Filtros</p>
-        <div class="weekly-menu__recipes__filter__select">
-          <select required id="category" v-model="recipeCategory">
-            <option value="" disabled selected>Categoría</option>
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-          </select>
+    <div class="weekly-menu__container">
+      <section class="weekly-menu__recipes">
+        <p class="weekly-menu__recipes__title">Recetas disponibles</p>
+        <input
+          class="weekly-menu__recipes__search"
+          type="text"
+          v-model="searchRecipe"
+          placeholder="Buscar recetas..."
+        />
+        <div class="weekly-menu__recipes__filter">
+          <p class="weekly-menu__recipes__filter__title">Filtros</p>
+          <div class="weekly-menu__recipes__filter__select">
+            <select required id="category" v-model="recipeCategory">
+              <option value="" disabled selected>Categoría</option>
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+            </select>
 
-          <select required id="difficulty" v-model="recipeDifficulty">
-            <option value="" disabled selected>Dificultad</option>
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-          </select>
+            <select required id="difficulty" v-model="recipeDifficulty">
+              <option value="" disabled selected>Dificultad</option>
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+            </select>
 
-          <select required id="diet" v-model="recipeDiet">
-            <option value="" disabled selected>Dieta</option>
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-          </select>
+            <select required id="diet" v-model="recipeDiet">
+              <option value="" disabled selected>Dieta</option>
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+            </select>
 
-          <select required id="meal" v-model="recipeMealType">
-            <option value="" disabled selected>Tipo de comida</option>
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-          </select>
+            <select required id="meal" v-model="recipeMealType">
+              <option value="" disabled selected>Tipo de comida</option>
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+            </select>
+          </div>
+          <div>
+            <CardRecipeForMenu
+              title="Verduras al horno con pollo a la parrilla"
+              time="3"
+              difficulty="Medio"
+              meal="Desayuno"
+              src="/public/images/mealpreping.webp"
+              buttonText="Añadir"
+              link="/"
+            />
+          </div>
         </div>
-        <div>
-          <CardRecipeForMenu
-            title="Verduras al horno con pollo a la parrilla"
-            time="3"
-            difficulty="Medio"
-            meal="Desayuno"
-            src="/public/images/mealpreping.webp"
-            buttonText="Añadir"
-            link="/"
-          />
-        </div>
-      </div>
-    </section>
+      </section>
+      <section class="weekly-menu__menu">
+        <p class="weekly-menu__menu__title">Menú semanal</p>
+        <p>Organiza tus 5 comidas diarias para cada día de la semana</p>
+        <Tabs value="0">
+          <TabList>
+            <Tab v-for="day in daysOfWeek" :key="day" :value="day">{{ day }}</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel v-for="day in daysOfWeek" :value="day" :key="day">
+              <div class="weekly-menu__menu__day">
+                <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
+                  <p class="weekly-menu__menu__meal__title">{{ meal }}</p>
+                  <p>No hay ninguna receta todavía</p>
+                </span>
+              </div>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -72,6 +93,13 @@ import { useRecipeStore } from '@/stores/recipeStore'
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import CardRecipeForMenu from '@/components/CardRecipeForMenu.vue'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
+import { daysOfWeek } from '@/data/menuData'
+import { meals } from '@/data/menuData'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
@@ -96,7 +124,11 @@ const recipeMealType = ref('')
   font-family: $body;
   color: $black;
   max-width: 1200px;
-  margin: 40px 10px 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+  margin: 40px auto;
 
   &__text {
     display: block;
@@ -108,7 +140,7 @@ const recipeMealType = ref('')
   }
 
   &__subtitle {
-    font-size: 14px;
+    font-size: 16px;
     margin-top: 10px;
   }
 
@@ -116,7 +148,7 @@ const recipeMealType = ref('')
     margin: 10px 0;
     padding: 15px 30px;
     background-color: #e5730930;
-    @include regular-text(13px);
+    @include regular-text(14px);
     border-radius: 8px;
     max-width: 400px;
     color: rgb(53, 53, 53);
@@ -131,6 +163,13 @@ const recipeMealType = ref('')
     }
   }
 
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 10px;
+  }
+
   &__recipes {
     background-color: white;
     box-shadow:
@@ -141,6 +180,7 @@ const recipeMealType = ref('')
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-width: 700px;
 
     &__title {
       @include semibold-text(18px);
@@ -153,7 +193,7 @@ const recipeMealType = ref('')
       border-radius: 5px;
       width: 300px;
       font-family: $body;
-      font-size: 12px;
+      font-size: 14px;
       border: 1.5px solid $secondary-orange;
       color: grey;
 
@@ -173,7 +213,7 @@ const recipeMealType = ref('')
       border-radius: 5px;
       padding: 5px 5px 5px 5px;
       width: 150px;
-      font-size: 12px;
+      font-size: 14px;
       border: 1.5px solid $secondary-orange;
     }
 
@@ -188,6 +228,38 @@ const recipeMealType = ref('')
         flex-wrap: wrap;
         gap: 12px;
       }
+    }
+  }
+
+  &__menu {
+    background-color: white;
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border-radius: 8px;
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 700px;
+    min-width: 300px;
+
+    &__meal {
+      padding: 10px 10px;
+      border-radius: 5px;
+      background-color: rgb(241, 241, 241);
+
+      &__title {
+        @include semibold-text(16px);
+        margin-bottom: 5px;
+        color: $secondary-orange;
+      }
+    }
+
+    &__day {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
   }
 }
