@@ -237,42 +237,82 @@
         </div>
 
         <div v-if="activeSection === 'stats'" class="admin__section-container admin__stats-container">
-  <h2 class="admin__section-title">Estadísticas</h2>
-  
-  <div v-if="isLoading" class="admin__loading">
-    <p class="admin__loading-text">Cargando datos estadísticos...</p>
-  </div>
-  
-  <div v-else-if="error" class="admin__error">
-    <p class="admin__error-text">Error al cargar datos: {{ error }}</p>
-  </div>
-  
-  <div v-else class="admin__charts-grid">
-    <!-- Dificultad de Recetas -->
-    <div class="admin__chart-card">
-      <h3 class="admin__chart-title">Recetas por Dificultad</h3>
-      <div class="admin__chart-wrapper">
-        <canvas v-if="!noDifficultyDataMessage" id="difficultyChart" ref="difficultyChartRef"></canvas>
-        <div v-else class="admin__no-data">
-          <i class="pi pi-exclamation-circle"></i>
-          <p>No hay datos de dificultad disponibles.</p>
+          <h2 class="admin__section-title">Estadísticas</h2>
+
+          <div v-if="isLoading" class="admin__loading">
+            <p class="admin__loading-text">Cargando datos estadísticos...</p>
+          </div>
+
+          <div v-else-if="error" class="admin__error">
+            <p class="admin__error-text">Error al cargar datos: {{ error }}</p>
+          </div>
+
+          <div v-else class="admin__charts-grid">
+            <!-- Dificultad de Recetas -->
+            <div class="admin__chart-card">
+              <h3 class="admin__chart-title">Recetas por Dificultad</h3>
+              <div class="admin__chart-wrapper">
+                <canvas
+                  v-if="!noDifficultyDataMessage"
+                  id="difficultyChart"
+                  ref="difficultyChartRef"
+                ></canvas>
+                <div v-else class="admin__no-data">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <p>No hay datos de dificultad disponibles.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Valoraciones -->
+            <div class="admin__chart-card">
+              <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
+              <div class="admin__chart-wrapper">
+                <canvas
+                  v-if="!noRatingDataMessage"
+                  id="ratingsChart"
+                  ref="ratingsChartRef"
+                ></canvas>
+                <div v-else class="admin__no-data">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <p>No hay datos de valoración disponibles.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tipos de Recetas -->
+            <div class="admin__chart-card">
+              <h3 class="admin__chart-title">Tipos de Recetas</h3>
+              <div class="admin__chart-wrapper">
+                <canvas
+                  v-if="!noRecipeTypesDataMessage"
+                  id="recipeTypesChart"
+                  ref="recipeTypesChartRef"
+                ></canvas>
+                <div v-else class="admin__no-data">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <p>No hay datos de tipos de recetas disponibles.</p>
+                </div>
+              </div>
+            </div>
+
+            <!--Reseñas Mensuales -->
+            <div class="admin__chart-card admin__chart-card--full">
+              <h3 class="admin__chart-title">Reseñas por Mes</h3>
+              <div class="admin__chart-wrapper admin__chart-wrapper--bar">
+                <canvas
+                  v-if="!noMonthlyReviewsDataMessage"
+                  id="monthlyReviewsChart"
+                  ref="monthlyReviewsChartRef"
+                ></canvas>
+                <div v-else class="admin__no-data">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <p>No hay datos de reseñas mensuales disponibles.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    
-    <!-- Valoraciones -->
-    <div class="admin__chart-card">
-      <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
-      <div class="admin__chart-wrapper">
-        <canvas v-if="!noRatingDataMessage" id="ratingsChart" ref="ratingsChartRef"></canvas>
-        <div v-else class="admin__no-data">
-          <i class="pi pi-exclamation-circle"></i>
-          <p>No hay datos de valoración disponibles.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
         <!-- Registro de admin -->
         <div v-if="activeSection === 'register'" class="admin__section-container">
@@ -469,16 +509,17 @@ const user = ref<IGetAllUsers[]>([])
 const {
   difficultyChartRef,
   ratingsChartRef,
+  recipeTypesChartRef,         
+  monthlyReviewsChartRef,      
   initializeCharts,
   setupWatchers,
   isLoading,
-  error
+  error,
+  noDifficultyDataMessage,
+  noRatingDataMessage,
+  noRecipeTypesDataMessage,   
+  noMonthlyReviewsDataMessage  
 } = useCharts(activeSection)
-
-const noRecipeDataMessage = ref(false) 
-const noUserDataMessage = ref(false)
-const noDifficultyDataMessage = ref(false)
-const noRatingDataMessage = ref(false)
 
 setupWatchers()
 
@@ -585,7 +626,7 @@ const handleRegister = async () => {
   }
   clearRegisterData()
   registerForm.username = ''
-  registerForm.password = ''
+  registerForm.email = ''
   registerForm.password = ''
 }
 </script>
@@ -990,27 +1031,40 @@ const handleRegister = async () => {
     display: grid;
     gap: 2rem;
     grid-template-columns: 1fr;
-    
+
     @media (min-width: 768px) {
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  
+
   &__chart-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-        
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    &--full {
+      grid-column: 1 / -1;
+    }
+
     .admin__chart-wrapper {
       width: 100%;
       max-width: 320px;
-      height: 320px;    
+      height: 320px;
       display: flex;
       align-items: center;
       justify-content: center;
+
+      &--bar {
+        max-width: 100%;
+        height: 400px;
+      }
     }
   }
-  
+
   &__chart-title {
     font-size: 1.1rem;
     font-weight: 600;
@@ -1018,27 +1072,27 @@ const handleRegister = async () => {
     text-align: center;
     color: $black;
   }
-  
+
   &__loading-text,
-  &__error-text { 
+  &__error-text {
     margin-top: 1rem;
     font-size: 1rem;
   }
-  
+
   &__error {
     color: #f44336;
   }
-  
+
   &__no-data {
     height: 300px;
     color: #9e9e9e;
-    
+
     i {
       font-size: 2.5rem;
       margin-bottom: 1rem;
       opacity: 0.7;
     }
-    
+
     p {
       font-size: 0.9rem;
       margin: 0;
@@ -1051,22 +1105,22 @@ const handleRegister = async () => {
   &__error {
     min-height: 400px;
     width: 100%;
-    
+
     i {
       font-size: 3rem;
       margin-bottom: 1rem;
     }
   }
-    
+
   &__debug-panel {
     margin-top: 2rem;
-    padding: 1rem;  
-    border: 1px dashed 
+    padding: 1rem;
+    border: 1px dashed
   }
 
   &__stats-container {
     padding: 2rem;
-    
+
     @media (max-width: 767px) {
       padding: 1rem;
     }
