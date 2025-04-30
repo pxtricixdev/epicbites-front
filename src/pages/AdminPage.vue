@@ -28,12 +28,6 @@
             </a>
           </li>
           <li class="admin__menu-item">
-            <a href="#" class="admin__menu-link" @click="setActiveSection('stats')">
-              <i class="pi pi-chart-bar"></i>
-              <span>Estadísticas</span>
-            </a>
-          </li>
-          <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('users')">
               <i class="pi pi-users"></i>
               <span>Usuarios</span>
@@ -113,201 +107,202 @@
           </div>
 
           <!-- Tabla de Recetas -->
-          <div v-if="activeSection === 'recetas'" class="admin__table-container">
-            <DataTable
-              v-if="allRecipes.length > 0"
-              :value="allRecipes"
-              paginator
-              :rows="5"
-              :rowsPerPageOptions="[5, 10, 20, 50]"
-              tableStyle="min-width: 100%"
-              responsiveLayout="stack"
-              breakpoint="960px"
-              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} a {last} de {totalRecords}"
-            >
-              <template #header>
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Recetas</span>
+          <div v-if="activeSection === 'recetas'" class="admin__section-container">
+            <h2 class="admin__section-title">Recetas</h2>
+            <div class="admin__table-container">
+              <DataTable
+                v-if="allRecipes.length > 0"
+                :value="allRecipes"
+                paginator
+                :rows="5"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 100%"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} a {last} de {totalRecords}"
+              >
+                <template #header>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Recetas</span>
+                  </div>
+                </template>
+
+                <Column field="name" header="Nombre"></Column>
+
+                <Column header="Imagen">
+                  <template #body="slotProps">
+                    <img
+                      :src="slotProps.data.image"
+                      class="admin__recipe-image"
+                      :alt="slotProps.data.name"
+                    />
+                  </template>
+                </Column>
+
+                <Column field="userName" header="Usuario"></Column>
+
+                <Column field="difficulty" header="Dificultad"></Column>
+
+                <Column field="score" header="Puntuación">
+                  <template #body="slotProps">
+                    <Rating :modelValue="slotProps.data.score" readonly />
+                  </template>
+                </Column>
+                <Column header="Acciones">
+                  <template #body="slotProps">
+                    <button
+                      class="button button--delete"
+                      @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
+                    >
+                      <i class="pi pi-trash"></i>
+                      <span class="button__text">Eliminar</span>
+                    </button>
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+            
+            <!-- Gráficas de Recetas -->
+            <div class="admin__charts-grid">
+              <!-- Dificultad de Recetas -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Recetas por Dificultad</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noDifficultyDataMessage"
+                    id="difficultyChart"
+                    ref="difficultyChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de dificultad disponibles.</p>
+                  </div>
                 </div>
-              </template>
+              </div>
 
-              <Column field="name" header="Nombre"></Column>
-
-              <Column header="Imagen">
-                <template #body="slotProps">
-                  <img
-                    :src="slotProps.data.image"
-                    class="admin__recipe-image"
-                    :alt="slotProps.data.name"
-                  />
-                </template>
-              </Column>
-
-              <Column field="userName" header="Usuario"></Column>
-
-              <Column field="difficulty" header="Dificultad"></Column>
-
-              <Column field="score" header="Puntuación">
-                <template #body="slotProps">
-                  <Rating :modelValue="slotProps.data.score" readonly />
-                </template>
-              </Column>
-              <Column header="Acciones">
-                <template #body="slotProps">
-                  <button
-                    class="button button--delete"
-                    @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
-                  >
-                    <i class="pi pi-trash"></i>
-                    <span class="button__text">Eliminar</span>
-                  </button>
-                </template>
-              </Column>
-            </DataTable>
+              <!-- Tipos de Recetas -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Tipos de Recetas</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noRecipeTypesDataMessage"
+                    id="recipeTypesChart"
+                    ref="recipeTypesChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de tipos de recetas disponibles.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Tabla de Users -->
-          <div v-if="activeSection === 'users'" class="admin__table-container">
-            <DataTable
-              v-if="user.length > 0"
-              :value="user"
-              paginator
-              :rows="5"
-              :rowsPerPageOptions="[5, 10, 20, 50]"
-              tableStyle="min-width: 100%"
-              responsiveLayout="stack"
-              breakpoint="960px"
-              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} a {last} de {totalRecords}"
-            >
-              <template #header>
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Usuarios</span>
-                </div>
-              </template>
+          <div v-if="activeSection === 'users'" class="admin__section-container">
+            <h2 class="admin__section-title">Usuarios</h2>
+            <div class="admin__table-container">
+              <DataTable
+                v-if="user.length > 0"
+                :value="user"
+                paginator
+                :rows="5"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 100%"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} a {last} de {totalRecords}"
+              >
+                <template #header>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Usuarios</span>
+                  </div>
+                </template>
 
-              <Column field="username" header="Usuario"></Column>
-              <Column field="email" header="Correo"></Column>
-              <Column field="role" header="Rol"></Column>
-            </DataTable>
+                <Column field="username" header="Usuario"></Column>
+                <Column field="email" header="Correo"></Column>
+                <Column field="role" header="Rol"></Column>
+              </DataTable>
+            </div>
           </div>
 
           <!-- Tabla de Reviews -->
-          <div v-if="activeSection === 'review'" class="admin__table-container">
-            <DataTable
-              v-if="allReviews.length > 0"
-              :value="allReviews"
-              paginator
-              :rows="5"
-              :rowsPerPageOptions="[5, 10, 20, 50]"
-              tableStyle="min-width: 100%"
-              responsiveLayout="stack"
-              breakpoint="960px"
-              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} a {last} de {totalRecords}"
-            >
-              <template #header>
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Últimas reseñas</span>
-                </div>
-              </template>
-
-              <Column field="name" header="Receta"></Column>
-              <Column field="username" header="Usuario"></Column>
-              <Column field="text" header="Comentario"></Column>
-              <Column field="score" header="Puntuación">
-                <template #body="slotProps">
-                  <Rating :modelValue="slotProps.data.score" readonly />
+          <div v-if="activeSection === 'review'" class="admin__section-container">
+            <h2 class="admin__section-title">Reseñas</h2>
+            <div class="admin__table-container">
+              <DataTable
+                v-if="allReviews.length > 0"
+                :value="allReviews"
+                paginator
+                :rows="5"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 100%"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} a {last} de {totalRecords}"
+              >
+                <template #header>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Últimas reseñas</span>
+                  </div>
                 </template>
-              </Column>
-              <Column header="Acciones">
-                <template #body="slotProps">
-                  <button
-                    class="button button--delete"
-                    @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
-                  >
-                    <i class="pi pi-trash"></i>
-                    <span class="button__text">Eliminar</span>
-                  </button>
-                </template>
-              </Column>
-            </DataTable>
-          </div>
-        </div>
 
-        <div v-if="activeSection === 'stats'" class="admin__section-container admin__stats-container">
-          <h2 class="admin__section-title">Estadísticas</h2>
-
-          <div v-if="isLoading" class="admin__loading">
-            <p class="admin__loading-text">Cargando datos estadísticos...</p>
-          </div>
-
-          <div v-else-if="error" class="admin__error">
-            <p class="admin__error-text">Error al cargar datos: {{ error }}</p>
-          </div>
-
-          <div v-else class="admin__charts-grid">
-            <!-- Dificultad de Recetas -->
-            <div class="admin__chart-card">
-              <h3 class="admin__chart-title">Recetas por Dificultad</h3>
-              <div class="admin__chart-wrapper">
-                <canvas
-                  v-if="!noDifficultyDataMessage"
-                  id="difficultyChart"
-                  ref="difficultyChartRef"
-                ></canvas>
-                <div v-else class="admin__no-data">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <p>No hay datos de dificultad disponibles.</p>
+                <Column field="name" header="Receta"></Column>
+                <Column field="username" header="Usuario"></Column>
+                <Column field="text" header="Comentario"></Column>
+                <Column field="score" header="Puntuación">
+                  <template #body="slotProps">
+                    <Rating :modelValue="slotProps.data.score" readonly />
+                  </template>
+                </Column>
+                <Column header="Acciones">
+                  <template #body="slotProps">
+                    <button
+                      class="button button--delete"
+                      @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
+                    >
+                      <i class="pi pi-trash"></i>
+                      <span class="button__text">Eliminar</span>
+                    </button>
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+            
+            <!-- Gráficas de Reseñas -->
+            <div class="admin__charts-grid">
+              <!-- Valoraciones -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noRatingDataMessage"
+                    id="ratingsChart"
+                    ref="ratingsChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de valoración disponibles.</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Valoraciones -->
-            <div class="admin__chart-card">
-              <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
-              <div class="admin__chart-wrapper">
-                <canvas
-                  v-if="!noRatingDataMessage"
-                  id="ratingsChart"
-                  ref="ratingsChartRef"
-                ></canvas>
-                <div v-else class="admin__no-data">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <p>No hay datos de valoración disponibles.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Tipos de Recetas -->
-            <div class="admin__chart-card">
-              <h3 class="admin__chart-title">Tipos de Recetas</h3>
-              <div class="admin__chart-wrapper">
-                <canvas
-                  v-if="!noRecipeTypesDataMessage"
-                  id="recipeTypesChart"
-                  ref="recipeTypesChartRef"
-                ></canvas>
-                <div v-else class="admin__no-data">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <p>No hay datos de tipos de recetas disponibles.</p>
-                </div>
-              </div>
-            </div>
-
-            <!--Reseñas Mensuales -->
-            <div class="admin__chart-card admin__chart-card--full">
-              <h3 class="admin__chart-title">Reseñas por Mes</h3>
-              <div class="admin__chart-wrapper admin__chart-wrapper--bar">
-                <canvas
-                  v-if="!noMonthlyReviewsDataMessage"
-                  id="monthlyReviewsChart"
-                  ref="monthlyReviewsChartRef"
-                ></canvas>
-                <div v-else class="admin__no-data">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <p>No hay datos de reseñas mensuales disponibles.</p>
+              <!--Reseñas Mensuales -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Reseñas por Mes</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noMonthlyReviewsDataMessage"
+                    id="monthlyReviewsChart"
+                    ref="monthlyReviewsChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de reseñas mensuales disponibles.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -507,18 +502,23 @@ const user = ref<IGetAllUsers[]>([])
 
 // composable de gráficas
 const {
+  // Referencias para gráficas en secciones específicas
   difficultyChartRef,
   ratingsChartRef,
   recipeTypesChartRef,         
-  monthlyReviewsChartRef,      
-  initializeCharts,
-  setupWatchers,
-  isLoading,
-  error,
+  monthlyReviewsChartRef,
+
+  // Mensajes de ausencia de datos
   noDifficultyDataMessage,
   noRatingDataMessage,
   noRecipeTypesDataMessage,   
-  noMonthlyReviewsDataMessage  
+  noMonthlyReviewsDataMessage,
+  
+  initializeCharts,
+  setupWatchers,
+  
+  isLoading,
+  error
 } = useCharts(activeSection)
 
 setupWatchers()
@@ -545,7 +545,8 @@ onMounted(async () => {
   mapReviews()
   reviewData.value.total = mappedReviews.value.length
   
-  if (activeSection.value === 'stats') {
+  // Iininicar según la sección seleccionada 
+  if ([ 'recetas', 'review'].includes(activeSection.value)) {
     initializeCharts()
   }
 })
@@ -568,6 +569,11 @@ const proceedWithDeleteRecipe = async () => {
   try {
     await deleteRecipe(recipeToDelete.value.id)
     recipeData.value.total = allRecipes.value.length
+    
+    // reiniciar gráficas después de eliminar una receta
+    if (activeSection.value === 'recetas') {
+      initializeCharts()
+    }
   } catch (error) {
     console.error('Error al eliminar la receta:', error)
   } finally {
@@ -589,6 +595,11 @@ const proceedWithDeleteReview = async () => {
     await deleteReview(reviewToDelete.value.id)
     mapReviews()
     reviewData.value.total = mappedReviews.value.length
+    
+    // reiniciar gráficas después de eliminar una receta
+    if (activeSection.value === 'review') {
+      initializeCharts()
+    }
   } catch (error) {
     console.error('Error al eliminar la reseña:', error)
   } finally {
@@ -632,8 +643,6 @@ const handleRegister = async () => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables' as *;
-
 @use '@/assets/styles/variables' as *;
 
 .admin {

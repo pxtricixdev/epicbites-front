@@ -9,8 +9,8 @@ export default function useCharts(activeSection: Ref<string>) {
   const difficultyChartRef = ref<HTMLCanvasElement | null>(null)
   const ratingsChartRef = ref<HTMLCanvasElement | null>(null)
   const recipeTypesChartRef = ref<HTMLCanvasElement | null>(null) 
-  const monthlyReviewsChartRef = ref<HTMLCanvasElement | null>(null) 
-  
+  const monthlyReviewsChartRef = ref<HTMLCanvasElement | null>(null)
+
   const noDifficultyDataMessage = ref(false) 
   const noRatingDataMessage = ref(false)
   const noRecipeTypesDataMessage = ref(false) 
@@ -21,8 +21,8 @@ export default function useCharts(activeSection: Ref<string>) {
   let difficultyChart: Chart | null = null
   let ratingsChart: Chart | null = null
   let recipeTypesChart: Chart | null = null 
-  let monthlyReviewsChart: Chart | null = null 
-
+  let monthlyReviewsChart: Chart | null = null
+  
   //verificar si hay datos
   const hasDifficultyData = computed(() => {
     if (!statsStore.statsReady) return false
@@ -103,8 +103,8 @@ export default function useCharts(activeSection: Ref<string>) {
       }
     })
   }
-
-  // gráfico de valoraciones
+  
+  // gráfico de valoraciones 
   const initializeRatingsChart = () => {
     if (!ratingsChartRef.value) return
     
@@ -168,7 +168,7 @@ export default function useCharts(activeSection: Ref<string>) {
       }
     })
   }
-
+  
   // tipos de recetas
   const initializeRecipeTypesChart = () => {
     if (!recipeTypesChartRef.value) return
@@ -294,37 +294,39 @@ export default function useCharts(activeSection: Ref<string>) {
     })
   }
   
-  // Inicializar los gráficos
+  // Inicializar los gráficos según la sección activa
   const initializeCharts = async () => {
-    if (activeSection.value !== 'stats') return
-    
-    noDifficultyDataMessage.value = false
-    noRatingDataMessage.value = false
-    noRecipeTypesDataMessage.value = false
-    noMonthlyReviewsDataMessage.value = false 
-    
+
     if (!statsStore.statsReady) {
       await statsStore.generateStats()
     }
     
     await nextTick()
-    initializeDifficultyChart()
-    initializeRatingsChart()
-    initializeRecipeTypesChart() 
-    initializeMonthlyReviewsChart()
+    if (activeSection.value === 'recetas') {
+      initializeDifficultyChart()
+      initializeRecipeTypesChart()
+    } else if (activeSection.value === 'review') {
+      initializeRatingsChart()
+      initializeMonthlyReviewsChart()
+    }
   }
 
   const setupWatchers = () => {
     watch(activeSection, (newSection) => {
-      if (newSection === 'stats') {
+      noDifficultyDataMessage.value = false
+      noRatingDataMessage.value = false
+      noRecipeTypesDataMessage.value = false
+      noMonthlyReviewsDataMessage.value = false
+      
+      if (['recetas', 'review'].includes(newSection)) {
         nextTick(() => initializeCharts())
       }
     })
   }
 
-  onMounted(() => {
-    if (activeSection.value === 'stats') {
-      initializeCharts()
+  onMounted(async () => {
+    if (['recetas', 'review'].includes(activeSection.value)) {
+      await initializeCharts()
     }
   })
 
@@ -332,11 +334,11 @@ export default function useCharts(activeSection: Ref<string>) {
     difficultyChartRef,
     ratingsChartRef,
     recipeTypesChartRef,      
-    monthlyReviewsChartRef,    
+    monthlyReviewsChartRef,
     noDifficultyDataMessage,
     noRatingDataMessage,
     noRecipeTypesDataMessage,  
-    noMonthlyReviewsDataMessage, 
+    noMonthlyReviewsDataMessage,
     initializeCharts,
     setupWatchers,
     isLoading: computed(() => statsStore.loading),
