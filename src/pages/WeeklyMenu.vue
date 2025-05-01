@@ -28,44 +28,48 @@
         <div class="weekly-menu__recipes__filter">
           <p class="weekly-menu__recipes__filter__title">Filtros</p>
           <div class="weekly-menu__recipes__filter__select">
-            <select required id="difficulty" v-model="recipeDifficulty">
-              <option value="" disabled selected>Dificultad</option>
+            <select id="difficulty" v-model="recipeDifficulty">
+              <option value="" selected>Dificultad</option>
               <option
                 :key="difficulty"
                 v-for="difficulty in uniqueDifficulties"
                 :value="difficulty"
               >
-                {{ difficulty }}
+                {{ difficultyLabels[difficulty] || difficulty }}
               </option>
             </select>
 
-            <select required id="diet" v-model="recipeDiet">
-              <option value="" disabled selected>Dieta</option>
+            <select id="diet" v-model="recipeDiet">
+              <option value="" selected>Dieta</option>
               <option :key="diet" v-for="diet in uniqueDiets" :value="diet">
-                {{ diet }}
+                {{ dietLabels[diet] || diet }}
               </option>
             </select>
 
-            <select required id="meal" v-model="recipeMealType">
-              <option value="" disabled selected>Tipo de comida</option>
+            <select id="meal" v-model="recipeMealType">
+              <option value="" selected>Tipo de comida</option>
               <option :key="meal" v-for="meal in uniqueMeals" :value="meal">
                 {{ meal }}
               </option>
             </select>
 
-            <select required id="flavour" v-model="recipeFlavourType">
-              <option value="" disabled selected>Sabor</option>
-              <option :key="flavour" v-for="flavour in uniqueFlavours" :value="flavour">
-                {{ flavour }}
+            <select id="calorie" v-model="recipeCalories">
+              <option value="" selected>Calorías</option>
+              <option
+                v-for="category in Object.keys(calorieCategories)"
+                :key="category"
+                :value="category"
+              >
+                {{ category }}
               </option>
             </select>
           </div>
           <div class="weekly-menu__recipes__content">
-            <div v-for="recipe in allRecipes" :key="recipe.id">
+            <div v-for="recipe in filteredRecipes" :key="recipe.id">
               <CardRecipeForMenu
                 :title="recipe.name"
                 :time="recipe.time"
-                :difficulty="recipe.difficulty"
+                :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
                 :meal="recipe.meal"
                 :src="recipe.image"
                 buttonText="Añadir"
@@ -110,6 +114,7 @@ import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import { daysOfWeek } from '@/data/menuData'
 import { meals } from '@/data/menuData'
+import { difficultyLabels, dietLabels } from '@/data/labels'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
@@ -136,18 +141,42 @@ const uniqueDiets = computed(() => {
   const diets = recipes.map((recipe) => recipe.diet)
   return [...new Set(diets)]
 })
-
-const uniqueFlavours = computed(() => {
+const calorieCategories = computed(() => {
   const recipes = allRecipes.value
-  const flavours = recipes.map((recipe) => recipe.flavour)
-  return [...new Set(flavours)]
+  return {
+    Bajas: recipes.filter((r) => r.calories < 300),
+    Medias: recipes.filter((r) => r.calories >= 300 && r.calories <= 600),
+    Altas: recipes.filter((r) => r.calories > 600),
+  }
 })
 
 const searchRecipe = ref('')
-const recipeFlavourType = ref('')
+const recipeCalories = ref('')
 const recipeDifficulty = ref('')
 const recipeDiet = ref('')
 const recipeMealType = ref('')
+
+const filteredRecipes = computed(() => {
+  if (!allRecipes.value) return []
+
+  return allRecipes.value.filter((recipe) => {
+    const searchInput = searchRecipe.value.toLowerCase().trim()
+
+    const matchesSearch = recipe.name.toLowerCase().includes(searchInput)
+    const matchesDifficulty =
+      !recipeDifficulty.value || recipe.difficulty === recipeDifficulty.value
+    const matchesDiet = !recipeDiet.value || recipe.diet === recipeDiet.value
+    const matchesMeal = !recipeMealType.value || recipe.meal === recipeMealType.value
+
+    const matchesCalories =
+      !recipeCalories.value ||
+      (recipeCalories.value === 'Bajas' && recipe.calories < 300) ||
+      (recipeCalories.value === 'Medias' && recipe.calories >= 300 && recipe.calories <= 600) ||
+      (recipeCalories.value === 'Altas' && recipe.calories > 600)
+
+    return matchesSearch && matchesDifficulty && matchesDiet && matchesMeal && matchesCalories
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -237,6 +266,7 @@ const recipeMealType = ref('')
       font-size: 14px;
       border: 1.5px solid $secondary-orange;
       color: grey;
+      width: 100%;
 
       &::placeholder {
         color: rgb(84, 84, 84);
@@ -268,6 +298,7 @@ const recipeMealType = ref('')
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
+        justify-content: space-between;
       }
     }
   }

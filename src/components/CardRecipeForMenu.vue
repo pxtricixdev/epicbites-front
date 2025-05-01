@@ -15,6 +15,7 @@
         <CirclePlus :size="14" />{{ buttonText }}
       </button>
     </div>
+
     <Dialog
       v-model:visible="isVisible"
       modal
@@ -88,7 +89,7 @@ const selectedMeal = ref<string | null>(null)
 
 .container {
   width: 310px;
-  height: 140px;
+  height: 160px;
   border-radius: 5px;
   border: 1px solid $light-grey;
   background-color: white;
@@ -97,25 +98,28 @@ const selectedMeal = ref<string | null>(null)
   margin: 20px 0;
   position: relative;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  padding: 10px;
+  gap: 10px;
+  align-items: center;
 
   &__image {
     width: 100px;
     height: 100px;
-    border-radius: 5px;
-    margin: auto;
+    border-radius: 10px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
   }
 
   &__info {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
     max-width: 180px;
-    padding: 10px 5px;
+    height: 100%;
 
     &__title {
       @include semibold-text(14px);
-      margin-bottom: 10px;
       color: rgb(45, 45, 45);
     }
 
@@ -124,7 +128,6 @@ const selectedMeal = ref<string | null>(null)
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
-      margin-top: 5px;
 
       p {
         padding: 2px 6px;
@@ -134,12 +137,10 @@ const selectedMeal = ref<string | null>(null)
     }
 
     button {
-      position: absolute;
-      right: 10px;
-      bottom: 10px;
       display: flex;
       flex-direction: row;
       align-items: center;
+      width: 100px;
       gap: 4px;
       background-color: $secondary-orange;
       border-radius: 5px;
