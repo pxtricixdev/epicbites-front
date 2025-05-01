@@ -182,7 +182,6 @@ const recipeMealType = ref('')
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 700px;
 
     &__title {
       @include semibold-text(18px);
@@ -280,8 +279,14 @@ const recipeMealType = ref('')
 }
 
 @media only screen and (min-width: 1200px) {
-  .weekly-menu__container {
-    flex-direction: row;
+  .weekly-menu {
+
+    &__recipes {
+      max-width: 355px;
+    }
+    &__container {
+      flex-direction: row;
+    }
   }
 }
 </style>
