@@ -142,16 +142,18 @@ const recipeMealType = ref('')
   &__subtitle {
     font-size: 16px;
     margin-top: 10px;
+    max-width: 1100px;
   }
 
   &__bullets {
-    margin: 10px 0;
+    margin: 10px;
     padding: 15px 30px;
     background-color: #e5730930;
     @include regular-text(14px);
     border-radius: 8px;
     max-width: 400px;
     color: rgb(53, 53, 53);
+    max-width: 400px;
 
     li {
       list-style: disc;
@@ -244,6 +246,10 @@ const recipeMealType = ref('')
     max-width: 700px;
     min-width: 300px;
 
+    &__title {
+      @include semibold-text(18px);
+    }
+
     &__meal {
       padding: 10px 10px;
       border-radius: 5px;
@@ -261,6 +267,21 @@ const recipeMealType = ref('')
       flex-direction: column;
       gap: 20px;
     }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .weekly-menu {
+    align-items: center;
+    &__container {
+      align-content: flex-start;
+    }
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .weekly-menu__container {
+    flex-direction: row;
   }
 }
 </style>
