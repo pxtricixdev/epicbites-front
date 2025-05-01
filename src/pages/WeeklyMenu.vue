@@ -8,14 +8,20 @@
         complicaciones.
       </p>
     </div>
-    <div class="weekly-menu__bullets">
-      <ul>
-        <li>Elige entre todas nuestras recetas disponibles.</li>
-        <li>Filtra las recetas según tus necesidades.</li>
-        <li>Asigna platos a cada día de la semana.</li>
-        <li>Guarda tu menú y visítalo cuando quieras.</li>
-      </ul>
+    <div class="weekly-menu__animation">
+      <div class="weekly-menu__bullets">
+        <ul>
+          <li>Elige entre todas nuestras recetas disponibles.</li>
+          <li>Filtra las recetas según tus necesidades.</li>
+          <li>Asigna platos a cada día de la semana.</li>
+          <li>Guarda tu menú y visítalo cuando quieras.</li>
+        </ul>
+      </div>
+      <div>
+        <DotLottieVue style="height: 150px; width: 200px" autoplay loop src="/public/pan.lottie" />
+      </div>
     </div>
+
     <div class="weekly-menu__container">
       <section class="weekly-menu__recipes">
         <p class="weekly-menu__recipes__title">Recetas disponibles</p>
@@ -104,6 +110,7 @@
 
 <script lang="ts" setup>
 import { useRecipeStore } from '@/stores/recipeStore'
+import { useMenuStore } from '@/stores/menuStore'
 import { ref, onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import CardRecipeForMenu from '@/components/CardRecipeForMenu.vue'
@@ -115,13 +122,22 @@ import TabPanel from 'primevue/tabpanel'
 import { daysOfWeek } from '@/data/menuData'
 import { meals } from '@/data/menuData'
 import { difficultyLabels, dietLabels } from '@/data/labels'
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
+
+const menuStore = useMenuStore()
+const { fetchMenu } = menuStore
+const { menuByUser } = storeToRefs(menuStore)
+
+console.log(menuByUser)
+
 const { fetchAllRecipes } = recipeStore
 
 onMounted(async () => {
   await fetchAllRecipes()
+  await fetchMenu()
 })
 
 const uniqueDifficulties = computed(() => {
@@ -228,6 +244,12 @@ const filteredRecipes = computed(() => {
     }
   }
 
+  &__animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   &__container {
     display: flex;
     flex-direction: column;
@@ -313,7 +335,7 @@ const filteredRecipes = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 700px;
+    max-width: 800px;
     min-width: 300px;
 
     &__title {
@@ -345,6 +367,10 @@ const filteredRecipes = computed(() => {
     align-items: center;
     &__container {
       align-content: flex-start;
+    }
+    &__animation {
+      flex-direction: row;
+      gap: 30px;
     }
   }
 }
