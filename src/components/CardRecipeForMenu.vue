@@ -65,7 +65,7 @@ defineProps<{
   src: string
   buttonText: string
   difficulty: string
-  time: string
+  time: number
   meal: string
   link: string
 }>()

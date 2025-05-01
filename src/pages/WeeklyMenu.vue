@@ -28,40 +28,50 @@
         <div class="weekly-menu__recipes__filter">
           <p class="weekly-menu__recipes__filter__title">Filtros</p>
           <div class="weekly-menu__recipes__filter__select">
-            <select required id="category" v-model="recipeCategory">
-              <option value="" disabled selected>Categoría</option>
-              <option value="g">g</option>
-              <option value="ml">ml</option>
-            </select>
-
             <select required id="difficulty" v-model="recipeDifficulty">
               <option value="" disabled selected>Dificultad</option>
-              <option value="g">g</option>
-              <option value="ml">ml</option>
+              <option
+                :key="difficulty"
+                v-for="difficulty in uniqueDifficulties"
+                :value="difficulty"
+              >
+                {{ difficulty }}
+              </option>
             </select>
 
             <select required id="diet" v-model="recipeDiet">
               <option value="" disabled selected>Dieta</option>
-              <option value="g">g</option>
-              <option value="ml">ml</option>
+              <option :key="diet" v-for="diet in uniqueDiets" :value="diet">
+                {{ diet }}
+              </option>
             </select>
 
             <select required id="meal" v-model="recipeMealType">
               <option value="" disabled selected>Tipo de comida</option>
-              <option value="g">g</option>
-              <option value="ml">ml</option>
+              <option :key="meal" v-for="meal in uniqueMeals" :value="meal">
+                {{ meal }}
+              </option>
+            </select>
+
+            <select required id="flavour" v-model="recipeFlavourType">
+              <option value="" disabled selected>Sabor</option>
+              <option :key="flavour" v-for="flavour in uniqueFlavours" :value="flavour">
+                {{ flavour }}
+              </option>
             </select>
           </div>
-          <div>
-            <CardRecipeForMenu
-              title="Verduras al horno con pollo a la parrilla"
-              time="3"
-              difficulty="Medio"
-              meal="Desayuno"
-              src="/public/images/mealpreping.webp"
-              buttonText="Añadir"
-              link="/"
-            />
+          <div class="weekly-menu__recipes__content">
+            <div v-for="recipe in allRecipes" :key="recipe.id">
+              <CardRecipeForMenu
+                :title="recipe.name"
+                :time="recipe.time"
+                :difficulty="recipe.difficulty"
+                :meal="recipe.meal"
+                :src="recipe.image"
+                buttonText="Añadir"
+                :link="`/receta/${recipe.id}`"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -90,7 +100,7 @@
 
 <script lang="ts" setup>
 import { useRecipeStore } from '@/stores/recipeStore'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import CardRecipeForMenu from '@/components/CardRecipeForMenu.vue'
 import Tabs from 'primevue/tabs'
@@ -109,8 +119,32 @@ onMounted(async () => {
   await fetchAllRecipes()
 })
 
+const uniqueDifficulties = computed(() => {
+  const recipes = allRecipes.value
+  const difficulties = recipes.map((recipe) => recipe.difficulty)
+  return [...new Set(difficulties)]
+})
+
+const uniqueMeals = computed(() => {
+  const recipes = allRecipes.value
+  const meals = recipes.map((recipe) => recipe.meal)
+  return [...new Set(meals)]
+})
+
+const uniqueDiets = computed(() => {
+  const recipes = allRecipes.value
+  const diets = recipes.map((recipe) => recipe.diet)
+  return [...new Set(diets)]
+})
+
+const uniqueFlavours = computed(() => {
+  const recipes = allRecipes.value
+  const flavours = recipes.map((recipe) => recipe.flavour)
+  return [...new Set(flavours)]
+})
+
 const searchRecipe = ref('')
-const recipeCategory = ref('')
+const recipeFlavourType = ref('')
 const recipeDifficulty = ref('')
 const recipeDiet = ref('')
 const recipeMealType = ref('')
@@ -182,6 +216,12 @@ const recipeMealType = ref('')
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    &__content {
+      overflow-y: scroll;
+      max-height: 500px;
+      margin: 20px 0;
+    }
 
     &__title {
       @include semibold-text(18px);
@@ -280,9 +320,8 @@ const recipeMealType = ref('')
 
 @media only screen and (min-width: 1200px) {
   .weekly-menu {
-
     &__recipes {
-      max-width: 355px;
+      max-width: 380px;
     }
     &__container {
       flex-direction: row;
