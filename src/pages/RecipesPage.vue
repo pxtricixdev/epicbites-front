@@ -61,9 +61,9 @@
             :alt="recipe.name"
             :title="recipe.name"
             :time="recipe.time"
-            :diet="recipe.diet"
-            :flavour="recipe.flavour"
-            :difficulty="recipe.difficulty"
+            :diet="dietLabels[recipe.diet] || recipe.diet"
+            :flavour="flavourLabels[recipe.flavour] || recipe.flavour"
+            :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
             :meal="recipe.meal"
             :link="`/receta/${recipe.id}`"
           />
@@ -84,6 +84,7 @@ import CardRecipeInfo from '@/components/CardRecipeInfo.vue'
 import { useRoute } from 'vue-router'
 import { CookingPot } from 'lucide-vue-next'
 import RadioButton from 'primevue/radiobutton'
+import { difficultyLabels, dietLabels, flavourLabels } from '@/data/labels'
 
 const route = useRoute()
 const category = computed(() => route.params.category)
