@@ -22,7 +22,7 @@
       </div>
     </div>
 
-    <div class="weekly-menu__container">
+    <div v-if="!menuByUser" class="weekly-menu__container">
       <section class="weekly-menu__recipes">
         <p class="weekly-menu__recipes__title">Recetas disponibles</p>
         <input
@@ -73,6 +73,7 @@
           <div class="weekly-menu__recipes__content">
             <div v-for="recipe in filteredRecipes" :key="recipe.id">
               <CardRecipeForMenu
+                :id="recipe.id"
                 :title="recipe.name"
                 :time="recipe.time"
                 :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
@@ -80,15 +81,17 @@
                 :src="recipe.image"
                 buttonText="Añadir"
                 :link="`/receta/${recipe.id}`"
+                @add="addToMenu"
               />
             </div>
           </div>
         </div>
       </section>
       <section class="weekly-menu__menu">
+        <Toaster richColors position="bottom-right" />
         <p class="weekly-menu__menu__title">Menú semanal</p>
         <p>Organiza tus 5 comidas diarias para cada día de la semana</p>
-        <Tabs value="0">
+        <Tabs v-model:value="activeDay">
           <TabList>
             <Tab v-for="day in daysOfWeek" :key="day" :value="day">{{ day }}</Tab>
           </TabList>
@@ -96,13 +99,18 @@
             <TabPanel v-for="day in daysOfWeek" :value="day" :key="day">
               <div class="weekly-menu__menu__day">
                 <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
-                  <p class="weekly-menu__menu__meal__title">{{ meal }}</p>
-                  <p>No hay ninguna receta todavía</p>
+                  <p>
+                    {{ meal }}
+                  </p>
+                  <p :class="weeklyMenu[day]?.[meal] ? 'recipetitle' : ''">
+                    {{ weeklyMenu[day]?.[meal]?.title || 'No hay ninguna receta todavía' }}
+                  </p>
                 </span>
               </div>
             </TabPanel>
           </TabPanels>
         </Tabs>
+        <button class="weekly-menu__menu__button" @click="handleSaveMenu">Guardar menú</button>
       </section>
     </div>
   </div>
@@ -123,15 +131,14 @@ import { daysOfWeek } from '@/data/menuData'
 import { meals } from '@/data/menuData'
 import { difficultyLabels, dietLabels } from '@/data/labels'
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
+import { Toaster, toast } from 'vue-sonner'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
 
 const menuStore = useMenuStore()
-const { fetchMenu } = menuStore
+const { fetchMenu, postMenu } = menuStore
 const { menuByUser } = storeToRefs(menuStore)
-
-console.log(menuByUser)
 
 const { fetchAllRecipes } = recipeStore
 
@@ -193,6 +200,38 @@ const filteredRecipes = computed(() => {
     return matchesSearch && matchesDifficulty && matchesDiet && matchesMeal && matchesCalories
   })
 })
+
+const activeDay = ref<string>('Lunes')
+
+type WeeklyMenu = {
+  [day: string]: {
+    [meal: string]: {
+      id: number
+      title: string
+    }
+  }
+}
+
+const weeklyMenu = ref<WeeklyMenu>({})
+
+const addToMenu = (day: string, meal: string, recipeTitle: string, id: number) => {
+  if (!weeklyMenu.value[day]) {
+    weeklyMenu.value[day] = {}
+  }
+  weeklyMenu.value[day][meal] = {
+    id,
+    title: recipeTitle,
+  }
+}
+
+const handleSaveMenu = async () => {
+  try {
+    await postMenu(weeklyMenu.value)
+    toast.success(`Menú creado correctamente`)
+  } catch {
+    toast.error('Ya existe un menú para esta semana')
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -337,9 +376,31 @@ const filteredRecipes = computed(() => {
     gap: 10px;
     max-width: 800px;
     min-width: 300px;
+    max-height: 680px;
 
     &__title {
       @include semibold-text(18px);
+    }
+
+    &__button {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      width: 150px;
+      gap: 4px;
+      background-color: $black;
+      border-radius: 5px;
+      padding: 8px 10px;
+      color: white;
+      @include regular-text(14px);
+      cursor: pointer;
+      border: 0;
+      margin-left: 20px;
+
+      &:hover {
+        opacity: 0.9;
+        transition: ease-in 0.15s;
+      }
     }
 
     &__meal {
@@ -384,5 +445,10 @@ const filteredRecipes = computed(() => {
       flex-direction: row;
     }
   }
+}
+
+.recipetitle {
+  @include semibold-text(16px);
+  color: $secondary-orange;
 }
 </style>

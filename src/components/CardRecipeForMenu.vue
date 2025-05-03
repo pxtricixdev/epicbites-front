@@ -49,7 +49,7 @@
           </button>
         </div>
       </div>
-      <button class="modal__button">Añadir al menú</button>
+      <button @click="addRecipe" class="modal__button">Añadir al menú</button>
     </Dialog>
   </div>
 </template>
@@ -61,7 +61,8 @@ import { ref } from 'vue'
 import { daysOfWeek } from '@/data/menuData'
 import { meals } from '@/data/menuData'
 
-defineProps<{
+const props = defineProps<{
+  id: number
   title: string
   src: string
   buttonText: string
@@ -71,12 +72,17 @@ defineProps<{
   link: string
 }>()
 
-const emit = defineEmits(['update:modelValue'])
-
 const isVisible = ref(false)
 
+const emit = defineEmits<{
+  (e: 'add', day: string, meal: string, title: string, id: number): void
+}>()
+
 const addRecipe = () => {
-  emit('update:modelValue')
+  if (selectedDay.value && selectedMeal.value) {
+    emit('add', selectedDay.value, selectedMeal.value, props.title, props.id)
+    isVisible.value = false
+  }
 }
 
 const selectedDay = ref<string | null>(null)

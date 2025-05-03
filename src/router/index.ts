@@ -61,7 +61,7 @@ const router = createRouter({
         {
           path: '/weekly-menu',
           name: 'weekly-menu',
-          component: () => import('@/pages/WeeklyMenu.vue'),
+          component: () => import('@/pages/WeeklyMenuPage.vue'),
         }
       ],
     },
