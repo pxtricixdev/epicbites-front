@@ -8,8 +8,8 @@
       <!-- Menú para pantallas > 768 -->
       <nav class="header__nav-desktop" v-if="isDesktop">
         <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
-        <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
         <RouterLink class="header__nav__item" to="/weekly-menu">Menú semanal</RouterLink>
+        <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
       </nav>
 
       <div class="header__content__buttons">
