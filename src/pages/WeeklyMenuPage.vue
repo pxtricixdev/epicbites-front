@@ -22,7 +22,10 @@
       </div>
     </div>
 
-    <div v-if="menusByWeek[thisWeekDate] || menusByWeek[selectedWeek]"></div>
+    <div>
+      <p v-if="menusByWeek[thisWeekDate]">Menú de esta semana:</p>
+      <p v-if="menusByWeek[selectedWeek]">Menú de la semana que viene:</p>
+    </div>
 
     <div
       v-if="!menusByWeek[thisWeekDate] && !menusByWeek[selectedWeek]"
