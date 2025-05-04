@@ -146,6 +146,7 @@ const selectedMeal = ref<string | null>(null)
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-content: center;
       width: 100px;
       gap: 4px;
       background-color: $secondary-orange;

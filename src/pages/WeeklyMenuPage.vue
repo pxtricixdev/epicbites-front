@@ -18,11 +18,16 @@
         </ul>
       </div>
       <div>
-        <DotLottieVue style="height: 150px; width: 200px" autoplay loop src="/public/pan.lottie" />
+        <DotLottieVue style="height: 150px; width: 200px" autoplay loop src="/pan.lottie" />
       </div>
     </div>
 
-    <div v-if="!menuByUser" class="weekly-menu__container">
+    <div v-if="menusByWeek[thisWeekDate] || menusByWeek[selectedWeek]"></div>
+
+    <div
+      v-if="!menusByWeek[thisWeekDate] && !menusByWeek[selectedWeek]"
+      class="weekly-menu__container"
+    >
       <section class="weekly-menu__recipes">
         <p class="weekly-menu__recipes__title">Recetas disponibles</p>
         <input
@@ -91,6 +96,15 @@
         <Toaster richColors position="bottom-right" />
         <p class="weekly-menu__menu__title">Menú semanal</p>
         <p>Organiza tus 5 comidas diarias para cada día de la semana</p>
+
+        <label class="weekly-menu__menu__label" for="week"
+          >¿Para qué semana quieres crear el menú?</label
+        >
+        <select class="weekly-menu__menu__select" id="week" v-model="selectedWeek">
+          <option :value="thisWeekDate">Esta semana ({{ formatDate(thisWeekDate) }})</option>
+          <option :value="nextWeekDate">Siguiente semana ({{ formatDate(nextWeekDate) }})</option>
+        </select>
+
         <Tabs v-model:value="activeDay">
           <TabList>
             <Tab v-for="day in daysOfWeek" :key="day" :value="day">{{ day }}</Tab>
@@ -99,9 +113,13 @@
             <TabPanel v-for="day in daysOfWeek" :value="day" :key="day">
               <div class="weekly-menu__menu__day">
                 <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
-                  <p>
-                    {{ meal }}
-                  </p>
+                  <div class="weekly-menu__menu__recipe">
+                    <p>
+                      {{ meal }}
+                    </p>
+                    <button @click="removeRecipeFromMenu(day, meal)">x</button>
+                  </div>
+
                   <p :class="weeklyMenu[day]?.[meal] ? 'recipetitle' : ''">
                     {{ weeklyMenu[day]?.[meal]?.title || 'No hay ninguna receta todavía' }}
                   </p>
@@ -135,16 +153,41 @@ import { Toaster, toast } from 'vue-sonner'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
+const { fetchAllRecipes } = recipeStore
+
+function getMonday(date = new Date()): string {
+  const day = date.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  const monday = new Date(date)
+  monday.setDate(date.getDate() + diff)
+  monday.setHours(0, 0, 0, 0)
+  return monday.toISOString().split('T')[0]
+}
+
+const thisWeekDate = getMonday()
+const nextWeekDate = getMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+
+const selectedWeek = ref(thisWeekDate)
 
 const menuStore = useMenuStore()
 const { fetchMenu, postMenu } = menuStore
-const { menuByUser } = storeToRefs(menuStore)
+const { menusByWeek, loadingMenu } = storeToRefs(menuStore)
+console.log(menusByWeek.value[thisWeekDate])
+console.log(menusByWeek.value[nextWeekDate])
 
-const { fetchAllRecipes } = recipeStore
+function formatDate(isoString: string): string {
+  const date = new Date(isoString)
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
 
 onMounted(async () => {
   await fetchAllRecipes()
-  await fetchMenu()
+  await fetchMenu(selectedWeek.value)
+  await fetchMenu(nextWeekDate)
 })
 
 const uniqueDifficulties = computed(() => {
@@ -224,10 +267,16 @@ const addToMenu = (day: string, meal: string, recipeTitle: string, id: number) =
   }
 }
 
+const removeRecipeFromMenu = (day: string, meal: string) => {
+  if (weeklyMenu.value[day]) {
+    delete weeklyMenu.value[day][meal]
+  }
+}
+
 const handleSaveMenu = async () => {
   try {
-    await postMenu(weeklyMenu.value)
-    toast.success(`Menú creado correctamente`)
+    await postMenu(weeklyMenu.value, selectedWeek.value)
+    toast.success(`Menú creado correctamente para la semana ${formatDate(selectedWeek.value)} `)
   } catch {
     toast.error('Ya existe un menú para esta semana')
   }
@@ -376,10 +425,41 @@ const handleSaveMenu = async () => {
     gap: 10px;
     max-width: 800px;
     min-width: 300px;
-    max-height: 680px;
+    max-height: 750px;
 
     &__title {
       @include semibold-text(18px);
+    }
+
+    &__label {
+      @include semibold-text(16px);
+    }
+
+    &__select {
+      background-color: white;
+      color: rgb(71, 71, 71);
+      @include regular-text(14px);
+      padding: 4px 6px;
+      width: 270px;
+      border: 2px solid $primary-yellow;
+      border-radius: 5px;
+    }
+
+    &__recipe {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      button {
+        background-color: $primary-yellow;
+        color: black;
+        border-radius: 100px;
+        border: none;
+        cursor: pointer;
+        padding: 3px 7px;
+        font-size: 12px;
+      }
     }
 
     &__button {

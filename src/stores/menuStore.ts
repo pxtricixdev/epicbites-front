@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { authStore } from '@/stores/authStore'
 
-type MenuByUser = {
+type MenusByWeek = {
   id: number
   userId: number
   name: string
@@ -27,8 +27,10 @@ type WeeklyMenu = {
   }
 }
 
+type MenusByUser = Record<string, MenusByWeek>
+
 export const useMenuStore = defineStore('menu', () => {
-  const menuByUser = ref<MenuByUser>()
+  const menusByWeek = ref<MenusByUser>({})
   const postMenuByUser = ref<PostMenu>()
 
   const loadingMenu = ref<boolean>(false)
@@ -38,18 +40,7 @@ export const useMenuStore = defineStore('menu', () => {
   const auth = authStore()
   const userId = auth.userId
 
-  function getMondayDate(date = new Date()) {
-    const day = date.getDay()
-    const diff = day === 0 ? -6 : 1 - day
-    const monday = new Date(date)
-    monday.setDate(date.getDate() + diff)
-    monday.setHours(0, 0, 0, 0)
-    return monday.toISOString().split('T')[0]
-  }
-
-  const startingDate = getMondayDate()
-
-  const fetchMenu = async () => {
+  const fetchMenu = async (startingDate: string) => {
     loadingMenu.value = true
     error.value = null
 
@@ -69,7 +60,7 @@ export const useMenuStore = defineStore('menu', () => {
         throw new Error(`Error ${response.status}`)
       }
 
-      menuByUser.value = await response.json()
+      menusByWeek.value[startingDate] = await response.json()
     } catch (err: any) {
       error.value = err.message
     } finally {
@@ -77,7 +68,7 @@ export const useMenuStore = defineStore('menu', () => {
     }
   }
 
-  const postMenu = async (weeklyMenu: WeeklyMenu) => {
+  const postMenu = async (weeklyMenu: WeeklyMenu, startingDate: string) => {
     loadingPostMenu.value = true
     error.value = null
 
@@ -118,13 +109,14 @@ export const useMenuStore = defineStore('menu', () => {
       postMenuByUser.value = await response.json()
     } catch (err: any) {
       error.value = err.message
+      throw err
     } finally {
       loadingPostMenu.value = false
     }
   }
 
   return {
-    menuByUser,
+    menusByWeek,
     postMenuByUser,
     loadingMenu,
     loadingPostMenu,
