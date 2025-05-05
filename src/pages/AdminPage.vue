@@ -24,13 +24,13 @@
           <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('home')">
               <i class="pi pi-home"></i>
-              <span>Home</span>
+              <span>Inicio</span>
             </a>
           </li>
           <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('users')">
               <i class="pi pi-users"></i>
-              <span>Users</span>
+              <span>Usuarios</span>
             </a>
           </li>
           <li class="admin__menu-item">
@@ -42,7 +42,7 @@
           <li class="admin__menu-item">
             <a href="#" class="admin__menu-link" @click="setActiveSection('review')">
               <i class="pi pi-star"></i>
-              <span>Review</span>
+              <span>Reseñas</span>
             </a>
           </li>
           <li class="admin__menu-item">
@@ -77,7 +77,7 @@
           <div class="admin__dashboard-cards">
             <div class="admin-card">
               <div class="admin-card__header">
-                <h3 class="admin-card__title">Users</h3>
+                <h3 class="admin-card__title">Usuarios</h3>
                 <div class="admin-card__icon">
                   <i class="pi pi-users"></i>
                 </div>
@@ -97,7 +97,7 @@
 
             <div class="admin-card">
               <div class="admin-card__header">
-                <h3 class="admin-card__title">Reviews</h3>
+                <h3 class="admin-card__title">Reseñas</h3>
                 <div class="admin-card__icon admin-card__icon--reviews">
                   <i class="pi pi-star"></i>
                 </div>
@@ -107,128 +107,208 @@
           </div>
 
           <!-- Tabla de Recetas -->
-          <div v-if="activeSection === 'recetas'" class="admin__table-container">
-            <DataTable
-              v-if="allRecipes.length > 0"
-              :value="allRecipes"
-              paginator
-              :rows="5"
-              :rowsPerPageOptions="[5, 10, 20, 50]"
-              tableStyle="min-width: 100%"
-              responsiveLayout="stack"
-              breakpoint="960px"
-              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} a {last} de {totalRecords}"
-            >
-              <template #header>
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Recetas</span>
+          <div v-if="activeSection === 'recetas'" class="admin__section-container">
+            <h2 class="admin__section-title">Recetas</h2>
+            <div class="admin__table-container">
+              <DataTable
+                v-if="allRecipes.length > 0"
+                :value="allRecipes"
+                paginator
+                :rows="5"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 100%"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} a {last} de {totalRecords}"
+              >
+                <template #header>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Recetas</span>
+                  </div>
+                </template>
+
+                <Column field="name" header="Nombre"></Column>
+
+                <Column header="Imagen">
+                  <template #body="slotProps">
+                    <img
+                      :src="slotProps.data.image"
+                      class="admin__recipe-image"
+                      :alt="slotProps.data.name"
+                    />
+                  </template>
+                </Column>
+
+                <Column field="userName" header="Usuario"></Column>
+
+                <Column field="difficulty" header="Dificultad"></Column>
+
+                <Column field="score" header="Puntuación">
+                  <template #body="slotProps">
+                    <Rating :modelValue="slotProps.data.score" readonly />
+                  </template>
+                </Column>
+                <Column header="Acciones">
+                  <template #body="slotProps">
+                    <button
+                      class="button button--delete"
+                      @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
+                    >
+                      <i class="pi pi-trash"></i>
+                      <span class="button__text">Eliminar</span>
+                    </button>
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+            
+            <!-- Gráficas de Recetas -->
+            <div class="admin__charts-grid">
+              <!-- Dificultad de Recetas -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Recetas por Dificultad</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noDifficultyDataMessage"
+                    id="difficultyChart"
+                    ref="difficultyChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de dificultad disponibles.</p>
+                  </div>
                 </div>
-              </template>
+              </div>
 
-              <Column field="name" header="Nombre"></Column>
-
-              <Column header="Imagen">
-                <template #body="slotProps">
-                  <img
-                    :src="slotProps.data.image"
-                    class="admin__recipe-image"
-                    :alt="slotProps.data.name"
-                  />
-                </template>
-              </Column>
-
-              <Column field="userName" header="Usuario"></Column>
-
-              <Column field="difficulty" header="Dificultad"></Column>
-
-              <Column field="score" header="Reviews">
-                <template #body="slotProps">
-                  <Rating :modelValue="slotProps.data.score" readonly />
-                </template>
-              </Column>
-              <Column header="Acciones">
-                <template #body="slotProps">
-                  <button
-                    class="button button--delete"
-                    @click="confirmDeleteRecipe(slotProps.data.id, slotProps.data.name)"
-                  >
-                    <i class="pi pi-trash"></i>
-                    <span class="button__text">Eliminar</span>
-                  </button>
-                </template>
-              </Column>
-            </DataTable>
+              <!-- Tipos de Recetas -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Tipos de Recetas</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noRecipeTypesDataMessage"
+                    id="recipeTypesChart"
+                    ref="recipeTypesChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de tipos de recetas disponibles.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Tabla de Users -->
-          <div v-if="activeSection === 'users'" class="admin__table-container">
-            <DataTable
-              v-if="user.length > 0"
-              :value="user"
-              paginator
-              :rows="5"
-              :rowsPerPageOptions="[5, 10, 20, 50]"
-              tableStyle="min-width: 100%"
-              responsiveLayout="stack"
-              breakpoint="960px"
-              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} a {last} de {totalRecords}"
-            >
-              <template #header>
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Usuarios</span>
-                </div>
-              </template>
+          <div v-if="activeSection === 'users'" class="admin__section-container">
+            <h2 class="admin__section-title">Usuarios</h2>
+            <div class="admin__table-container">
+              <DataTable
+                v-if="user.length > 0"
+                :value="user"
+                paginator
+                :rows="5"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 100%"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} a {last} de {totalRecords}"
+              >
+                <template #header>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Usuarios</span>
+                  </div>
+                </template>
 
-              <Column field="username" header="Usuario"></Column>
-              <Column field="email" header="Correo"></Column>
-              <Column field="role" header="Rol"></Column>
-            </DataTable>
+                <Column field="username" header="Usuario"></Column>
+                <Column field="email" header="Correo"></Column>
+                <Column field="role" header="Rol"></Column>
+              </DataTable>
+            </div>
           </div>
 
           <!-- Tabla de Reviews -->
-          <div v-if="activeSection === 'review'" class="admin__table-container">
-            <DataTable
-              v-if="allReviews.length > 0"
-              :value="allReviews"
-              paginator
-              :rows="5"
-              :rowsPerPageOptions="[5, 10, 20, 50]"
-              tableStyle="min-width: 100%"
-              responsiveLayout="stack"
-              breakpoint="960px"
-              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} a {last} de {totalRecords}"
-            >
-              <template #header>
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xl font-bold">Últimas reseñas</span>
-                </div>
-              </template>
+          <div v-if="activeSection === 'review'" class="admin__section-container">
+            <h2 class="admin__section-title">Reseñas</h2>
+            <div class="admin__table-container">
+              <DataTable
+                v-if="allReviews.length > 0"
+                :value="allReviews"
+                paginator
+                :rows="5"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 100%"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} a {last} de {totalRecords}"
+              >
+                <template #header>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Últimas reseñas</span>
+                  </div>
+                </template>
 
-              <Column field="name" header="Receta"></Column>
-              <Column field="username" header="Usuario"></Column>
-              <Column field="text" header="Comentario"></Column>
-              <Column field="score" header="Puntuación">
-                <template #body="slotProps">
-                  <Rating :modelValue="slotProps.data.score" readonly />
-                </template>
-              </Column>
-              <Column header="Acciones">
-                <template #body="slotProps">
-                  <button
-                    class="button button--delete"
-                    @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
-                  >
-                    <i class="pi pi-trash"></i>
-                    <span class="button__text">Eliminar</span>
-                  </button>
-                </template>
-              </Column>
-            </DataTable>
+                <Column field="name" header="Receta"></Column>
+                <Column field="username" header="Usuario"></Column>
+                <Column field="text" header="Comentario"></Column>
+                <Column field="score" header="Puntuación">
+                  <template #body="slotProps">
+                    <Rating :modelValue="slotProps.data.score" readonly />
+                  </template>
+                </Column>
+                <Column header="Acciones">
+                  <template #body="slotProps">
+                    <button
+                      class="button button--delete"
+                      @click="confirmDeleteReview(slotProps.data.id, slotProps.data.name)"
+                    >
+                      <i class="pi pi-trash"></i>
+                      <span class="button__text">Eliminar</span>
+                    </button>
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+            
+            <!-- Gráficas de Reseñas -->
+            <div class="admin__charts-grid">
+              <!-- Valoraciones -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noRatingDataMessage"
+                    id="ratingsChart"
+                    ref="ratingsChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de valoración disponibles.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!--Reseñas Mensuales -->
+              <div class="admin__chart-card">
+                <h3 class="admin__chart-title">Reseñas por Mes</h3>
+                <div class="admin__chart-wrapper">
+                  <canvas
+                    v-if="!noMonthlyReviewsDataMessage"
+                    id="monthlyReviewsChart"
+                    ref="monthlyReviewsChartRef"
+                  ></canvas>
+                  <div v-else class="admin__no-data">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <p>No hay datos de reseñas mensuales disponibles.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
         <!-- Registro de admin -->
         <div v-if="activeSection === 'register'" class="admin__section-container">
           <p>Rellena el formulario para registrar un administrador</p>
@@ -391,6 +471,7 @@ import { useUserStore } from '@/stores/userStore'
 import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { storeToRefs } from 'pinia'
+import useCharts from '@/data/useChart'
 
 const router = useRouter()
 
@@ -419,6 +500,29 @@ const { allUsers } = storeToRefs(userStore)
 const { fetchUsers } = userStore
 const user = ref<IGetAllUsers[]>([])
 
+// composable de gráficas
+const {
+  // Referencias para gráficas en secciones específicas
+  difficultyChartRef,
+  ratingsChartRef,
+  recipeTypesChartRef,         
+  monthlyReviewsChartRef,
+
+  // Mensajes de ausencia de datos
+  noDifficultyDataMessage,
+  noRatingDataMessage,
+  noRecipeTypesDataMessage,   
+  noMonthlyReviewsDataMessage,
+  
+  initializeCharts,
+  setupWatchers,
+  
+  isLoading,
+  error
+} = useCharts(activeSection)
+
+setupWatchers()
+
 const deleteRecipeDialogVisible = ref(false)
 const recipeToDelete = ref<{ id: number; name: string }>({ id: 0, name: '' })
 
@@ -440,8 +544,12 @@ onMounted(async () => {
   await fetchAllReviews()
   mapReviews()
   reviewData.value.total = mappedReviews.value.length
+  
+  // Iininicar según la sección seleccionada 
+  if ([ 'recetas', 'review'].includes(activeSection.value)) {
+    initializeCharts()
+  }
 })
-
 const mapReviews = () => {
   mappedReviews.value = allReviews.value.map((review) => ({
     id: review.id,
@@ -461,6 +569,11 @@ const proceedWithDeleteRecipe = async () => {
   try {
     await deleteRecipe(recipeToDelete.value.id)
     recipeData.value.total = allRecipes.value.length
+    
+    // reiniciar gráficas después de eliminar una receta
+    if (activeSection.value === 'recetas') {
+      initializeCharts()
+    }
   } catch (error) {
     console.error('Error al eliminar la receta:', error)
   } finally {
@@ -482,6 +595,11 @@ const proceedWithDeleteReview = async () => {
     await deleteReview(reviewToDelete.value.id)
     mapReviews()
     reviewData.value.total = mappedReviews.value.length
+    
+    // reiniciar gráficas después de eliminar una receta
+    if (activeSection.value === 'review') {
+      initializeCharts()
+    }
   } catch (error) {
     console.error('Error al eliminar la reseña:', error)
   } finally {
@@ -519,14 +637,12 @@ const handleRegister = async () => {
   }
   clearRegisterData()
   registerForm.username = ''
-  registerForm.password = ''
+  registerForm.email = ''
   registerForm.password = ''
 }
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables' as *;
-
 @use '@/assets/styles/variables' as *;
 
 .admin {
@@ -696,7 +812,7 @@ const handleRegister = async () => {
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-top: 2rem;
-    max-width: 66.3%;
+    max-width: 100%;
     color: $black;
     text-align: center;
 
@@ -903,6 +1019,120 @@ const handleRegister = async () => {
     flex-direction: row;
     text-align: left;
     padding: 1rem 2rem;
+  }
+}
+
+.admin {
+  &__loading,
+  &__error,
+  &__no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: $black;
+  }
+
+  &__charts-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__chart-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    &--full {
+      grid-column: 1 / -1;
+    }
+
+    .admin__chart-wrapper {
+      width: 100%;
+      max-width: 320px;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &--bar {
+        max-width: 100%;
+        height: 400px;
+      }
+    }
+  }
+
+  &__chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: $black;
+  }
+
+  &__loading-text,
+  &__error-text {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+
+  &__error {
+    color: #f44336;
+  }
+
+  &__no-data {
+    height: 300px;
+    color: #9e9e9e;
+
+    i {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    p {
+      font-size: 0.9rem;
+      margin: 0;
+      width: 100% !important;
+      text-align: center !important;
+    }
+  }
+
+  &__loading,
+  &__error {
+    min-height: 400px;
+    width: 100%;
+
+    i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  &__debug-panel {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px dashed
+  }
+
+  &__stats-container {
+    padding: 2rem;
+
+    @media (max-width: 767px) {
+      padding: 1rem;
+    }
   }
 }
 
