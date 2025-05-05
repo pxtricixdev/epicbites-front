@@ -27,12 +27,12 @@
         <p>Día de la semana</p>
         <div class="modal__days__buttons">
           <button
-            :class="{ clicked: selectedDay === day }"
-            @click="selectedDay = day"
-            v-for="day in daysOfWeek"
-            :key="day"
+            v-for="[key, label] in Object.entries(dayLabels)"
+            :key="key"
+            :class="{ clicked: selectedDay === key }"
+            @click="selectedDay = key"
           >
-            {{ day }}
+            {{ label }}
           </button>
         </div>
       </div>
@@ -58,7 +58,7 @@
 import { CirclePlus } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
-import { daysOfWeek } from '@/data/menuData'
+import { dayLabels } from '@/data/labels'
 import { meals } from '@/data/menuData'
 
 const props = defineProps<{

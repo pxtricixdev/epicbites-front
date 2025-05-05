@@ -22,15 +22,12 @@
       </div>
     </div>
 
-    <div>
+    <!--     <div>
       <p v-if="menusByWeek[thisWeekDate]">Menú de esta semana:</p>
       <p v-if="menusByWeek[selectedWeek]">Menú de la semana que viene:</p>
-    </div>
+    </div> -->
 
-    <div
-      v-if="!menusByWeek[thisWeekDate] && !menusByWeek[selectedWeek]"
-      class="weekly-menu__container"
-    >
+    <div class="weekly-menu__container">
       <section class="weekly-menu__recipes">
         <p class="weekly-menu__recipes__title">Recetas disponibles</p>
         <input
@@ -110,21 +107,22 @@
 
         <Tabs v-model:value="activeDay">
           <TabList>
-            <Tab v-for="day in daysOfWeek" :key="day" :value="day">{{ day }}</Tab>
+            <Tab v-for="[key, label] in Object.entries(dayLabels)" :key="key" :value="key">
+              {{ label }}
+            </Tab>
           </TabList>
+
           <TabPanels>
-            <TabPanel v-for="day in daysOfWeek" :value="day" :key="day">
+            <TabPanel v-for="[key] in Object.entries(dayLabels)" :key="key" :value="key">
               <div class="weekly-menu__menu__day">
                 <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
                   <div class="weekly-menu__menu__recipe">
-                    <p>
-                      {{ meal }}
-                    </p>
-                    <button @click="removeRecipeFromMenu(day, meal)">x</button>
+                    <p>{{ meal }}</p>
+                    <button @click="removeRecipeFromMenu(key, meal)">x</button>
                   </div>
 
-                  <p :class="weeklyMenu[day]?.[meal] ? 'recipetitle' : ''">
-                    {{ weeklyMenu[day]?.[meal]?.title || 'No hay ninguna receta todavía' }}
+                  <p :class="weeklyMenu[key]?.[meal] ? 'recipetitle' : ''">
+                    {{ weeklyMenu[key]?.[meal]?.title || 'No hay ninguna receta todavía' }}
                   </p>
                 </span>
               </div>
@@ -148,11 +146,11 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
-import { daysOfWeek } from '@/data/menuData'
 import { meals } from '@/data/menuData'
 import { difficultyLabels, dietLabels } from '@/data/labels'
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { Toaster, toast } from 'vue-sonner'
+import { dayLabels } from '@/data/labels'
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
