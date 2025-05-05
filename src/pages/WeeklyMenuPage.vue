@@ -22,115 +22,138 @@
       </div>
     </div>
 
-    <!--     <div>
-      <p v-if="menusByWeek[thisWeekDate]">Menú de esta semana:</p>
-      <p v-if="menusByWeek[selectedWeek]">Menú de la semana que viene:</p>
-    </div> -->
+    <div v-if="!localLoadingMenu">
+      <div>
+        <p v-if="menusByWeek[thisWeekDate]">Menú de esta semana:</p>
+        <p v-else-if="menusByWeek[selectedWeek]">Menú de la semana que viene:</p>
+      </div>
 
-    <div class="weekly-menu__container">
-      <section class="weekly-menu__recipes">
-        <p class="weekly-menu__recipes__title">Recetas disponibles</p>
-        <input
-          class="weekly-menu__recipes__search"
-          type="text"
-          v-model="searchRecipe"
-          placeholder="Buscar recetas..."
-        />
-        <div class="weekly-menu__recipes__filter">
-          <p class="weekly-menu__recipes__filter__title">Filtros</p>
-          <div class="weekly-menu__recipes__filter__select">
-            <select id="difficulty" v-model="recipeDifficulty">
-              <option value="" selected>Dificultad</option>
-              <option
-                :key="difficulty"
-                v-for="difficulty in uniqueDifficulties"
-                :value="difficulty"
-              >
-                {{ difficultyLabels[difficulty] || difficulty }}
-              </option>
-            </select>
+      <div class="weekly-menu__container">
+        <section class="weekly-menu__recipes">
+          <p class="weekly-menu__recipes__title">Recetas disponibles</p>
+          <input
+            class="weekly-menu__recipes__search"
+            type="text"
+            v-model="searchRecipe"
+            placeholder="Buscar recetas..."
+          />
+          <div class="weekly-menu__recipes__filter">
+            <p class="weekly-menu__recipes__filter__title">Filtros</p>
+            <div class="weekly-menu__recipes__filter__select">
+              <select id="difficulty" v-model="recipeDifficulty">
+                <option value="" selected>Dificultad</option>
+                <option
+                  :key="difficulty"
+                  v-for="difficulty in uniqueDifficulties"
+                  :value="difficulty"
+                >
+                  {{ difficultyLabels[difficulty] || difficulty }}
+                </option>
+              </select>
 
-            <select id="diet" v-model="recipeDiet">
-              <option value="" selected>Dieta</option>
-              <option :key="diet" v-for="diet in uniqueDiets" :value="diet">
-                {{ dietLabels[diet] || diet }}
-              </option>
-            </select>
+              <select id="diet" v-model="recipeDiet">
+                <option value="" selected>Dieta</option>
+                <option :key="diet" v-for="diet in uniqueDiets" :value="diet">
+                  {{ dietLabels[diet] || diet }}
+                </option>
+              </select>
 
-            <select id="meal" v-model="recipeMealType">
-              <option value="" selected>Tipo de comida</option>
-              <option :key="meal" v-for="meal in uniqueMeals" :value="meal">
-                {{ meal }}
-              </option>
-            </select>
+              <select id="meal" v-model="recipeMealType">
+                <option value="" selected>Tipo de comida</option>
+                <option :key="meal" v-for="meal in uniqueMeals" :value="meal">
+                  {{ meal }}
+                </option>
+              </select>
 
-            <select id="calorie" v-model="recipeCalories">
-              <option value="" selected>Calorías</option>
-              <option
-                v-for="category in Object.keys(calorieCategories)"
-                :key="category"
-                :value="category"
-              >
-                {{ category }}
-              </option>
-            </select>
-          </div>
-          <div class="weekly-menu__recipes__content">
-            <div v-for="recipe in filteredRecipes" :key="recipe.id">
-              <CardRecipeForMenu
-                :id="recipe.id"
-                :title="recipe.name"
-                :time="recipe.time"
-                :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
-                :meal="recipe.meal"
-                :src="recipe.image"
-                buttonText="Añadir"
-                :link="`/receta/${recipe.id}`"
-                @add="addToMenu"
-              />
+              <select id="calorie" v-model="recipeCalories">
+                <option value="" selected>Calorías</option>
+                <option
+                  v-for="category in Object.keys(calorieCategories)"
+                  :key="category"
+                  :value="category"
+                >
+                  {{ category }}
+                </option>
+              </select>
+            </div>
+            <div class="weekly-menu__recipes__content">
+              <div v-for="recipe in filteredRecipes" :key="recipe.id">
+                <CardRecipeForMenu
+                  :id="recipe.id"
+                  :title="recipe.name"
+                  :time="recipe.time"
+                  :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
+                  :meal="recipe.meal"
+                  :src="recipe.image"
+                  buttonText="Añadir"
+                  :link="`/receta/${recipe.id}`"
+                  @add="addToMenu"
+                />
+              </div>
             </div>
           </div>
+        </section>
+        <section class="weekly-menu__menu">
+          <Toaster richColors position="bottom-right" />
+          <p class="weekly-menu__menu__title">Menú semanal</p>
+          <p>Organiza tus 5 comidas diarias para cada día de la semana</p>
+
+          <label class="weekly-menu__menu__label" for="week"
+            >¿Para qué semana quieres crear el menú?</label
+          >
+          <select class="weekly-menu__menu__select" id="week" v-model="selectedWeek">
+            <option v-if="!menusByWeek[thisWeekDate]" :value="thisWeekDate">
+              Esta semana ({{ formatDate(thisWeekDate) }})
+            </option>
+            <option v-if="!menusByWeek[nextWeekDate]" :value="nextWeekDate">
+              Siguiente semana ({{ formatDate(nextWeekDate) }})
+            </option>
+          </select>
+
+          <Tabs v-model:value="activeDay">
+            <TabList>
+              <Tab v-for="[key, label] in Object.entries(dayLabels)" :key="key" :value="key">
+                {{ label }}
+              </Tab>
+            </TabList>
+
+            <TabPanels>
+              <TabPanel v-for="[key] in Object.entries(dayLabels)" :key="key" :value="key">
+                <div class="weekly-menu__menu__day">
+                  <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
+                    <div class="weekly-menu__menu__recipe">
+                      <p>{{ meal }}</p>
+                      <button @click="removeRecipeFromMenu(key, meal)">x</button>
+                    </div>
+
+                    <p :class="weeklyMenu[key]?.[meal] ? 'recipetitle' : ''">
+                      {{ weeklyMenu[key]?.[meal]?.title || 'No hay ninguna receta todavía' }}
+                    </p>
+                  </span>
+                </div>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+          <button class="weekly-menu__menu__button" @click="handleSaveMenu">Guardar menú</button>
+        </section>
+      </div>
+    </div>
+    <div v-else class="weekly-menu__skeleton">
+      <div class="skeleton__container">
+        <div class="skeleton__sidebar">
+          <div class="skeleton__title shimmer"></div>
+          <div class="skeleton__input shimmer"></div>
+          <div class="skeleton__filters shimmer" v-for="i in 4" :key="i"></div>
+          <div class="skeleton__card shimmer" v-for="i in 3" :key="`card-${i}`"></div>
         </div>
-      </section>
-      <section class="weekly-menu__menu">
-        <Toaster richColors position="bottom-right" />
-        <p class="weekly-menu__menu__title">Menú semanal</p>
-        <p>Organiza tus 5 comidas diarias para cada día de la semana</p>
-
-        <label class="weekly-menu__menu__label" for="week"
-          >¿Para qué semana quieres crear el menú?</label
-        >
-        <select class="weekly-menu__menu__select" id="week" v-model="selectedWeek">
-          <option :value="thisWeekDate">Esta semana ({{ formatDate(thisWeekDate) }})</option>
-          <option :value="nextWeekDate">Siguiente semana ({{ formatDate(nextWeekDate) }})</option>
-        </select>
-
-        <Tabs v-model:value="activeDay">
-          <TabList>
-            <Tab v-for="[key, label] in Object.entries(dayLabels)" :key="key" :value="key">
-              {{ label }}
-            </Tab>
-          </TabList>
-
-          <TabPanels>
-            <TabPanel v-for="[key] in Object.entries(dayLabels)" :key="key" :value="key">
-              <div class="weekly-menu__menu__day">
-                <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
-                  <div class="weekly-menu__menu__recipe">
-                    <p>{{ meal }}</p>
-                    <button @click="removeRecipeFromMenu(key, meal)">x</button>
-                  </div>
-
-                  <p :class="weeklyMenu[key]?.[meal] ? 'recipetitle' : ''">
-                    {{ weeklyMenu[key]?.[meal]?.title || 'No hay ninguna receta todavía' }}
-                  </p>
-                </span>
-              </div>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-        <button class="weekly-menu__menu__button" @click="handleSaveMenu">Guardar menú</button>
-      </section>
+        <div class="skeleton__main">
+          <div class="skeleton__title shimmer"></div>
+          <div class="skeleton__text shimmer"></div>
+          <div class="skeleton__select shimmer"></div>
+          <div class="skeleton__tabs shimmer" v-for="i in 8" :key="`tab-${i}`"></div>
+          <div class="skeleton__button shimmer"></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -185,10 +208,12 @@ function formatDate(isoString: string): string {
   })
 }
 
+const localLoadingMenu = ref(true)
+
 onMounted(async () => {
   await fetchAllRecipes()
-  await fetchMenu(selectedWeek.value)
-  await fetchMenu(nextWeekDate)
+  await Promise.all([fetchMenu(selectedWeek.value), fetchMenu(nextWeekDate)])
+  localLoadingMenu.value = false
 })
 
 const uniqueDifficulties = computed(() => {
@@ -531,5 +556,110 @@ const handleSaveMenu = async () => {
 .recipetitle {
   @include semibold-text(16px);
   color: $secondary-orange;
+}
+
+.weekly-menu__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  margin: 40px auto;
+  max-width: 1200px;
+
+  .skeleton__container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 10px;
+    width: 1200px;
+
+    @media (min-width: 1200px) {
+      flex-direction: row;
+    }
+  }
+
+  .skeleton__sidebar {
+    width: 400px;
+  }
+
+  .skeleton__main {
+    width: 800px;
+  }
+
+  .skeleton__sidebar,
+  .skeleton__main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  }
+
+  .skeleton__title {
+    height: 20px;
+    width: 50%;
+    border-radius: 5px;
+  }
+
+  .skeleton__input {
+    height: 35px;
+    width: 100%;
+    border-radius: 5px;
+  }
+  .skeleton__select {
+    height: 35px;
+    width: 30%;
+    border-radius: 5px;
+  }
+
+  .skeleton__filters {
+    height: 30px;
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .skeleton__card {
+    height: 120px;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .skeleton__text {
+    height: 15px;
+    width: 60%;
+    border-radius: 5px;
+  }
+
+  .skeleton__tabs {
+    height: 50px;
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .skeleton__button {
+    height: 40px;
+    width: 150px;
+    border-radius: 5px;
+    align-self: center;
+  }
+
+  .shimmer {
+    background: linear-gradient(to right, #eeeeee 0%, #dddddd 20%, #eeeeee 40%, #eeeeee 100%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
 }
 </style>
