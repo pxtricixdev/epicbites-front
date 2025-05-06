@@ -616,15 +616,6 @@ const toggleWeek = () => {
   currentMenuWeek.value = isThisWeek.value ? nextWeekDate : thisWeekDate
 }
 
-// Navegar a la página de una receta específica
-const goToRecipe = (recipeId: number) => {
-  if (recipeId) {
-    router.push({
-      name: 'detalle-receta',
-      params: { id: recipeId },
-    })
-  }
-}
 
 // Función para normalizar
 const normalizeText = (text: string) => {
