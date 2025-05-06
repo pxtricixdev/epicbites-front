@@ -167,20 +167,20 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="day in daysOfWeek" :key="day">
+              <tr v-for="day in dayLabels" :key="day">
                 <td class="profile__menu-day">{{ day }}</td>
                 <td v-for="meal in meals" :key="meal" class="profile__menu-cell">
                   <div v-if="getRecipeForDayAndMeal(day, meal)" class="profile__menu-recipe">
                     <RouterLink
-                      :to="`/receta/${getRecipeForDayAndMeal(day, meal).recipeId}`"
+                      :to="`/receta/${getRecipeForDayAndMeal(day, meal)?.recipeId}`"
                       class="profile__menu-recipe-link"
                     >
                       <span class="profile__menu-recipe-name">
-                        {{ getRecipeForDayAndMeal(day, meal).recipeName }}
+                        {{ getRecipeForDayAndMeal(day, meal)?.recipeName }}
                       </span>
                     </RouterLink>
                     <button
-                      @click="goToRecipe(getRecipeForDayAndMeal(day, meal).recipeId)"
+                      @click="goToRecipe(getRecipeForDayAndMeal(day, meal)?.recipeId)"
                       class="profile__menu-view-button"
                     >
                       Ver receta
@@ -317,7 +317,8 @@ import { storeToRefs } from 'pinia'
 import type { IPutUser } from '@/stores/interfaces/IPutUser'
 import { Toaster, toast } from 'vue-sonner'
 import { useMenuStore } from '@/stores/menuStore'
-import { meals, daysOfWeek } from '@/data/menuData'
+import { meals } from '@/data/menuData'
+import { dayLabels } from '@/data/labels'
 import { RouterLink } from 'vue-router'
 
 const auth = authStore()
@@ -352,7 +353,7 @@ const nextWeekDate = getMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
 const currentMenuWeek = ref(thisWeekDate)
 const isThisWeek = computed(() => currentMenuWeek.value === thisWeekDate)
 
-// Comprobar si hay menús disponibles 
+// Comprobar si hay menús disponibles
 const hasMenus = computed(() => {
   return (
     menusByWeek.value[thisWeekDate]?.menuDetails?.length > 0 ||
@@ -608,7 +609,7 @@ function getMonday(date = new Date()) {
   return monday.toISOString().split('T')[0]
 }
 
-function formatDate(isoString) {
+function formatDate(isoString: string) {
   const date = new Date(isoString)
   return date.toLocaleDateString('es-ES', {
     day: '2-digit',
@@ -622,7 +623,7 @@ const toggleWeek = () => {
 }
 
 // Navegar a la página de una receta específica
-const goToRecipe = (recipeId) => {
+const goToRecipe = (recipeId: number) => {
   if (recipeId) {
     router.push({
       name: 'detalle-receta',
@@ -631,8 +632,8 @@ const goToRecipe = (recipeId) => {
   }
 }
 
-// Función para normalizar 
-const normalizeText = (text) => {
+// Función para normalizar
+const normalizeText = (text: string) => {
   return text
     .toLowerCase()
     .normalize('NFD')
@@ -640,7 +641,7 @@ const normalizeText = (text) => {
 }
 
 // Obtener receta por día y comida
-const getRecipeForDayAndMeal = (day, meal) => {
+const getRecipeForDayAndMeal = (day: string, meal: string) => {
   if (!menusByWeek.value[currentMenuWeek.value]) return null
 
   const menuDetails = menusByWeek.value[currentMenuWeek.value].menuDetails || []
@@ -677,7 +678,7 @@ onMounted(async () => {
     try {
       await fetchMenu(thisWeekDate)
       await fetchMenu(nextWeekDate)
-
+      
     } catch (error) {
       console.error('Error al cargar datos del menú:', error)
     }
