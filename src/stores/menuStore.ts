@@ -2,13 +2,34 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { authStore } from '@/stores/authStore'
 
+type RecipeData = {
+  id: number
+  name: string
+  description: string
+  meal: string
+  diet: string
+  flavour: string
+  time: number
+  calories: number
+  difficulty: string
+  image: string
+  score: number
+  ingredients: any[]
+}
+
+type MenuDetail = {
+  day: string
+  meal: string
+  recipe: RecipeData
+}
+
 type MenusByWeek = {
   id: number
   userId: number
   name: string
   startingDate: Date
   createdAt: Date
-  menuDetails: { id: number; day: string; meal: string; weeklyMenuId: number; recipeId: number }[]
+  menuDetails: MenuDetail[]
 }
 
 type PostMenu = {
