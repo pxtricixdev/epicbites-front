@@ -180,7 +180,7 @@
                       </span>
                     </RouterLink>
                     <button
-                      @click="goToRecipe(getRecipeForDayAndMeal(day, meal)?.recipeId)"
+                      @click="goToRecipe(getRecipeForDayAndMeal(day, meal)?.recipeId ?? 0)"
                       class="profile__menu-view-button"
                     >
                       Ver receta
