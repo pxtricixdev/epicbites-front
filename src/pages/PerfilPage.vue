@@ -179,12 +179,6 @@
                         {{ getRecipeForDayAndMeal(day, meal)?.recipeName }}
                       </span>
                     </RouterLink>
-                    <button
-                      @click="goToRecipe(getRecipeForDayAndMeal(day, meal)?.recipeId ?? 0)"
-                      class="profile__menu-view-button"
-                    >
-                      Ver receta
-                    </button>
                   </div>
                   <div v-else class="profile__menu-empty-recipe">
                     <span>Sin receta</span>
