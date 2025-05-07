@@ -10,15 +10,17 @@
     </div>
     <div class="weekly-menu__animation">
       <div class="weekly-menu__bullets">
-        <ul>
-          <li>Elige entre todas nuestras recetas disponibles.</li>
-          <li>Filtra las recetas según tus necesidades.</li>
-          <li>Asigna platos a cada día de la semana.</li>
-          <li>Guarda tu menú y visítalo cuando quieras.</li>
-        </ul>
-      </div>
-      <div>
-        <DotLottieVue style="height: 150px; width: 200px" autoplay loop src="/pan.lottie" />
+        <div>
+          <ul>
+            <li>Elige entre todas nuestras recetas disponibles</li>
+            <li>Filtra las recetas según tus necesidades</li>
+            <li>Asigna platos a cada día de la semana</li>
+            <li>Guarda tu menú y visítalo cuando quieras</li>
+          </ul>
+        </div>
+        <div>
+          <DotLottieVue style="height: 120px; width: 200px" autoplay loop src="/pan.lottie" />
+        </div>
       </div>
     </div>
 
@@ -122,11 +124,16 @@
                 <div class="weekly-menu__menu__day">
                   <span v-for="meal in meals" :key="meal" class="weekly-menu__menu__meal">
                     <div class="weekly-menu__menu__recipe">
-                      <p>{{ meal }}</p>
-                      <button @click="removeRecipeFromMenu(key, meal)">x</button>
+                      <p class="weekly-menu__menu__recipe__meal">{{ meal }}</p>
+                      <button
+                        v-if="weeklyMenu[key]?.[meal]"
+                        @click="removeRecipeFromMenu(key, meal)"
+                      >
+                        x
+                      </button>
                     </div>
 
-                    <p :class="weeklyMenu[key]?.[meal] ? 'recipetitle' : ''">
+                    <p :class="weeklyMenu[key]?.[meal] ? 'recipetitle' : 'noRecipeTitle'">
                       {{ weeklyMenu[key]?.[meal]?.title || 'No hay ninguna receta todavía' }}
                     </p>
                   </span>
@@ -339,21 +346,27 @@ const handleSaveMenu = async () => {
   }
 
   &__bullets {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     margin: 10px;
-    padding: 15px 30px;
-    background-color: #e5730930;
+    padding: 10px 0 10px 40px;
+    border: 1.5px solid $primary-yellow;
+    box-shadow:
+      0 4px 6px -1px rgba(252, 154, 16, 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
     @include regular-text(14px);
     border-radius: 8px;
     max-width: 400px;
     color: rgb(53, 53, 53);
-    max-width: 400px;
+    max-width: 600px;
 
     li {
+      padding: 2px 0;
       list-style: disc;
-      margin-bottom: 5px;
 
       &::marker {
-        color: $secondary-orange;
+        color: $primary-yellow;
       }
     }
   }
@@ -451,7 +464,7 @@ const handleSaveMenu = async () => {
     gap: 10px;
     max-width: 800px;
     min-width: 300px;
-    max-height: 750px;
+    max-height: 730px;
 
     &__title {
       @include semibold-text(18px);
@@ -477,14 +490,23 @@ const handleSaveMenu = async () => {
       justify-content: space-between;
       align-items: center;
 
+      &__meal {
+        @include bold-text(15px);
+      }
+
       button {
-        background-color: $primary-yellow;
-        color: black;
+        background: none;
+        color: rgb(154, 154, 154);
+        font-weight: 700;
         border-radius: 100px;
         border: none;
         cursor: pointer;
-        padding: 3px 7px;
-        font-size: 12px;
+        font-size: 18px;
+
+        &:hover {
+          color: rgb(79, 79, 79);
+          transition: ease-in 0.15s;
+        }
       }
     }
 
@@ -554,8 +576,13 @@ const handleSaveMenu = async () => {
 }
 
 .recipetitle {
-  @include semibold-text(16px);
+  @include semibold-text(14px);
   color: $secondary-orange;
+}
+
+.noRecipeTitle {
+  @include regular-text(14px);
+  color: rgb(154, 154, 154);
 }
 
 .weekly-menu__skeleton {
