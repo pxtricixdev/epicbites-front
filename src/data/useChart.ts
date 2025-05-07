@@ -5,7 +5,13 @@ import { useStatsStore } from '@/stores/statsStore'
 
 Chart.register(...registerables)
 
-export default function useCharts(activeSection: Ref<string>) {
+export default function useCharts(
+  activeSection: Ref<string>,
+  homeDifficultyChartRef?: Ref<HTMLCanvasElement | null>,
+  homeRatingsChartRef?: Ref<HTMLCanvasElement | null>,
+  homeRecipeTypesChartRef?: Ref<HTMLCanvasElement | null>,
+  homeMonthlyReviewsChartRef?: Ref<HTMLCanvasElement | null>
+) {
   const difficultyChartRef = ref<HTMLCanvasElement | null>(null)
   const ratingsChartRef = ref<HTMLCanvasElement | null>(null)
   const recipeTypesChartRef = ref<HTMLCanvasElement | null>(null) 
@@ -46,8 +52,8 @@ export default function useCharts(activeSection: Ref<string>) {
   })
 
   // gráfico de dificultad
-  const initializeDifficultyChart = () => {
-    if (!difficultyChartRef.value) return
+  const initializeDifficultyChart = (chartRef = difficultyChartRef) => {
+    if (!chartRef.value) return
     
     if (!hasDifficultyData.value) {
       if (difficultyChart) difficultyChart.destroy()
@@ -64,7 +70,7 @@ export default function useCharts(activeSection: Ref<string>) {
       statsStore.difficultyStats.hard
     ]
     
-    difficultyChart = new Chart(difficultyChartRef.value, {
+    difficultyChart = new Chart(chartRef.value, {
       type: 'pie',
       data: {
         labels: ['Fácil', 'Media', 'Difícil'],
@@ -105,8 +111,8 @@ export default function useCharts(activeSection: Ref<string>) {
   }
   
   // gráfico de valoraciones 
-  const initializeRatingsChart = () => {
-    if (!ratingsChartRef.value) return
+  const initializeRatingsChart = (chartRef = ratingsChartRef) => {
+    if (!chartRef.value) return
     
     if (!hasRatingData.value) {
       if (ratingsChart) ratingsChart.destroy()
@@ -125,7 +131,7 @@ export default function useCharts(activeSection: Ref<string>) {
       statsStore.ratingStats[5]
     ]
     
-    ratingsChart = new Chart(ratingsChartRef.value, {
+    ratingsChart = new Chart(chartRef.value, {
       type: 'doughnut',
       data: {
         labels: ['1 ★', '2 ★', '3 ★', '4 ★', '5 ★'],
@@ -170,8 +176,8 @@ export default function useCharts(activeSection: Ref<string>) {
   }
   
   // tipos de recetas
-  const initializeRecipeTypesChart = () => {
-    if (!recipeTypesChartRef.value) return
+  const initializeRecipeTypesChart = (chartRef = recipeTypesChartRef) => {
+    if (!chartRef.value) return
     
     if (!hasRecipeTypesData.value) {
       if (recipeTypesChart) recipeTypesChart.destroy()
@@ -193,7 +199,7 @@ export default function useCharts(activeSection: Ref<string>) {
       typeStats.Mediterranea
     ]
     
-    recipeTypesChart = new Chart(recipeTypesChartRef.value, {
+    recipeTypesChart = new Chart(chartRef.value, {
       type: 'pie',
       data: {
         labels: ['Vegetariana', 'Sin Gluten', 'Vegana', 'Sin Lactosa', 'Proteína', 'Omnívoro', 'Mediterránea'],
@@ -241,8 +247,8 @@ export default function useCharts(activeSection: Ref<string>) {
   }
 
   // reseñas mensuales
-  const initializeMonthlyReviewsChart = () => {
-    if (!monthlyReviewsChartRef.value) return
+  const initializeMonthlyReviewsChart = (chartRef = monthlyReviewsChartRef) => {
+    if (!chartRef.value) return
     
     if (!hasMonthlyReviewsData.value) {
       if (monthlyReviewsChart) monthlyReviewsChart.destroy()
@@ -255,7 +261,7 @@ export default function useCharts(activeSection: Ref<string>) {
     
     const monthlyData = statsStore.reviewsByMonth
     
-    monthlyReviewsChart = new Chart(monthlyReviewsChartRef.value, {
+    monthlyReviewsChart = new Chart(chartRef.value, {
       type: 'bar',
       data: {
         labels: monthlyData.map(item => item.month),
@@ -296,13 +302,33 @@ export default function useCharts(activeSection: Ref<string>) {
   
   // Inicializar los gráficos según la sección activa
   const initializeCharts = async () => {
-
+    
     if (!statsStore.statsReady) {
       await statsStore.generateStats()
     }
     
     await nextTick()
-    if (activeSection.value === 'recetas') {
+    if (activeSection.value === 'home') {
+      if (homeDifficultyChartRef?.value) {
+        await nextTick()
+        initializeDifficultyChart(homeDifficultyChartRef)
+      }
+      
+      if (homeRecipeTypesChartRef?.value) {
+        await nextTick()
+        initializeRecipeTypesChart(homeRecipeTypesChartRef)
+      }
+      
+      if (homeRatingsChartRef?.value) {
+        await nextTick()
+        initializeRatingsChart(homeRatingsChartRef)
+      }
+      
+      if (homeMonthlyReviewsChartRef?.value) {
+        await nextTick()
+        initializeMonthlyReviewsChart(homeMonthlyReviewsChartRef)
+      }
+    } else if (activeSection.value === 'recetas') {
       initializeDifficultyChart()
       initializeRecipeTypesChart()
     } else if (activeSection.value === 'review') {
@@ -318,14 +344,14 @@ export default function useCharts(activeSection: Ref<string>) {
       noRecipeTypesDataMessage.value = false
       noMonthlyReviewsDataMessage.value = false
       
-      if (['recetas', 'review'].includes(newSection)) {
+      if (['home', 'recetas', 'review'].includes(newSection)) {
         nextTick(() => initializeCharts())
       }
     })
   }
 
   onMounted(async () => {
-    if (['recetas', 'review'].includes(activeSection.value)) {
+    if (['home', 'recetas', 'review'].includes(activeSection.value)) {
       await initializeCharts()
     }
   })
@@ -335,6 +361,10 @@ export default function useCharts(activeSection: Ref<string>) {
     ratingsChartRef,
     recipeTypesChartRef,      
     monthlyReviewsChartRef,
+    homeDifficultyChartRef,
+    homeRatingsChartRef,
+    homeRecipeTypesChartRef,
+    homeMonthlyReviewsChartRef,
     noDifficultyDataMessage,
     noRatingDataMessage,
     noRecipeTypesDataMessage,  

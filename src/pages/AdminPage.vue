@@ -162,41 +162,6 @@
                 </Column>
               </DataTable>
             </div>
-            
-            <!-- Gráficas de Recetas -->
-            <div class="admin__charts-grid">
-              <!-- Dificultad de Recetas -->
-              <div class="admin__chart-card">
-                <h3 class="admin__chart-title">Recetas por Dificultad</h3>
-                <div class="admin__chart-wrapper">
-                  <canvas
-                    v-if="!noDifficultyDataMessage"
-                    id="difficultyChart"
-                    ref="difficultyChartRef"
-                  ></canvas>
-                  <div v-else class="admin__no-data">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <p>No hay datos de dificultad disponibles.</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tipos de Recetas -->
-              <div class="admin__chart-card">
-                <h3 class="admin__chart-title">Tipos de Recetas</h3>
-                <div class="admin__chart-wrapper">
-                  <canvas
-                    v-if="!noRecipeTypesDataMessage"
-                    id="recipeTypesChart"
-                    ref="recipeTypesChartRef"
-                  ></canvas>
-                  <div v-else class="admin__no-data">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <p>No hay datos de tipos de recetas disponibles.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Tabla de Users -->
@@ -271,128 +236,161 @@
                 </Column>
               </DataTable>
             </div>
-            
-            <!-- Gráficas de Reseñas -->
-            <div class="admin__charts-grid">
-              <!-- Valoraciones -->
-              <div class="admin__chart-card">
-                <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
-                <div class="admin__chart-wrapper">
-                  <canvas
-                    v-if="!noRatingDataMessage"
-                    id="ratingsChart"
-                    ref="ratingsChartRef"
-                  ></canvas>
-                  <div v-else class="admin__no-data">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <p>No hay datos de valoración disponibles.</p>
-                  </div>
-                </div>
-              </div>
+          </div>
 
-              <!--Reseñas Mensuales -->
-              <div class="admin__chart-card">
-                <h3 class="admin__chart-title">Reseñas por Mes</h3>
-                <div class="admin__chart-wrapper">
-                  <canvas
-                    v-if="!noMonthlyReviewsDataMessage"
-                    id="monthlyReviewsChart"
-                    ref="monthlyReviewsChartRef"
-                  ></canvas>
-                  <div v-else class="admin__no-data">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <p>No hay datos de reseñas mensuales disponibles.</p>
+          <!-- home con gráficas -->
+          <div v-if="activeSection === 'home'" class="admin__section-container">
+            <h2 class="admin__section-title">Bienvenido al Panel de Administración</h2>
+            
+            <div class="admin__home-charts">
+              <h3 class="admin__section-subtitle">Resumen de estadísticas</h3>
+              
+              <div class="admin__charts-grid">
+                <!--  Dificultad de Recetas -->
+                <div class="admin__chart-card">
+                  <h3 class="admin__chart-title">Recetas por Dificultad</h3>
+                  <div class="admin__chart-wrapper">
+                    <canvas 
+                      v-if="!noDifficultyDataMessage" 
+                      id="homeChartDifficulty" 
+                      ref="homeDifficultyChartRef"
+                    ></canvas>
+                    <div v-else class="admin__no-data">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <p>No hay datos de dificultad disponibles.</p>
+                    </div>
                   </div>
+                  <button class="admin__chart-button" @click="setActiveSection('recetas')">
+                    <i class="pi pi-arrow-right"></i> Más detalles
+                  </button>
+                </div>
+                
+                <!-- Tipos de Recetas -->
+                <div class="admin__chart-card">
+                  <h3 class="admin__chart-title">Tipos de Recetas</h3>
+                  <div class="admin__chart-wrapper">
+                    <canvas 
+                      v-if="!noRecipeTypesDataMessage" 
+                      id="homeChartRecipeTypes" 
+                      ref="homeRecipeTypesChartRef"
+                    ></canvas>
+                    <div v-else class="admin__no-data">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <p>No hay datos de tipos de recetas disponibles.</p>
+                    </div>
+                  </div>
+                  <button class="admin__chart-button" @click="setActiveSection('recetas')">
+                    <i class="pi pi-arrow-right"></i> Más detalles
+                  </button>
+                </div>
+                
+                <!-- Valoraciones -->
+                <div class="admin__chart-card">
+                  <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
+                  <div class="admin__chart-wrapper">
+                    <canvas 
+                      v-if="!noRatingDataMessage" 
+                      id="homeChartRatings" 
+                      ref="homeRatingsChartRef"
+                    ></canvas>
+                    <div v-else class="admin__no-data">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <p>No hay datos de valoración disponibles.</p>
+                    </div>
+                  </div>
+                  <button class="admin__chart-button" @click="setActiveSection('review')">
+                    <i class="pi pi-arrow-right"></i> Más detalles
+                  </button>
+                </div>
+                
+                <!--Reseñas Mensuales -->
+                <div class="admin__chart-card">
+                  <h3 class="admin__chart-title">Reseñas por Mes</h3>
+                  <div class="admin__chart-wrapper">
+                    <canvas 
+                      v-if="!noMonthlyReviewsDataMessage" 
+                      id="homeChartMonthlyReviews" 
+                      ref="homeMonthlyReviewsChartRef"
+                    ></canvas>
+                    <div v-else class="admin__no-data">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <p>No hay datos de reseñas mensuales disponibles.</p>
+                    </div>
+                  </div>
+                  <button class="admin__chart-button" @click="setActiveSection('review')">
+                    <i class="pi pi-arrow-right"></i> Más detalles
+                  </button>
                 </div>
               </div>
+            </div>
+            
+            <div class="admin__section-info">
+              <h3 class="admin__section-subtitle">¿Qué puedes hacer desde este panel?</h3>
+              <p class="admin__section-message">
+                Este es el centro de control donde puedes administrar la información clave del sistema,
+                incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos importantes,
+                realizar modificaciones y garantizar que todo funcione correctamente.
+              </p>
+              <h3 class="admin__section-subtitle">Recuerda:</h3>
+              <p class="admin__section-message">
+                El correcto uso de este panel es fundamental para mantener la calidad y seguridad del
+                sistema. Cualquier modificación debe ser realizada con responsabilidad y pensando
+                siempre en la mejor experiencia para los usuarios.
+              </p>
             </div>
           </div>
-        </div>
 
-        <!-- Registro de admin -->
-        <div v-if="activeSection === 'register'" class="admin__section-container">
-          <p>Rellena el formulario para registrar un administrador</p>
-          <Form :validation-schema="validationSchema" @submit="handleRegister" class="register">
-            <div class="register__content">
-              <div class="register__inputs">
-                <FloatLabel class="register__field">
-                  <Field name="username" v-slot="{ field }">
-                    <InputText
-                      v-bind="field"
-                      class="register__input"
-                      id="username"
-                      v-model="registerForm.username"
-                    />
-                  </Field>
-                  <label class="register__label" for="username">Nombre de usuario</label>
-                </FloatLabel>
-                <ErrorMessage name="username" class="register__error" />
+          <!-- Registro de admin -->
+          <div v-if="activeSection === 'register'" class="admin__section-container">
+            <h2 class="admin__section-title">Registro de administrador</h2>
+            <p>Rellena el formulario para registrar un administrador</p>
+            <Form :validation-schema="validationSchema" @submit="handleRegister" class="register">
+              <div class="register__content">
+                <div class="register__inputs">
+                  <FloatLabel class="register__field">
+                    <Field name="username" v-slot="{ field }">
+                      <InputText
+                        v-bind="field"
+                        class="register__input"
+                        id="username"
+                        v-model="registerForm.username"
+                      />
+                    </Field>
+                    <label class="register__label" for="username">Nombre de usuario</label>
+                  </FloatLabel>
+                  <ErrorMessage name="username" class="register__error" />
 
-                <FloatLabel class="register__field">
-                  <Field v-slot="{ field }" name="email">
-                    <InputText
-                      v-bind="field"
-                      class="register__input"
-                      id="email"
-                      v-model="registerForm.email"
-                    />
-                  </Field>
-                  <label class="register__label" for="email">Email</label>
-                </FloatLabel>
-                <ErrorMessage name="email" class="register__error" />
+                  <FloatLabel class="register__field">
+                    <Field v-slot="{ field }" name="email">
+                      <InputText
+                        v-bind="field"
+                        class="register__input"
+                        id="email"
+                        v-model="registerForm.email"
+                      />
+                    </Field>
+                    <label class="register__label" for="email">Email</label>
+                  </FloatLabel>
+                  <ErrorMessage name="email" class="register__error" />
 
-                <FloatLabel class="register__field">
-                  <Field v-slot="{ field }" name="password">
-                    <InputText
-                      v-bind="field"
-                      class="register__input"
-                      id="password"
-                      type="password"
-                      v-model="registerForm.password"
-                    />
-                  </Field>
-                  <label class="register__label" for="password">Contraseña</label>
-                </FloatLabel>
-                <ErrorMessage name="password" class="register__error" />
+                  <FloatLabel class="register__field">
+                    <Field v-slot="{ field }" name="password">
+                      <InputText
+                        v-bind="field"
+                        class="register__input"
+                        id="password"
+                        type="password"
+                        v-model="registerForm.password"
+                      />
+                    </Field>
+                    <label class="register__label" for="password">Contraseña</label>
+                  </FloatLabel>
+                  <ErrorMessage name="password" class="register__error" />
+                </div>
+                <button class="register__button" type="submit">Enviar</button>
               </div>
-              <button class="register__button" type="submit">Enviar</button>
-            </div>
-          </Form>
-        </div>
-
-        <div v-if="activeSection === 'home'" class="admin__section-container">
-          <h2 class="admin__section-title">Bienvenido al Panel de Administración</h2>
-          <p class="admin__section-message">
-            Este es el centro de control donde puedes administrar la información clave del sistema,
-            incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos importantes,
-            realizar modificaciones y garantizar que todo funcione correctamente.
-          </p>
-
-          <h3 class="admin__section-subtitle">¿Qué puedes hacer desde este panel?</h3>
-          <p class="admin__section-message">
-            Desde aquí tienes acceso a diferentes secciones del sistema:
-          </p>
-          <ul class="admin__section-list">
-            <li class="admin__section-list-item">
-              👥 <strong>Usuarios</strong>: Gestiona la información de los usuarios registrados y
-              sus roles.
-            </li>
-            <li class="admin__section-list-item">
-              📖 <strong>Recetas</strong>:  Administra todas las recetas
-              disponibles en la plataforma.
-            </li>
-            <li class="admin__section-list-item">
-              ⭐ <strong>Reseñas</strong>: Modera y supervisa las opiniones de los usuarios sobre
-              las recetas.
-            </li>
-          </ul>
-
-          <h3 class="admin__section-subtitle">Recuerda:</h3>
-          <p class="admin__section-message">
-            El correcto uso de este panel es fundamental para mantener la calidad y seguridad del
-            sistema. Cualquier modificación debe ser realizada con responsabilidad y pensando
-            siempre en la mejor experiencia para los usuarios.
-          </p>
+            </Form>
+          </div>
         </div>
       </div>
     </div>
@@ -453,7 +451,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, watch } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Rating from 'primevue/rating'
@@ -485,6 +483,11 @@ const sidebarActive = ref(true)
 const activeSection = ref('home')
 const setActiveSection = (section: string) => {
   activeSection.value = section
+  if (section === 'home') {
+    setTimeout(() => {
+      initializeCharts()
+    }, 100)
+  }
 }
 
 const recipeStore = useRecipeStore()
@@ -500,15 +503,14 @@ const { allUsers } = storeToRefs(userStore)
 const { fetchUsers } = userStore
 const user = ref<IGetAllUsers[]>([])
 
+// Ref graficas en Home
+const homeDifficultyChartRef = ref(null)
+const homeRatingsChartRef = ref(null)
+const homeRecipeTypesChartRef = ref(null)
+const homeMonthlyReviewsChartRef = ref(null)
+
 // composable de gráficas
 const {
-  // Referencias para gráficas en secciones específicas
-  difficultyChartRef,
-  ratingsChartRef,
-  recipeTypesChartRef,         
-  monthlyReviewsChartRef,
-
-  // Mensajes de ausencia de datos
   noDifficultyDataMessage,
   noRatingDataMessage,
   noRecipeTypesDataMessage,   
@@ -519,7 +521,13 @@ const {
   
   isLoading,
   error
-} = useCharts(activeSection)
+} = useCharts(
+  activeSection, 
+  homeDifficultyChartRef,
+  homeRatingsChartRef, 
+  homeRecipeTypesChartRef, 
+  homeMonthlyReviewsChartRef
+)
 
 setupWatchers()
 
@@ -545,11 +553,22 @@ onMounted(async () => {
   mapReviews()
   reviewData.value.total = mappedReviews.value.length
   
-  // Iininicar según la sección seleccionada 
-  if ([ 'recetas', 'review'].includes(activeSection.value)) {
-    initializeCharts()
+  // Iininicar en la home
+  if (activeSection.value === 'home') {
+    setTimeout(() => {
+      initializeCharts()
+    }, 100)
   }
 })
+
+watch(activeSection, (newSection) => {
+  if (newSection === 'home') {
+    setTimeout(() => {
+      initializeCharts()
+    }, 100)
+  }
+})
+
 const mapReviews = () => {
   mappedReviews.value = allReviews.value.map((review) => ({
     id: review.id,
@@ -571,7 +590,7 @@ const proceedWithDeleteRecipe = async () => {
     recipeData.value.total = allRecipes.value.length
     
     // reiniciar gráficas después de eliminar una receta
-    if (activeSection.value === 'recetas') {
+    if (activeSection.value === 'home') {
       initializeCharts()
     }
   } catch (error) {
@@ -596,8 +615,8 @@ const proceedWithDeleteReview = async () => {
     mapReviews()
     reviewData.value.total = mappedReviews.value.length
     
-    // reiniciar gráficas después de eliminar una receta
-    if (activeSection.value === 'review') {
+    // reiniciar gráficas después de eliminar una reseña
+    if (activeSection.value === 'home') {
       initializeCharts()
     }
   } catch (error) {
@@ -821,6 +840,7 @@ const handleRegister = async () => {
       font-size: 16px;
       width: 65%;
       margin: 0 auto;
+      text-align: center;
     }
   }
 
@@ -865,6 +885,36 @@ const handleRegister = async () => {
 
     strong {
       font-weight: 600;
+    }
+  }
+  
+  &__home-charts {
+    margin-bottom: 2rem;
+  }
+  
+  &__section-info {
+    margin-top: 2rem;
+    border-top: 1px solid #eee;
+    padding-top: 1.5rem;
+  }
+  
+  &__chart-button {
+    background-color: $secondary-orange;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    
+    i {
+      font-size: 0.9rem;
     }
   }
 }
