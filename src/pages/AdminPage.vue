@@ -108,7 +108,6 @@
 
           <!-- Tabla de Recetas -->
           <div v-if="activeSection === 'recetas'" class="admin__section-container">
-            <h2 class="admin__section-title">Recetas</h2>
             <div class="admin__table-container">
               <DataTable
                 v-if="allRecipes.length > 0"
@@ -166,7 +165,6 @@
 
           <!-- Tabla de Users -->
           <div v-if="activeSection === 'users'" class="admin__section-container">
-            <h2 class="admin__section-title">Usuarios</h2>
             <div class="admin__table-container">
               <DataTable
                 v-if="user.length > 0"
@@ -195,7 +193,6 @@
 
           <!-- Tabla de Reviews -->
           <div v-if="activeSection === 'review'" class="admin__section-container">
-            <h2 class="admin__section-title">Reseñas</h2>
             <div class="admin__table-container">
               <DataTable
                 v-if="allReviews.length > 0"
@@ -238,17 +235,17 @@
             </div>
           </div>
 
-          <!-- home con gráficas -->
+          <!-- HOME con gráficas -->
           <div v-if="activeSection === 'home'" class="admin__section-container">
             <h2 class="admin__section-title">Bienvenido al Panel de Administración</h2>
             <div class="admin__home-charts">
               <h3 class="admin__section-subtitle">Resumen de estadísticas</h3>
 
-              <div class="admin__charts-row">
+              <div class="admin__charts-grid">
                 <!--  Dificultad de Recetas -->
-                <div class="admin__chart-card admin__chart-card--small">
+                <div class="admin__chart-card">
                   <h3 class="admin__chart-title">Recetas por Dificultad</h3>
-                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                  <div class="admin__chart-wrapper">
                     <canvas
                       v-if="!noDifficultyDataMessage"
                       id="homeChartDifficulty"
@@ -259,15 +256,21 @@
                       <p>No hay datos de dificultad disponibles.</p>
                     </div>
                   </div>
-                  <button class="admin__chart-button" @click="setActiveSection('recetas')">
-                    <i class="pi pi-arrow-right"></i> Más detalles
-                  </button>
+                  <div class="admin__chart-link-container">
+                    <a
+                      href="#"
+                      class="admin__chart-link"
+                      @click.prevent="setActiveSection('recetas')"
+                    >
+                      <i class="pi pi-arrow-right"></i> Más detalles
+                    </a>
+                  </div>
                 </div>
 
                 <!-- Tipos de Recetas -->
-                <div class="admin__chart-card admin__chart-card--small">
+                <div class="admin__chart-card">
                   <h3 class="admin__chart-title">Tipos de Recetas</h3>
-                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                  <div class="admin__chart-wrapper">
                     <canvas
                       v-if="!noRecipeTypesDataMessage"
                       id="homeChartRecipeTypes"
@@ -278,15 +281,21 @@
                       <p>No hay datos de tipos de recetas disponibles.</p>
                     </div>
                   </div>
-                  <button class="admin__chart-button" @click="setActiveSection('recetas')">
-                    <i class="pi pi-arrow-right"></i> Más detalles
-                  </button>
+                  <div class="admin__chart-link-container">
+                    <a
+                      href="#"
+                      class="admin__chart-link"
+                      @click.prevent="setActiveSection('recetas')"
+                    >
+                      <i class="pi pi-arrow-right"></i> Más detalles
+                    </a>
+                  </div>
                 </div>
 
                 <!-- Valoraciones -->
-                <div class="admin__chart-card admin__chart-card--small">
+                <div class="admin__chart-card">
                   <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
-                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                  <div class="admin__chart-wrapper">
                     <canvas
                       v-if="!noRatingDataMessage"
                       id="homeChartRatings"
@@ -297,15 +306,21 @@
                       <p>No hay datos de valoración disponibles.</p>
                     </div>
                   </div>
-                  <button class="admin__chart-button" @click="setActiveSection('review')">
-                    <i class="pi pi-arrow-right"></i> Más detalles
-                  </button>
+                  <div class="admin__chart-link-container">
+                    <a
+                      href="#"
+                      class="admin__chart-link"
+                      @click.prevent="setActiveSection('review')"
+                    >
+                      <i class="pi pi-arrow-right"></i> Más detalles
+                    </a>
+                  </div>
                 </div>
 
                 <!--Reseñas Mensuales -->
-                <div class="admin__chart-card admin__chart-card--small">
+                <div class="admin__chart-card">
                   <h3 class="admin__chart-title">Reseñas por Mes</h3>
-                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                  <div class="admin__chart-wrapper">
                     <canvas
                       v-if="!noMonthlyReviewsDataMessage"
                       id="homeChartMonthlyReviews"
@@ -316,9 +331,15 @@
                       <p>No hay datos de reseñas mensuales disponibles.</p>
                     </div>
                   </div>
-                  <button class="admin__chart-button" @click="setActiveSection('review')">
-                    <i class="pi pi-arrow-right"></i> Más detalles
-                  </button>
+                  <div class="admin__chart-link-container">
+                    <a
+                      href="#"
+                      class="admin__chart-link"
+                      @click.prevent="setActiveSection('review')"
+                    >
+                      <i class="pi pi-arrow-right"></i> Más detalles
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -897,23 +918,99 @@ const handleRegister = async () => {
     padding-top: 1.5rem;
   }
 
-  &__chart-button {
-    background-color: $secondary-orange;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    margin-top: 1rem;
-    font-weight: 500;
-    cursor: pointer;
+  // Estilos para el grid de gráficas
+  &__charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    
+    @media (max-width: 991px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  &__chart-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  &__chart-wrapper {
+    width: 100%;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    margin: 0 auto;
+  }
+  
+  &__chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    text-align: center;
+    color: $black;
+  }
+  
+  &__chart-link-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.8rem;
+  }
+  
+  &__chart-link {
+    color: $secondary-orange;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
     transition: all 0.2s ease;
+    
+    &:hover {
+      text-decoration: underline;
+      transform: translateX(2px);
+    }
+    
+    i {
+      font-size: 0.8rem;
+    }
+  }
+  
+  &__loading,
+  &__error,
+  &__no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 1rem;
+    text-align: center;
+    color: $black;
+  }
+  
+  &__no-data {
+    height: 180px;
+    color: #9e9e9e;
 
     i {
-      font-size: 0.9rem;
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+      opacity: 0.7;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+      width: 100% !important;
+      text-align: center !important;
     }
   }
 }
@@ -1071,56 +1168,6 @@ const handleRegister = async () => {
   }
 }
 
-.admin {
-  &__charts-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    
-    @media (max-width: 1199px) {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    @media (min-width: 1200px) {
-      flex-direction: row;
-    }
-  }
-  
-  &__chart-card {
-    &--small {
-      flex: 1;
-      min-width: 220px;
-      max-width: 100%;
-      
-      @media (min-width: 1200px) {
-        max-width: calc(25% - 1rem);
-      }
-    }
-  }
-  
-  &__chart-wrapper {
-    &--small {
-      height: 200px;
-      max-width: 200px;
-      margin: 0 auto;
-    }
-  }
-  
-  &__chart-title {
-    font-size: 0.9rem;
-    margin-bottom: 0.8rem;
-  }
-  
-  &__chart-button {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.8rem;
-    margin-top: 0.5rem;
-  }
-}
-
 .register {
   border: 1px solid $secondary-orange;
   border-radius: 10px;
@@ -1196,12 +1243,6 @@ const handleRegister = async () => {
       transition: ease-in-out 0.2s;
     }
   }
-}
-
-::v-deep(.p-datatable-header, .p-datatable-header-cell) {
-  background-color: $white !important;
-  color: $black !important;
-  border-style: none;
 }
 
 @keyframes spin {
