@@ -241,18 +241,17 @@
           <!-- home con gráficas -->
           <div v-if="activeSection === 'home'" class="admin__section-container">
             <h2 class="admin__section-title">Bienvenido al Panel de Administración</h2>
-            
             <div class="admin__home-charts">
               <h3 class="admin__section-subtitle">Resumen de estadísticas</h3>
-              
-              <div class="admin__charts-grid">
+
+              <div class="admin__charts-row">
                 <!--  Dificultad de Recetas -->
-                <div class="admin__chart-card">
+                <div class="admin__chart-card admin__chart-card--small">
                   <h3 class="admin__chart-title">Recetas por Dificultad</h3>
-                  <div class="admin__chart-wrapper">
-                    <canvas 
-                      v-if="!noDifficultyDataMessage" 
-                      id="homeChartDifficulty" 
+                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                    <canvas
+                      v-if="!noDifficultyDataMessage"
+                      id="homeChartDifficulty"
                       ref="homeDifficultyChartRef"
                     ></canvas>
                     <div v-else class="admin__no-data">
@@ -264,14 +263,14 @@
                     <i class="pi pi-arrow-right"></i> Más detalles
                   </button>
                 </div>
-                
+
                 <!-- Tipos de Recetas -->
-                <div class="admin__chart-card">
+                <div class="admin__chart-card admin__chart-card--small">
                   <h3 class="admin__chart-title">Tipos de Recetas</h3>
-                  <div class="admin__chart-wrapper">
-                    <canvas 
-                      v-if="!noRecipeTypesDataMessage" 
-                      id="homeChartRecipeTypes" 
+                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                    <canvas
+                      v-if="!noRecipeTypesDataMessage"
+                      id="homeChartRecipeTypes"
                       ref="homeRecipeTypesChartRef"
                     ></canvas>
                     <div v-else class="admin__no-data">
@@ -283,14 +282,14 @@
                     <i class="pi pi-arrow-right"></i> Más detalles
                   </button>
                 </div>
-                
+
                 <!-- Valoraciones -->
-                <div class="admin__chart-card">
+                <div class="admin__chart-card admin__chart-card--small">
                   <h3 class="admin__chart-title">Distribución de Valoraciones</h3>
-                  <div class="admin__chart-wrapper">
-                    <canvas 
-                      v-if="!noRatingDataMessage" 
-                      id="homeChartRatings" 
+                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                    <canvas
+                      v-if="!noRatingDataMessage"
+                      id="homeChartRatings"
                       ref="homeRatingsChartRef"
                     ></canvas>
                     <div v-else class="admin__no-data">
@@ -302,14 +301,14 @@
                     <i class="pi pi-arrow-right"></i> Más detalles
                   </button>
                 </div>
-                
+
                 <!--Reseñas Mensuales -->
-                <div class="admin__chart-card">
+                <div class="admin__chart-card admin__chart-card--small">
                   <h3 class="admin__chart-title">Reseñas por Mes</h3>
-                  <div class="admin__chart-wrapper">
-                    <canvas 
-                      v-if="!noMonthlyReviewsDataMessage" 
-                      id="homeChartMonthlyReviews" 
+                  <div class="admin__chart-wrapper admin__chart-wrapper--small">
+                    <canvas
+                      v-if="!noMonthlyReviewsDataMessage"
+                      id="homeChartMonthlyReviews"
                       ref="homeMonthlyReviewsChartRef"
                     ></canvas>
                     <div v-else class="admin__no-data">
@@ -323,7 +322,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="admin__section-info">
               <h3 class="admin__section-subtitle">¿Qué puedes hacer desde este panel?</h3>
               <p class="admin__section-message">
@@ -513,19 +512,19 @@ const homeMonthlyReviewsChartRef = ref(null)
 const {
   noDifficultyDataMessage,
   noRatingDataMessage,
-  noRecipeTypesDataMessage,   
+  noRecipeTypesDataMessage,
   noMonthlyReviewsDataMessage,
-  
+
   initializeCharts,
   setupWatchers,
-  
+
   isLoading,
   error
 } = useCharts(
-  activeSection, 
+  activeSection,
   homeDifficultyChartRef,
-  homeRatingsChartRef, 
-  homeRecipeTypesChartRef, 
+  homeRatingsChartRef,
+  homeRecipeTypesChartRef,
   homeMonthlyReviewsChartRef
 )
 
@@ -552,7 +551,7 @@ onMounted(async () => {
   await fetchAllReviews()
   mapReviews()
   reviewData.value.total = mappedReviews.value.length
-  
+
   // Iininicar en la home
   if (activeSection.value === 'home') {
     setTimeout(() => {
@@ -588,7 +587,7 @@ const proceedWithDeleteRecipe = async () => {
   try {
     await deleteRecipe(recipeToDelete.value.id)
     recipeData.value.total = allRecipes.value.length
-    
+
     // reiniciar gráficas después de eliminar una receta
     if (activeSection.value === 'home') {
       initializeCharts()
@@ -614,7 +613,7 @@ const proceedWithDeleteReview = async () => {
     await deleteReview(reviewToDelete.value.id)
     mapReviews()
     reviewData.value.total = mappedReviews.value.length
-    
+
     // reiniciar gráficas después de eliminar una reseña
     if (activeSection.value === 'home') {
       initializeCharts()
@@ -887,17 +886,17 @@ const handleRegister = async () => {
       font-weight: 600;
     }
   }
-  
+
   &__home-charts {
     margin-bottom: 2rem;
   }
-  
+
   &__section-info {
     margin-top: 2rem;
     border-top: 1px solid #eee;
     padding-top: 1.5rem;
   }
-  
+
   &__chart-button {
     background-color: $secondary-orange;
     color: white;
@@ -912,7 +911,7 @@ const handleRegister = async () => {
     justify-content: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
-    
+
     i {
       font-size: 0.9rem;
     }
@@ -1073,116 +1072,52 @@ const handleRegister = async () => {
 }
 
 .admin {
-  &__loading,
-  &__error,
-  &__no-data {
+  &__charts-row {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 2rem;
-    text-align: center;
-    color: $black;
-  }
-
-  &__charts-grid {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: 1fr;
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  &__chart-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-
-    &--full {
-      grid-column: 1 / -1;
-    }
-
-    .admin__chart-wrapper {
-      width: 100%;
-      max-width: 320px;
-      height: 320px;
-      display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    
+    @media (max-width: 1199px) {
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-
-      &--bar {
-        max-width: 100%;
-        height: 400px;
+    }
+    
+    @media (min-width: 1200px) {
+      flex-direction: row;
+    }
+  }
+  
+  &__chart-card {
+    &--small {
+      flex: 1;
+      min-width: 220px;
+      max-width: 100%;
+      
+      @media (min-width: 1200px) {
+        max-width: calc(25% - 1rem);
       }
     }
   }
-
+  
+  &__chart-wrapper {
+    &--small {
+      height: 200px;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+  }
+  
   &__chart-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    text-align: center;
-    color: $black;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
   }
-
-  &__loading-text,
-  &__error-text {
-    margin-top: 1rem;
-    font-size: 1rem;
-  }
-
-  &__error {
-    color: #f44336;
-  }
-
-  &__no-data {
-    height: 300px;
-    color: #9e9e9e;
-
-    i {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      opacity: 0.7;
-    }
-
-    p {
-      font-size: 0.9rem;
-      margin: 0;
-      width: 100% !important;
-      text-align: center !important;
-    }
-  }
-
-  &__loading,
-  &__error {
-    min-height: 400px;
-    width: 100%;
-
-    i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-  }
-
-  &__debug-panel {
-    margin-top: 2rem;
-    padding: 1rem;
-    border: 1px dashed
-  }
-
-  &__stats-container {
-    padding: 2rem;
-
-    @media (max-width: 767px) {
-      padding: 1rem;
-    }
+  
+  &__chart-button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.8rem;
+    margin-top: 0.5rem;
   }
 }
 
