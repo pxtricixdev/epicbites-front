@@ -136,6 +136,54 @@ export const useMenuStore = defineStore('menu', () => {
     }
   }
 
+  const putMenu = async (weeklyMenu: WeeklyMenu, startingDate: string, menuId: number) => {
+    loadingPostMenu.value = true
+    error.value = null
+
+    const menuDetails = []
+
+    for (const day in weeklyMenu) {
+      for (const meal in weeklyMenu[day]) {
+        const recipe = weeklyMenu[day][meal]
+        menuDetails.push({
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          meal: meal.charAt(0).toUpperCase() + meal.slice(1),
+          recipeId: recipe.id,
+        })
+      }
+    }
+
+    const payload = {
+      id: menuId,
+      userId,
+      name: 'Menú semanal',
+      startingDate,
+      menuDetails,
+    }
+
+    try {
+      const response = await fetch(`https://localhost:7129/api/weekly-menu/${menuId}`, {
+        method: 'PUT',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`)
+      }
+
+      postMenuByUser.value = await response.json()
+    } catch (err: any) {
+      error.value = err.message
+      throw err
+    } finally {
+      loadingPostMenu.value = false
+    }
+  }
+
   return {
     menusByWeek,
     postMenuByUser,
@@ -145,5 +193,6 @@ export const useMenuStore = defineStore('menu', () => {
 
     fetchMenu,
     postMenu,
+    putMenu,
   }
 })

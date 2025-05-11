@@ -25,11 +25,6 @@
     </div>
 
     <div v-if="!localLoadingMenu">
-      <div>
-        <p v-if="menusByWeek[thisWeekDate]">Menú de esta semana:</p>
-        <p v-else-if="menusByWeek[selectedWeek]">Menú de la semana que viene:</p>
-      </div>
-
       <div class="weekly-menu__container">
         <section class="weekly-menu__recipes">
           <p class="weekly-menu__recipes__title">Recetas disponibles</p>
@@ -104,12 +99,8 @@
             >¿Para qué semana quieres crear el menú?</label
           >
           <select class="weekly-menu__menu__select" id="week" v-model="selectedWeek">
-            <option v-if="!menusByWeek[thisWeekDate]" :value="thisWeekDate">
-              Esta semana ({{ formatDate(thisWeekDate) }})
-            </option>
-            <option v-if="!menusByWeek[nextWeekDate]" :value="nextWeekDate">
-              Siguiente semana ({{ formatDate(nextWeekDate) }})
-            </option>
+            <option :value="thisWeekDate">Esta semana ({{ formatDate(thisWeekDate) }})</option>
+            <option :value="nextWeekDate">Siguiente semana ({{ formatDate(nextWeekDate) }})</option>
           </select>
 
           <Tabs v-model:value="activeDay">
@@ -141,7 +132,9 @@
               </TabPanel>
             </TabPanels>
           </Tabs>
-          <button class="weekly-menu__menu__button" @click="handleSaveMenu">Guardar menú</button>
+          <button class="weekly-menu__menu__button" @click="handleSaveMenu">
+            {{ menusByWeek[selectedWeek]?.id ? 'Actualizar menú' : 'Crear menú' }}
+          </button>
         </section>
       </div>
     </div>
@@ -168,7 +161,7 @@
 <script lang="ts" setup>
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useMenuStore } from '@/stores/menuStore'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import CardRecipeForMenu from '@/components/CardRecipeForMenu.vue'
 import Tabs from 'primevue/tabs'
@@ -183,28 +176,16 @@ import { Toaster, toast } from 'vue-sonner'
 import { dayLabels } from '@/data/labels'
 
 const recipeStore = useRecipeStore()
-const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
+const { allRecipes } = storeToRefs(recipeStore)
 const { fetchAllRecipes } = recipeStore
 
 function getMonday(date = new Date()): string {
-  const day = date.getDay()
+  const local = new Date(date)
+  const day = local.getUTCDay()
   const diff = day === 0 ? -6 : 1 - day
-  const monday = new Date(date)
-  monday.setDate(date.getDate() + diff)
-  monday.setHours(0, 0, 0, 0)
-  return monday.toISOString().split('T')[0]
+  local.setUTCDate(local.getUTCDate() + diff)
+  return local.toISOString().split('T')[0]
 }
-
-const thisWeekDate = getMonday()
-const nextWeekDate = getMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
-
-const selectedWeek = ref(thisWeekDate)
-
-const menuStore = useMenuStore()
-const { fetchMenu, postMenu } = menuStore
-const { menusByWeek, loadingMenu } = storeToRefs(menuStore)
-console.log(menusByWeek.value[thisWeekDate])
-console.log(menusByWeek.value[nextWeekDate])
 
 function formatDate(isoString: string): string {
   const date = new Date(isoString)
@@ -215,11 +196,52 @@ function formatDate(isoString: string): string {
   })
 }
 
+const thisWeekDate = getMonday()
+const nextWeekDate = getMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+
+const selectedWeek = ref(thisWeekDate)
+const activeDay = ref<string>('Lunes')
+
+const menuStore = useMenuStore()
+const { fetchMenu, postMenu, putMenu } = menuStore
+const { menusByWeek } = storeToRefs(menuStore)
+
 const localLoadingMenu = ref(true)
+
+const loadMenuForWeek = (week: string) => {
+  const menu = menusByWeek.value[week]
+
+  if (menu?.menuDetails?.length) {
+    const displayData: Record<string, Record<string, { id: number; title: string }>> = {}
+
+    for (const { day, meal, recipe } of menu.menuDetails) {
+      const dayCapitalized = day.charAt(0).toUpperCase() + day.slice(1)
+      const mealCapitalized = meal.charAt(0).toUpperCase() + meal.slice(1)
+
+      if (!displayData[dayCapitalized]) {
+        displayData[dayCapitalized] = {}
+      }
+
+      displayData[dayCapitalized][mealCapitalized] = {
+        id: recipe.id,
+        title: recipe.name,
+      }
+    }
+
+    weeklyMenu.value = displayData
+  } else {
+    weeklyMenu.value = {}
+  }
+}
+
+watch(selectedWeek, (newWeek) => {
+  loadMenuForWeek(newWeek)
+})
 
 onMounted(async () => {
   await fetchAllRecipes()
-  await Promise.all([fetchMenu(selectedWeek.value), fetchMenu(nextWeekDate)])
+  await Promise.all([fetchMenu(thisWeekDate), fetchMenu(nextWeekDate)])
+  loadMenuForWeek(selectedWeek.value)
   localLoadingMenu.value = false
 })
 
@@ -277,8 +299,6 @@ const filteredRecipes = computed(() => {
   })
 })
 
-const activeDay = ref<string>('Lunes')
-
 type WeeklyMenu = {
   [day: string]: {
     [meal: string]: {
@@ -307,9 +327,17 @@ const removeRecipeFromMenu = (day: string, meal: string) => {
 }
 
 const handleSaveMenu = async () => {
+  const existingMenu = menusByWeek.value[selectedWeek.value]
   try {
-    await postMenu(weeklyMenu.value, selectedWeek.value)
-    toast.success(`Menú creado correctamente para la semana ${formatDate(selectedWeek.value)} `)
+    if (existingMenu?.id) {
+      await putMenu(weeklyMenu.value, selectedWeek.value, existingMenu.id)
+      toast.success(
+        `Menú actualizado correctamente para la semana ${formatDate(selectedWeek.value)}`,
+      )
+    } else {
+      await postMenu(weeklyMenu.value, selectedWeek.value)
+      toast.success(`Menú creado correctamente para la semana ${formatDate(selectedWeek.value)}`)
+    }
   } catch {
     toast.error('Ya existe un menú para esta semana')
   }
@@ -382,6 +410,7 @@ const handleSaveMenu = async () => {
     flex-direction: column;
     gap: 20px;
     margin: 0 10px;
+    margin-bottom: 60px;
   }
 
   &__recipes {

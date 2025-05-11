@@ -590,17 +590,14 @@ const executeDeleteFavorite = async () => {
     }
   }
 }
-
 // Menú semanal
-
-// Obtener fechas y fomrato de fecha
-function getMonday(date = new Date()) {
-  const day = date.getDay()
+// // Obtener fechas y formato de fecha
+function getMonday(date = new Date()): string {
+  const local = new Date(date)
+  const day = local.getUTCDay()
   const diff = day === 0 ? -6 : 1 - day
-  const monday = new Date(date)
-  monday.setDate(date.getDate() + diff)
-  monday.setHours(0, 0, 0, 0)
-  return monday.toISOString().split('T')[0]
+  local.setUTCDate(local.getUTCDate() + diff)
+  return local.toISOString().split('T')[0]
 }
 
 function formatDate(isoString: string) {
@@ -615,7 +612,6 @@ function formatDate(isoString: string) {
 const toggleWeek = () => {
   currentMenuWeek.value = isThisWeek.value ? nextWeekDate : thisWeekDate
 }
-
 
 // Función para normalizar
 const normalizeText = (text: string) => {
@@ -663,7 +659,6 @@ onMounted(async () => {
     try {
       await fetchMenu(thisWeekDate)
       await fetchMenu(nextWeekDate)
-      
     } catch (error) {
       console.error('Error al cargar datos del menú:', error)
     }
