@@ -125,6 +125,18 @@
       </div>
     </div>
     <div v-if="activeTab === 'weeklyPlan'" class="profile__weekly-plan">
+      <!-- Botón de editar recetas-->
+      <div class="profile__weekly-plan-header">
+        <h2 class="profile__menu-title" v-if="hasMenus">
+          Menú para la semana: {{ formatDate(currentMenuWeek) }}
+        </h2>
+        <div class="profile__weekly-plan-actions" v-if="hasMenus">
+          <button @click="goToWeeklyMenu" class="profile__edit-recipes-button">
+            <span class="profile__edit-icon">✏️</span> Editar mi menú
+          </button>
+        </div>
+      </div>
+
       <div v-if="loadingMenu" class="profile__loading">
         <div class="profile__spinner"></div>
         <span>Cargando menú semanal...</span>
@@ -139,9 +151,6 @@
       <!-- Si hay al menos un menú guardado -->
       <div v-else class="profile__menu-content">
         <div class="profile__menu-header">
-          <h2 class="profile__menu-title">
-            Menú para la semana: {{ formatDate(currentMenuWeek) }}
-          </h2>
           <div class="profile__menu-actions">
             <button @click="toggleWeek" class="button button--secondary">
               {{ isThisWeek ? 'Ver próxima semana' : 'Ver esta semana' }}
@@ -946,6 +955,43 @@ onMounted(async () => {
 
   &__weekly-plan {
     min-height: 300px;
+  }
+
+  &__weekly-plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__weekly-plan-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__edit-recipes-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: $primary-yellow;
+    color: $black;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: $primary-yellow;
+      transform: translateY(-2px);
+    }
+  }
+
+  &__edit-icon {
+    font-size: 16px;
   }
 
   &__menu-header {
