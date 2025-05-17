@@ -26,7 +26,7 @@
           to="/perfil"
         >
           Perfil
-          <UserRoundPen :size="16" color="black" />
+          <User2Icon :size="16" color="black" />
         </RouterLink>
         <button v-if="isAuthenticated" @click="handleAuth" class="header__content__button-logout">
           Cerrar sesión
@@ -71,7 +71,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { ArrowRight, Menu, X, UserRoundPen } from 'lucide-vue-next'
+import { ArrowRight, Menu, X, User2Icon } from 'lucide-vue-next'
 import LogoCanvas from '@/components/LogoCanvas.vue'
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'

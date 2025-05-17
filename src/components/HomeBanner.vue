@@ -1,23 +1,55 @@
 <template>
   <section class="promo-banner">
-    <div class="promo-banner__left">
-      <h1>{{ title }}</h1>
-      <p>{{ description }}</p>
-      <ul>
-        <li v-for="(feature, index) in features" :key="index">✔ {{ feature }}</li>
-      </ul>
-      <p class="promo-banner__note">{{ note }}</p>
+    <div class="promo-banner__left" ref="videoSection">
+      <video id="cooking-video" autoplay muted loop playsinline class="promo-banner__left__video">
+        <source src="/cooking.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <h1 id="cooking-slogan" class="promo-banner__left__slogan">Cocina. Disfruta. Repite.</h1>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, onUnmounted } from 'vue'
 defineProps<{
   title: string
   description: string
   features: string[]
   note: string
 }>()
+
+const videoSection = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  const video = document.getElementById('cooking-video')
+  const slogan = document.getElementById('cooking-slogan')
+
+  const maxScroll = 100
+
+  const handleScroll = () => {
+    if (!video || !slogan) return
+
+    const scrollTop = window.scrollY
+    const clampedScroll = Math.min(scrollTop, maxScroll)
+
+    const scale = Math.max(0.8, 1 - clampedScroll / maxScroll)
+    video.style.transform = `translateX(-50%) scale(${scale})`
+    video.style.transformOrigin = 'top center'
+
+    if (scrollTop > 2) {
+      slogan.classList.add('slogan-visible')
+    } else {
+      slogan.classList.remove('slogan-visible')
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll)
+
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -38,19 +70,39 @@ defineProps<{
   }
 
   &__left {
-    background-image: url('/images/pexels-jonathanborba-2878745.webp'),
-      linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5));
-    background-blend-mode: darken;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 1;
-    padding: 30px 15px;
-    font-family: $heading;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
 
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
+    &__video {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      will-change: transform;
+      z-index: 1;
+    }
+
+    &__slogan {
+      position: absolute;
+      bottom: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 34px;
+      font-weight: 700;
+      text-align: center;
+      color: $white;
+      text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      pointer-events: none;
+      font-family: $body;
+      letter-spacing: 10px;
     }
 
     p {
@@ -106,5 +158,8 @@ defineProps<{
     object-fit: cover;
     border-radius: 12px;
   }
+}
+.slogan-visible {
+  opacity: 1;
 }
 </style>
