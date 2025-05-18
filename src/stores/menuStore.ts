@@ -184,6 +184,39 @@ export const useMenuStore = defineStore('menu', () => {
     }
   }
 
+  const deleteMenu = async (menuId: number) => {
+    loadingPostMenu.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`https://localhost:7129/api/weekly-menu/${menuId}`, {
+        method: 'DELETE',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`)
+      }
+
+      for (const startDate in menusByWeek.value) {
+        if (menusByWeek.value[startDate].id === menuId) {
+          delete menusByWeek.value[startDate]
+          break
+        }
+      }
+
+      return true
+    } catch (err: any) {
+      error.value = err.message
+      throw err
+    } finally {
+      loadingPostMenu.value = false
+    }
+  }
+
   return {
     menusByWeek,
     postMenuByUser,
@@ -194,5 +227,6 @@ export const useMenuStore = defineStore('menu', () => {
     fetchMenu,
     postMenu,
     putMenu,
+    deleteMenu,
   }
 })
