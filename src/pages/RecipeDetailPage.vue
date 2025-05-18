@@ -56,36 +56,38 @@
           </div>
         </div>
         <div class="recipe-notes">
-          <h2 class="recipe-notes__title">📝 <span>Mis notas personales</span></h2>
-          <div v-if="isAuthenticated" class="recipe-notes__form">
-            <textarea
-              v-model="noteText"
-              placeholder="Añade una nota personal para esta receta..."
-              class="recipe-notes__textarea"
-            ></textarea>
-            <button
-              @click="handleCreateNote"
-              class="recipe-notes__button"
-              :disabled="!noteText.trim() || loadingCreateNote"
-            >
-              {{ loadingCreateNote ? 'Guardando...' : 'Guardar nota' }}
-            </button>
-          </div>
-          <div v-if="loadingNotes" class="recipe-notes__loading">
-            <p>Cargando notas...</p>
-          </div>
+          <div v-if="isAuthenticated" class="recipe-notes">
+            <h2 class="recipe-notes__title">📝 <span>Mis notas personales</span></h2>
+            <div class="recipe-notes__form">
+              <textarea
+                v-model="noteText"
+                placeholder="Añade una nota personal para esta receta..."
+                class="recipe-notes__textarea"
+              ></textarea>
+              <button
+                @click="handleCreateNote"
+                class="recipe-notes__button"
+                :disabled="!noteText.trim() || loadingCreateNote"
+              >
+                {{ loadingCreateNote ? 'Guardando...' : 'Guardar nota' }}
+              </button>
+            </div>
+            <div v-if="loadingNotes" class="recipe-notes__loading">
+              <p>Cargando notas...</p>
+            </div>
 
-          <div v-else-if="userNotes.length > 0" class="recipe-notes__list">
-            <NoteCard
-              v-for="note in userNotes"
-              :key="note.id"
-              :text="note.noteText"
-              @delete="showDeleteConfirmation(note.id)"
-            />
-          </div>
-          <div v-else class="recipe-notes__empty">
-            <p>No tienes notas para esta receta</p>
-            <p v-if="isAuthenticated">Añade una nota para recordar tus cambios personales.</p>
+            <div v-else-if="userNotes.length > 0" class="recipe-notes__list">
+              <NoteCard
+                v-for="note in userNotes"
+                :key="note.id"
+                :text="note.noteText"
+                @delete="showDeleteConfirmation(note.id)"
+              />
+            </div>
+            <div v-else class="recipe-notes__empty">
+              <p>No tienes notas para esta receta</p>
+              <p v-if="isAuthenticated">Añade una nota para recordar tus cambios personales.</p>
+            </div>
           </div>
         </div>
       </div>
