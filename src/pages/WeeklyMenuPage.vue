@@ -132,7 +132,7 @@
               </TabPanel>
             </TabPanels>
           </Tabs>
-          <button class="weekly-menu__menu__button" @click="handleSaveMenu">
+          <button v-if="isAuthenticated" class="weekly-menu__menu__button" @click="handleSaveMenu">
             {{ menusByWeek[selectedWeek]?.id ? 'Actualizar menú' : 'Crear menú' }}
           </button>
         </section>
@@ -174,6 +174,7 @@ import { difficultyLabels, dietLabels } from '@/data/labels'
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { Toaster, toast } from 'vue-sonner'
 import { dayLabels } from '@/data/labels'
+import { authStore } from '@/stores/authStore'
 
 const recipeStore = useRecipeStore()
 const { allRecipes } = storeToRefs(recipeStore)
@@ -342,6 +343,9 @@ const handleSaveMenu = async () => {
     toast.error('Ya existe un menú para esta semana')
   }
 }
+
+const auth = authStore()
+const { isAuthenticated } = storeToRefs(auth)
 </script>
 
 <style lang="scss" scoped>
