@@ -12,12 +12,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref, onUnmounted } from 'vue'
-defineProps<{
-  title: string
-  description: string
-  features: string[]
-  note: string
-}>()
 
 const videoSection = ref<HTMLElement | null>(null)
 
@@ -26,6 +20,7 @@ onMounted(() => {
   const slogan = document.getElementById('cooking-slogan')
 
   const maxScroll = 100
+  const isDesktop = window.matchMedia('(min-width: 1024px)').matches
 
   const handleScroll = () => {
     if (!video || !slogan) return
@@ -33,7 +28,7 @@ onMounted(() => {
     const scrollTop = window.scrollY
     const clampedScroll = Math.min(scrollTop, maxScroll)
 
-    const scale = Math.max(0.8, 1 - clampedScroll / maxScroll)
+    const scale = Math.max(0.9, 1 - clampedScroll / maxScroll)
     video.style.transform = `translateX(-50%) scale(${scale})`
     video.style.transformOrigin = 'top center'
 
@@ -44,16 +39,24 @@ onMounted(() => {
     }
   }
 
-  window.addEventListener('scroll', handleScroll)
+  if (isDesktop) {
+    window.addEventListener('scroll', handleScroll)
+  } else {
+    if (video) video.style.transform = 'translateX(-50%) scale(1)'
+    if (slogan) slogan.classList.add('slogan-visible')
+  }
 
   onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll)
+    if (isDesktop) {
+      window.removeEventListener('scroll', handleScroll)
+    }
   })
 })
 </script>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .promo-banner {
   display: flex;
@@ -70,9 +73,14 @@ onMounted(() => {
   }
 
   &__left {
-    height: 600px;
     position: relative;
     overflow: hidden;
+    height: auto;
+    aspect-ratio: 16 / 9;
+
+    @media (min-width: 1024px) {
+      height: 600px;
+    }
 
     &__video {
       position: absolute;
@@ -89,11 +97,10 @@ onMounted(() => {
 
     &__slogan {
       position: absolute;
-      bottom: 40%;
+      bottom: 10%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 34px;
-      font-weight: 700;
+      @include semibold-text(16px);
       text-align: center;
       color: $white;
       text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
@@ -102,7 +109,18 @@ onMounted(() => {
       transition: opacity 0.3s ease-in-out;
       pointer-events: none;
       font-family: $body;
-      letter-spacing: 10px;
+      letter-spacing: 5px;
+
+      @media (min-width: 768px) {
+        @include semibold-text(20px);
+        letter-spacing: 10px;
+      }
+
+      @media (min-width: 1024px) {
+        bottom: 20%;
+        left: 50%;
+        @include semibold-text(34px);
+      }
     }
 
     p {
