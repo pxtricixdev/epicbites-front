@@ -134,6 +134,9 @@
           <button @click="goToWeeklyMenu" class="profile__edit-recipes-button">
             <span class="profile__edit-icon">✏️</span> Editar mi menú
           </button>
+          <button @click="confirmDeleteMenu" class="profile__delete-menu-button">
+            <span class="profile__delete-icon">🗑️</span> Eliminar menú
+          </button>
         </div>
       </div>
 
@@ -305,6 +308,22 @@
         </div>
       </div>
     </div>
+    <!--confirmación eliminar menu -->
+    <div v-if="showConfirmModal && modalType === 'menu'" class="modal">
+      <div class="modal__container modal__container--confirm">
+        <div class="modal__header">
+          <h2 class="modal__title">Eliminar Menú Semanal</h2>
+          <button @click="closeModal" class="modal__close-button">×</button>
+        </div>
+        <p class="modal__text">¿Estás seguro de que quieres eliminar este menú semanal?</p>
+        <div class="modal__actions">
+          <button @click="closeModal" class="button button--secondary">Cancelar</button>
+          <button @click="executeDeleteMenu" class="button button--danger" :disabled="isDeleting">
+            {{ isDeleting ? 'Borrando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -340,13 +359,14 @@ const { dataFavoriteRecipes, loadingFavoriteRecipes } = storeToRefs(favoriteStor
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
 const showEditProfileModal = ref(false)
-const modalType = ref<'favorite' | 'recipe'>('favorite')
+const modalType = ref<'favorite' | 'recipe' | 'menu'>('favorite')
 const favoriteToDelete = ref<number | null>(null)
 const recipeToDelete = ref<number | null>(null)
 const isUpdating = ref(false)
 const updateError = ref('')
 const updateSuccess = ref('')
 const isDeleting = ref(false)
+const menuToDelete = ref<number | null>(null)
 
 const menuStore = useMenuStore()
 const { fetchMenu } = menuStore
@@ -651,6 +671,36 @@ const getRecipeForDayAndMeal = (day: string, meal: string) => {
   return {
     recipeId: detail.recipe.id,
     recipeName: detail.recipe.name,
+  }
+}
+
+//eliminar el menu semanal
+
+const confirmDeleteMenu = () => {
+  if (menusByWeek.value[currentMenuWeek.value]) {
+    menuToDelete.value = menusByWeek.value[currentMenuWeek.value].id
+    modalType.value = 'menu'
+    showConfirmModal.value = true
+  }
+}
+
+const executeDeleteMenu = async () => {
+  if (menuToDelete.value) {
+    isDeleting.value = true
+    try {
+      await menuStore.deleteMenu(menuToDelete.value)
+
+      delete menusByWeek.value[currentMenuWeek.value]
+
+      toast.success('Menú eliminado correctamente')
+    } catch (error) {
+      console.error('Error al eliminar el menú:', error)
+      toast.error('Error al eliminar el menú')
+    } finally {
+      showConfirmModal.value = false
+      menuToDelete.value = null
+      isDeleting.value = false
+    }
   }
 }
 
@@ -969,6 +1019,31 @@ onMounted(async () => {
     display: flex;
     justify-content: flex-end;
   }
+
+  &__delete-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+
+  &:hover {
+    background-color: #f5c6cb;
+    transform: translateY(-2px);
+  }
+}
+
+&__delete-icon {
+  font-size: 16px;
+}
 
   &__edit-recipes-button {
     display: flex;
