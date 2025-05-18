@@ -49,6 +49,13 @@
       >
         Mis Recetas
       </button>
+      <button
+        @click="activeTab = 'weeklyPlan'"
+        :class="{ 'profile__tab-button--active': activeTab === 'weeklyPlan' }"
+        class="profile__tab-button"
+      >
+        Menú Semanal
+      </button>
     </div>
 
     <div class="profile__tab-content">
@@ -117,7 +124,84 @@
         </div>
       </div>
     </div>
+    <div v-if="activeTab === 'weeklyPlan'" class="profile__weekly-plan">
+      <!-- Botón de editar recetas-->
+      <div class="profile__weekly-plan-header">
+        <h2 class="profile__menu-title" v-if="hasMenus">
+          Menú para la semana: {{ formatDate(currentMenuWeek) }}
+        </h2>
+        <div class="profile__weekly-plan-actions" v-if="hasMenus">
+          <button @click="goToWeeklyMenu" class="profile__edit-recipes-button">
+            <span class="profile__edit-icon">✏️</span> Editar mi menú
+          </button>
+          <button @click="confirmDeleteMenu" class="profile__delete-menu-button">
+            <span class="profile__delete-icon">🗑️</span> Eliminar menú
+          </button>
+        </div>
+      </div>
 
+      <div v-if="loadingMenu" class="profile__loading">
+        <div class="profile__spinner"></div>
+        <span>Cargando menú semanal...</span>
+      </div>
+
+      <!-- Si no hay nada ninguna semana -->
+      <div v-else-if="!hasMenus" class="profile__empty-state">
+        <p class="profile__empty-text">No hay menú semanal disponible</p>
+        <button @click="goToWeeklyMenu" class="button button--primary">Crear menú</button>
+      </div>
+
+      <!-- Si hay al menos un menú guardado -->
+      <div v-else class="profile__menu-content">
+        <div class="profile__menu-header">
+          <div class="profile__menu-actions">
+            <button @click="toggleWeek" class="button button--secondary">
+              {{ isThisWeek ? 'Ver próxima semana' : 'Ver esta semana' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Si no hay menú para la semana actual seleccionada -->
+        <div v-if="!hasMenuForCurrentWeek" class="profile__empty-state">
+          <p class="profile__empty-text">
+            No hay menú para la semana que comienza el {{ formatDate(currentMenuWeek) }}
+          </p>
+          <button @click="goToWeeklyMenu" class="button button--primary">Crear menú</button>
+        </div>
+
+        <!-- Si hay menú para la semana actual seleccionada -->
+        <div v-else class="profile__menu-table-container">
+          <table class="profile__menu-table">
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th v-for="meal in meals" :key="meal">{{ meal }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="day in dayLabels" :key="day">
+                <td class="profile__menu-day">{{ day }}</td>
+                <td v-for="meal in meals" :key="meal" class="profile__menu-cell">
+                  <div v-if="getRecipeForDayAndMeal(day, meal)" class="profile__menu-recipe">
+                    <RouterLink
+                      :to="`/receta/${getRecipeForDayAndMeal(day, meal)?.recipeId}`"
+                      class="profile__menu-recipe-link"
+                    >
+                      <span class="profile__menu-recipe-name">
+                        {{ getRecipeForDayAndMeal(day, meal)?.recipeName }}
+                      </span>
+                    </RouterLink>
+                  </div>
+                  <div v-else class="profile__menu-empty-recipe">
+                    <span>Sin receta</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     <!-- editar perfil -->
     <div v-if="showEditProfileModal" class="modal">
       <div class="modal__container">
@@ -224,6 +308,22 @@
         </div>
       </div>
     </div>
+    <!--confirmación eliminar menu -->
+    <div v-if="showConfirmModal && modalType === 'menu'" class="modal">
+      <div class="modal__container modal__container--confirm">
+        <div class="modal__header">
+          <h2 class="modal__title">Eliminar Menú Semanal</h2>
+          <button @click="closeModal" class="modal__close-button">×</button>
+        </div>
+        <p class="modal__text">¿Estás seguro de que quieres eliminar este menú semanal?</p>
+        <div class="modal__actions">
+          <button @click="closeModal" class="button button--secondary">Cancelar</button>
+          <button @click="executeDeleteMenu" class="button button--danger" :disabled="isDeleting">
+            {{ isDeleting ? 'Borrando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -238,6 +338,10 @@ import { useFavoriteStore } from '@/stores/favoriteStore'
 import { storeToRefs } from 'pinia'
 import type { IPutUser } from '@/stores/interfaces/IPutUser'
 import { Toaster, toast } from 'vue-sonner'
+import { useMenuStore } from '@/stores/menuStore'
+import { meals } from '@/data/menuData'
+import { dayLabels } from '@/data/labels'
+import { RouterLink } from 'vue-router'
 
 const auth = authStore()
 const userStore = useUserStore()
@@ -255,13 +359,38 @@ const { dataFavoriteRecipes, loadingFavoriteRecipes } = storeToRefs(favoriteStor
 const activeTab = ref('favorites')
 const showConfirmModal = ref(false)
 const showEditProfileModal = ref(false)
-const modalType = ref<'favorite' | 'recipe'>('favorite')
+const modalType = ref<'favorite' | 'recipe' | 'menu'>('favorite')
 const favoriteToDelete = ref<number | null>(null)
 const recipeToDelete = ref<number | null>(null)
 const isUpdating = ref(false)
 const updateError = ref('')
 const updateSuccess = ref('')
 const isDeleting = ref(false)
+const menuToDelete = ref<number | null>(null)
+
+const menuStore = useMenuStore()
+const { fetchMenu } = menuStore
+const { menusByWeek, loadingMenu } = storeToRefs(menuStore)
+const thisWeekDate = getMonday()
+const nextWeekDate = getMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+const currentMenuWeek = ref(thisWeekDate)
+const isThisWeek = computed(() => currentMenuWeek.value === thisWeekDate)
+
+// Comprobar si hay menús disponibles
+const hasMenus = computed(() => {
+  return (
+    menusByWeek.value[thisWeekDate]?.menuDetails?.length > 0 ||
+    menusByWeek.value[nextWeekDate]?.menuDetails?.length > 0
+  )
+})
+
+const hasMenuForCurrentWeek = computed(() => {
+  return menusByWeek.value[currentMenuWeek.value]?.menuDetails?.length > 0
+})
+
+const goToWeeklyMenu = () => {
+  router.push('/weekly-menu')
+}
 
 const userProfile = ref({
   id: '',
@@ -279,7 +408,7 @@ const editForm = ref({
 
 const isAuthenticated = computed(() => auth.isAuthenticated)
 
-// Veri si hay algún cambio en el formulario
+// Verificar si hay algún cambio en el formulario
 const hasChanges = computed(() => {
   return (
     editForm.value.username.trim() !== '' ||
@@ -490,6 +619,90 @@ const executeDeleteFavorite = async () => {
     }
   }
 }
+// Menú semanal
+// // Obtener fechas y formato de fecha
+function getMonday(date = new Date()): string {
+  const local = new Date(date)
+  const day = local.getUTCDay()
+  const diff = day === 0 ? -6 : 1 - day
+  local.setUTCDate(local.getUTCDate() + diff)
+  return local.toISOString().split('T')[0]
+}
+
+function formatDate(isoString: string) {
+  const date = new Date(isoString)
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
+
+const toggleWeek = () => {
+  currentMenuWeek.value = isThisWeek.value ? nextWeekDate : thisWeekDate
+}
+
+// Función para normalizar
+const normalizeText = (text: string) => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+// Obtener receta por día y comida
+const getRecipeForDayAndMeal = (day: string, meal: string) => {
+  if (!menusByWeek.value[currentMenuWeek.value]) return null
+
+  const menuDetails = menusByWeek.value[currentMenuWeek.value].menuDetails || []
+
+  const normalizedDay = normalizeText(day)
+  const normalizedMeal = normalizeText(meal)
+
+  const detail = menuDetails.find((d) => {
+    const detailDay = normalizeText(d.day)
+    const detailMeal = normalizeText(d.meal)
+
+    return detailDay === normalizedDay && detailMeal === normalizedMeal
+  })
+
+  if (!detail || !detail.recipe) return null
+
+  return {
+    recipeId: detail.recipe.id,
+    recipeName: detail.recipe.name,
+  }
+}
+
+//eliminar el menu semanal
+
+const confirmDeleteMenu = () => {
+  if (menusByWeek.value[currentMenuWeek.value]) {
+    menuToDelete.value = menusByWeek.value[currentMenuWeek.value].id
+    modalType.value = 'menu'
+    showConfirmModal.value = true
+  }
+}
+
+const executeDeleteMenu = async () => {
+  if (menuToDelete.value) {
+    isDeleting.value = true
+    try {
+      await menuStore.deleteMenu(menuToDelete.value)
+
+      delete menusByWeek.value[currentMenuWeek.value]
+
+      toast.success('Menú eliminado correctamente')
+    } catch (error) {
+      console.error('Error al eliminar el menú:', error)
+      toast.error('Error al eliminar el menú')
+    } finally {
+      showConfirmModal.value = false
+      menuToDelete.value = null
+      isDeleting.value = false
+    }
+  }
+}
 
 onMounted(async () => {
   if (!auth.isAuthenticated) {
@@ -497,9 +710,20 @@ onMounted(async () => {
     return
   }
 
-  await loadUserProfile()
-  await fetchFavoriteRecipes()
-  await fetchRecipeByUser()
+  try {
+    await loadUserProfile()
+    await fetchFavoriteRecipes()
+    await fetchRecipeByUser()
+
+    try {
+      await fetchMenu(thisWeekDate)
+      await fetchMenu(nextWeekDate)
+    } catch (error) {
+      console.error('Error al cargar datos del menú:', error)
+    }
+  } catch (error) {
+    console.error('Error al cargar datos del perfil:', error)
+  }
 })
 </script>
 
@@ -685,10 +909,6 @@ onMounted(async () => {
     }
   }
 
-  &__tab-content {
-    min-height: 300px;
-  }
-
   &__action-buttons {
     display: flex;
     justify-content: flex-start;
@@ -781,6 +1001,197 @@ onMounted(async () => {
     font-size: 18px;
     line-height: 1;
     font-weight: bold;
+  }
+
+  &__weekly-plan {
+    min-height: 300px;
+  }
+
+  &__weekly-plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__weekly-plan-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__delete-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+
+  &:hover {
+    background-color: #f5c6cb;
+    transform: translateY(-2px);
+  }
+}
+
+&__delete-icon {
+  font-size: 16px;
+}
+
+  &__edit-recipes-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: $primary-yellow;
+    color: $black;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: $primary-yellow;
+      transform: translateY(-2px);
+    }
+  }
+
+  &__edit-icon {
+    font-size: 16px;
+  }
+
+  &__menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__menu-title {
+    margin: 0;
+    font-size: 1.3rem;
+    color: $black;
+  }
+
+  &__menu-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      width: 100%;
+
+      .button {
+        width: 100%;
+      }
+    }
+  }
+
+  &__menu-table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+
+  &__menu-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: $body;
+
+    th,
+    td {
+      padding: 0.75rem;
+      border: 1px solid $light-grey;
+    }
+
+    th {
+      background-color: #f8f8f8;
+      text-align: center;
+      font-weight: 600;
+      color: $black;
+    }
+  }
+
+  &__menu-day {
+    font-weight: 600;
+    color: $black;
+    background-color: #f8f8f8;
+    text-align: center;
+  }
+
+  &__menu-cell {
+    vertical-align: middle;
+    min-width: 180px;
+  }
+
+  &__menu-recipe,
+  &__menu-empty-recipe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  &__menu-recipe-link {
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  &__menu-recipe-name {
+    font-weight: 500;
+    color: $secondary-orange;
+  }
+
+  &__menu-view-button,
+  &__menu-add-button {
+    background-color: transparent;
+    border: 1px solid $primary-yellow;
+    color: $black;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $primary-yellow;
+    }
+  }
+
+  &__menu-add-button {
+    border-color: $secondary-orange;
+
+    &:hover {
+      background-color: $secondary-orange;
+      color: white;
+    }
+  }
+
+  &__menu-empty-recipe {
+    color: #999;
+    font-style: italic;
   }
 }
 

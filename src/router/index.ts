@@ -58,6 +58,11 @@ const router = createRouter({
           name: 'perfil',
           component: () => import('@/pages/PerfilPage.vue'),
         },
+        {
+          path: '/weekly-menu',
+          name: 'weekly-menu',
+          component: () => import('@/pages/WeeklyMenuPage.vue'),
+        }
       ],
     },
     {

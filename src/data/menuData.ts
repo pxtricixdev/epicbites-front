@@ -1,0 +1,1 @@
+export const meals: string[] = ['Desayuno', 'Almuerzo', 'Comida', 'Merienda', 'Cena']

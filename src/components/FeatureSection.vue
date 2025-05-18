@@ -1,15 +1,16 @@
 <template>
-  <div class="feature-card" :style="{ backgroundColor: backgroundColor }">
-    <div class="feature-card__image">
-      <img :src="image" />
-    </div>
-    <RouterLink :to="link">
+  <RouterLink :to="link">
+    <div class="feature-card" :style="{ backgroundColor: backgroundColor }">
+      <div class="feature-card__image">
+        <img :src="image" />
+      </div>
+
       <div class="feature-card__content" :style="{ color: textColor }">
         <h3 class="feature-card__title">{{ title }}</h3>
         <p class="feature-card__description">{{ subtitle }}</p>
       </div>
-    </RouterLink>
-  </div>
+    </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">

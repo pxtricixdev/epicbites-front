@@ -43,4 +43,21 @@ body {
   --p-radiobutton-width: 1rem !important;
   --p-radiobutton-height: 1rem !important;
   --p-radiobutton-icon-size: 0.5rem !important;
+  --p-dialog-color: black !important;
+  --p-tabs-tabpanel-background: white !important;
+  --p-tabs-tabpanel-color: black !important;
+  --p-tabs-tablist-background: white !important;
+  --p-tabs-tab-hover-color: none !important;
+  --p-tabs-tab-active-color: none !important;
+  --p-text-muted-color: #6a6a6a !important;
+  --p-tabs-tab-border-color: none !important;
+}
+
+.p-dialog,
+.p-dialog * {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.p-tablist {
+  overflow-x: auto;
 }

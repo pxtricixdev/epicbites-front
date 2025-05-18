@@ -24,7 +24,7 @@
                 <span class="recipe-page__calories">🔥 {{ recipeDetail.calories }} kcal</span>
                 <span class="recipe-page__difficulty">
                   {{ getDifficultyEmoji(recipeDetail.difficulty) }}
-                  {{ recipeDetail.difficulty }}</span
+                  {{ difficultyLabels[recipeDetail.difficulty] || recipeDetail.difficulty }}</span
                 >
               </div>
               <Toaster richColors />
@@ -190,6 +190,7 @@ import type { IPostFavorite } from '@/stores/interfaces/IPostFavorite'
 import { Toaster, toast } from 'vue-sonner'
 import RecipePrintButton from '@/components/RecipePrintButton.vue'
 import NoteCard from '@/components/NoteCard.vue'
+import { difficultyLabels } from '@/data/labels'
 
 const route = useRoute()
 const recipeNoteStore = useRecipeNoteStore()

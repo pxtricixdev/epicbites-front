@@ -8,6 +8,7 @@
       <!-- Menú para pantallas > 768 -->
       <nav class="header__nav-desktop" v-if="isDesktop">
         <RouterLink class="header__nav__item" to="/recetas">Recetas</RouterLink>
+        <RouterLink class="header__nav__item" to="/weekly-menu">Menú semanal</RouterLink>
         <RouterLink class="header__nav__item" to="/sobre-nosotros">Sobre Nosotros</RouterLink>
       </nav>
 
@@ -25,7 +26,7 @@
           to="/perfil"
         >
           Perfil
-          <UserRoundPen :size="16" color="black" />
+          <User2Icon :size="16" color="black" />
         </RouterLink>
         <button v-if="isAuthenticated" @click="handleAuth" class="header__content__button-logout">
           Cerrar sesión
@@ -50,6 +51,10 @@
             Todas las recetas
             <ArrowRight :size="18" color="#E57309" />
           </RouterLink>
+          <RouterLink class="header__nav__item" to="/weekly-menu">
+            Menú semanal
+            <ArrowRight :size="18" color="#E57309" />
+          </RouterLink>
           <RouterLink class="header__nav__item" to="/sobre-nosotros">
             Sobre Nosotros
             <ArrowRight :size="18" color="#E57309" />
@@ -66,7 +71,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { ArrowRight, Menu, X, UserRoundPen } from 'lucide-vue-next'
+import { ArrowRight, Menu, X, User2Icon } from 'lucide-vue-next'
 import LogoCanvas from '@/components/LogoCanvas.vue'
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'

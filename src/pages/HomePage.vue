@@ -1,11 +1,7 @@
 <template>
   <div class="home-page">
-    <Banner
-      title="Cocina, comparte e inspira: una comunidad para los amantes de la buena comida"
-      description="Guarda, organiza y planifica tus recetas para una cocina sin complicaciones."
-      :features="features"
-      note="¡Comienza a cocinar hoy mismo!"
-    />
+    <HomeBanner />
+    <InspireSection />
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas mejor valoradas 🔥</h2>
@@ -20,7 +16,7 @@
     <section class="home-page__feature">
       <div class="feature-container">
         <FeatureSection
-          title="!Inspírate y cocina!"
+          title="¡Inspírate y cocina!"
           subtitle="Desde platos rápidos hasta recetas gourmet, aquí tienes todo lo que necesitas."
           :link="`/receta/${randomRecipe}`"
           image="/images/coockingsection2.webp"
@@ -30,10 +26,10 @@
       </div>
       <div class="feature-container">
         <FeatureSection
-          title="Explora sabores increíbles"
-          subtitle="Encuentra recetas fáciles y deliciosas para cada ocasión."
-          :link="`/receta/${randomRecipe}`"
-          image="/images/coockingsection1.webp"
+          title="¡Planifica tus comidas fácilmente!"
+          subtitle="Diseña tu menú semanal y lleva el control de tus comidas de forma sencilla."
+          :link="'/weekly-menu'"
+          image="/images/mealpreping.webp"
           backgroundColor="#E7E34F"
           textColor="#000"
         />
@@ -81,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import Banner from '@/components/HomeBanner.vue'
+import HomeBanner from '@/components/HomeBanner.vue'
 import HomeReview from '@/components/HomeReview.vue'
 import FeatureSection from '@/components/FeatureSection.vue'
 import { onMounted, ref } from 'vue'
@@ -90,6 +86,7 @@ import type { IGetAllRecipes } from '@/stores/interfaces/IGetAllRecipes'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
 import { storeToRefs } from 'pinia'
+import InspireSection from '@/components/InspireSection.vue'
 
 const features = ['Rápido', 'Sencillo', 'Delicioso']
 const vegetarianRecipes = ref<IGetAllRecipes[]>([])
@@ -142,9 +139,13 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 70px;
     margin-bottom: 20px;
     gap: 50px;
+    margin-top: 20px;
+
+    @media (min-width: 768px) {
+      margin-top: 70px;
+    }
   }
 
   &__recipes {
