@@ -347,15 +347,15 @@
             <div class="admin__section-info">
               <h3 class="admin__section-subtitle">¿Qué puedes hacer desde este panel?</h3>
               <p class="admin__section-message">
-                Este es el centro de control donde puedes administrar la información clave del sistema,
-                incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos importantes,
-                realizar modificaciones y garantizar que todo funcione correctamente.
+                Este es el centro de control donde puedes administrar la información clave del
+                sistema, incluyendo usuarios, recetas y reseñas. Desde aquí, puedes visualizar datos
+                importantes, realizar modificaciones y garantizar que todo funcione correctamente.
               </p>
               <h3 class="admin__section-subtitle">Recuerda:</h3>
               <p class="admin__section-message">
-                El correcto uso de este panel es fundamental para mantener la calidad y seguridad del
-                sistema. Cualquier modificación debe ser realizada con responsabilidad y pensando
-                siempre en la mejor experiencia para los usuarios.
+                El correcto uso de este panel es fundamental para mantener la calidad y seguridad
+                del sistema. Cualquier modificación debe ser realizada con responsabilidad y
+                pensando siempre en la mejor experiencia para los usuarios.
               </p>
             </div>
           </div>
@@ -518,7 +518,7 @@ const reviewStore = useReviewStore()
 const { allReviews } = storeToRefs(reviewStore)
 const { fetchAllReviews, deleteReview } = reviewStore
 
-const userStore  = useUserStore()
+const userStore = useUserStore()
 const { allUsers } = storeToRefs(userStore)
 const { fetchUsers } = userStore
 const user = ref<IGetAllUsers[]>([])
@@ -540,13 +540,13 @@ const {
   setupWatchers,
 
   isLoading,
-  error
+  error,
 } = useCharts(
   activeSection,
   homeDifficultyChartRef,
   homeRatingsChartRef,
   homeRecipeTypesChartRef,
-  homeMonthlyReviewsChartRef
+  homeMonthlyReviewsChartRef,
 )
 
 setupWatchers()
@@ -858,7 +858,7 @@ const handleRegister = async () => {
     p {
       padding-bottom: 10px;
       font-size: 16px;
-      width: 65%;
+      width: 100%;
       margin: 0 auto;
       text-align: center;
     }
@@ -924,12 +924,12 @@ const handleRegister = async () => {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     margin: 1.5rem 0;
-    
+
     @media (max-width: 991px) {
       grid-template-columns: 1fr;
     }
   }
-  
+
   &__chart-card {
     background-color: #ffffff;
     border-radius: 8px;
@@ -939,7 +939,7 @@ const handleRegister = async () => {
     flex-direction: column;
     align-items: center;
   }
-  
+
   &__chart-wrapper {
     width: 100%;
     height: 180px;
@@ -948,7 +948,7 @@ const handleRegister = async () => {
     justify-content: center;
     margin: 0 auto;
   }
-  
+
   &__chart-title {
     font-size: 0.95rem;
     font-weight: 600;
@@ -956,13 +956,13 @@ const handleRegister = async () => {
     text-align: center;
     color: $black;
   }
-  
+
   &__chart-link-container {
     display: flex;
     justify-content: center;
     margin-top: 0.8rem;
   }
-  
+
   &__chart-link {
     color: $secondary-orange;
     font-size: 0.85rem;
@@ -972,17 +972,17 @@ const handleRegister = async () => {
     align-items: center;
     gap: 0.3rem;
     transition: all 0.2s ease;
-    
+
     &:hover {
       text-decoration: underline;
       transform: translateX(2px);
     }
-    
+
     i {
       font-size: 0.8rem;
     }
   }
-  
+
   &__loading,
   &__error,
   &__no-data {
@@ -995,7 +995,7 @@ const handleRegister = async () => {
     text-align: center;
     color: $black;
   }
-  
+
   &__no-data {
     height: 180px;
     color: #9e9e9e;
