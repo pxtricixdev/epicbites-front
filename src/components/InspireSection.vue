@@ -6,14 +6,19 @@
       <li class="inspira-section__item">✔ Sencillo</li>
       <li class="inspira-section__item">✔ Delicioso</li>
     </ul>
-    <RouterLink to="/registro" class="inspira-section__button"
+    <RouterLink :to="redirectTo" class="inspira-section__button"
       >Empieza ahora<ArrowRight width="20" />
     </RouterLink>
   </section>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { ArrowRight } from 'lucide-vue-next'
+import { authStore } from '@/stores/authStore'
+
+const auth = authStore()
+const redirectTo = computed(() => (auth.isAuthenticated ? '/' : '/registro'))
 </script>
 
 <style scoped lang="scss">
