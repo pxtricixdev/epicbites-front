@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { CHAT_API_URL } from '@/stores/chatConfig'
 
 interface ChatMessage {
   text: string
@@ -25,20 +24,20 @@ export const useChatStore = defineStore('chat', () => {
     messages.value.push({
       text: message,
       sender: 'user',
-      timestamp: new Date()
+      timestamp: new Date(),
     })
 
     loading.value = true
     error.value = null
 
     try {
-      const response = await fetch(CHAT_API_URL, {
+      const response = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ mensaje: message })
+        body: JSON.stringify({ mensaje: message }),
       })
 
       if (!response.ok) {
@@ -51,7 +50,7 @@ export const useChatStore = defineStore('chat', () => {
       messages.value.push({
         text: data.respuesta,
         sender: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     } catch (err: any) {
       console.error('Error al enviar mensaje:', err)
@@ -60,7 +59,7 @@ export const useChatStore = defineStore('chat', () => {
       messages.value.push({
         text: '❌ Lo siento, hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo.',
         sender: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     } finally {
       loading.value = false
@@ -80,6 +79,6 @@ export const useChatStore = defineStore('chat', () => {
 
     toggleChat,
     sendMessage,
-    clearChat
+    clearChat,
   }
 })

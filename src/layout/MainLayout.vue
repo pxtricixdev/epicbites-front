@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainHeader from '@/components/MainHeader.vue'
 import Footer from '@/components/FooterComponent.vue'
-import ChefChatbox from '@/components/ChefChatbox.vue'
+import ChatbotAssistant from '@/components/ChatbotAssistant.vue'
 </script>
 
 <template>
@@ -10,5 +10,5 @@ import ChefChatbox from '@/components/ChefChatbox.vue'
     <RouterView />
   </main>
   <Footer />
-  <ChefChatbox />
+  <ChatbotAssistant />
 </template>
