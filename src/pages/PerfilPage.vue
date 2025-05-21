@@ -793,7 +793,6 @@ onMounted(async () => {
   }
 
   &__stats {
-    display: flex;
     gap: 2rem;
     margin-bottom: 1rem;
   }
@@ -952,6 +951,12 @@ onMounted(async () => {
     @media (max-width: 768px) {
       justify-content: center;
     }
+
+    @media (min-width: 375px) and (max-width: 767px) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+    }
   }
 
   &__card-wrapper {
@@ -960,6 +965,18 @@ onMounted(async () => {
 
   &__card {
     position: relative;
+
+    @media (min-width: 375px) and (max-width: 767px) {
+      transform: scale(0.95);
+      width: 100%;
+
+      font-size: 0.85rem;
+
+      & img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
 
     &--with-actions {
       position: relative;
@@ -971,6 +988,10 @@ onMounted(async () => {
 
       &:hover {
         transform: translateY(-5px);
+
+        @media (min-width: 375px) and (max-width: 767px) {
+          transform: translateY(-3px) scale(0.95);
+        }
       }
     }
   }
@@ -992,8 +1013,25 @@ onMounted(async () => {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 2;
 
+    @media (min-width: 375px) and (max-width: 767px) {
+      width: 22px;
+      height: 22px;
+      top: 13px;
+      right: 6px;
+    }
+
     &:hover {
       background-color: ($secondary-orange, 10%);
+    }
+  }
+
+  &__close-icon {
+    font-size: 18px;
+    line-height: 1;
+    font-weight: bold;
+
+    @media (min-width: 375px) and (max-width: 767px) {
+      font-size: 16px;
     }
   }
 
@@ -1021,29 +1059,29 @@ onMounted(async () => {
   }
 
   &__delete-menu-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 16px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 10px;
 
-  &:hover {
-    background-color: #f5c6cb;
-    transform: translateY(-2px);
+    &:hover {
+      background-color: #f5c6cb;
+      transform: translateY(-2px);
+    }
   }
-}
 
-&__delete-icon {
-  font-size: 16px;
-}
+  &__delete-icon {
+    font-size: 16px;
+  }
 
   &__edit-recipes-button {
     display: flex;
@@ -1085,7 +1123,8 @@ onMounted(async () => {
 
   &__menu-title {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 17px;
+    margin-bottom: 15px;
     color: $black;
   }
 
