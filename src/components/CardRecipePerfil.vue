@@ -30,16 +30,15 @@ defineProps<{
 .cardperfil {
   font-family: $body;
   height: 270px;
-  width: 190px;
+  width: 150px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
   padding-top: 20px;
   align-items: center;
   text-decoration: none;
 
   &__img {
-    width: 170px;
+    width: 150px;
     height: auto;
     aspect-ratio: 1 / 1;
     background-repeat: no-repeat;

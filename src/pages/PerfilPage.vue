@@ -529,6 +529,7 @@ const updateUserProfile = async () => {
     setTimeout(() => {
       closeEditProfileModal()
     }, 1200)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Error:', err)
 
@@ -946,16 +947,11 @@ onMounted(async () => {
   &__recipes-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
+    justify-content: center;
 
-    @media (max-width: 768px) {
-      justify-content: center;
-    }
-
-    @media (min-width: 375px) and (max-width: 767px) {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
+    @media (min-width: 768px) {
+      gap: 30px;
     }
   }
 
@@ -998,7 +994,7 @@ onMounted(async () => {
 
   &__remove-button {
     position: absolute;
-    top: 15px;
+    top: 25px;
     right: 5px;
     background-color: $secondary-orange;
     color: white;
@@ -1012,13 +1008,6 @@ onMounted(async () => {
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 2;
-
-    @media (min-width: 375px) and (max-width: 767px) {
-      width: 22px;
-      height: 22px;
-      top: 13px;
-      right: 6px;
-    }
 
     &:hover {
       background-color: ($secondary-orange, 10%);
