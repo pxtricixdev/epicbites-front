@@ -226,11 +226,15 @@ const filteredRecipes = computed(() => {
     font-family: $body;
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 15px;
     justify-content: center;
     margin: 20px auto 80px auto;
     color: $black;
     text-align: center;
+
+    @media (min-width: 768px) {
+      gap: 30px;
+    }
   }
 
   &__title {

@@ -58,8 +58,8 @@ defineProps<{
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
 .card-recipe {
-  width: 241px;
-  height: 381px;
+  width: 170px;
+  height: 320px;
   box-shadow: 0px 2px 10px rgba(126, 126, 126, 0.05);
   border-radius: 16px;
   background-color: $white;
@@ -67,12 +67,22 @@ defineProps<{
   overflow: hidden;
   position: relative;
 
+  @media (min-width: 768px) {
+    width: 241px;
+    height: 381px;
+  }
+
   &__image {
     width: 100%;
-    height: 60%;
+    height: 50%;
     object-fit: cover;
     border-radius: 8px 8px 0 0;
     transition: transform 0.3s ease-in-out;
+
+    @media (min-width: 768px) {
+      width: 100%;
+      height: 60%;
+    }
 
     &:hover {
       cursor: pointer;
@@ -91,7 +101,11 @@ defineProps<{
   &__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
+
+    @media (min-width: 768px) {
+      gap: 10px;
+    }
   }
 
   &__time {
@@ -103,8 +117,12 @@ defineProps<{
 
   &__title {
     font-weight: 400;
-    font-size: 15px;
+    font-size: 13px;
     color: $black;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
   }
 
   &__details {
@@ -124,6 +142,11 @@ defineProps<{
     text-align: center;
     display: flex;
     align-items: center;
+    margin-right: 5px;
+
+    @media (min-width: 768px) {
+      margin-right: 0;
+    }
   }
 
   &__meal,
@@ -133,7 +156,7 @@ defineProps<{
     border: 1px solid #ffc993;
     border-radius: 3px;
     padding: 2px 5px;
-    font-size: 12px;
+    font-size: 11px;
     width: fit-content;
 
     &:hover {
