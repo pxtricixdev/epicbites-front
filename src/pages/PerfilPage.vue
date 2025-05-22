@@ -529,6 +529,7 @@ const updateUserProfile = async () => {
     setTimeout(() => {
       closeEditProfileModal()
     }, 1200)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Error:', err)
 
@@ -793,7 +794,6 @@ onMounted(async () => {
   }
 
   &__stats {
-    display: flex;
     gap: 2rem;
     margin-bottom: 1rem;
   }
@@ -947,10 +947,11 @@ onMounted(async () => {
   &__recipes-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
+    justify-content: center;
 
-    @media (max-width: 768px) {
-      justify-content: center;
+    @media (min-width: 768px) {
+      gap: 30px;
     }
   }
 
@@ -960,6 +961,18 @@ onMounted(async () => {
 
   &__card {
     position: relative;
+
+    @media (min-width: 375px) and (max-width: 767px) {
+      transform: scale(0.95);
+      width: 100%;
+
+      font-size: 0.85rem;
+
+      & img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
 
     &--with-actions {
       position: relative;
@@ -971,13 +984,17 @@ onMounted(async () => {
 
       &:hover {
         transform: translateY(-5px);
+
+        @media (min-width: 375px) and (max-width: 767px) {
+          transform: translateY(-3px) scale(0.95);
+        }
       }
     }
   }
 
   &__remove-button {
     position: absolute;
-    top: 15px;
+    top: 25px;
     right: 5px;
     background-color: $secondary-orange;
     color: white;
@@ -994,6 +1011,16 @@ onMounted(async () => {
 
     &:hover {
       background-color: ($secondary-orange, 10%);
+    }
+  }
+
+  &__close-icon {
+    font-size: 18px;
+    line-height: 1;
+    font-weight: bold;
+
+    @media (min-width: 375px) and (max-width: 767px) {
+      font-size: 16px;
     }
   }
 
@@ -1021,29 +1048,29 @@ onMounted(async () => {
   }
 
   &__delete-menu-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 16px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 10px;
 
-  &:hover {
-    background-color: #f5c6cb;
-    transform: translateY(-2px);
+    &:hover {
+      background-color: #f5c6cb;
+      transform: translateY(-2px);
+    }
   }
-}
 
-&__delete-icon {
-  font-size: 16px;
-}
+  &__delete-icon {
+    font-size: 16px;
+  }
 
   &__edit-recipes-button {
     display: flex;
@@ -1085,7 +1112,8 @@ onMounted(async () => {
 
   &__menu-title {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 17px;
+    margin-bottom: 15px;
     color: $black;
   }
 
