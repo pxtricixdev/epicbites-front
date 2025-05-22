@@ -41,12 +41,6 @@
     <nav v-if="!isDesktop" :class="{ header__nav__open: isOpen }" class="header__nav">
       <ul class="header__nav__list">
         <li>
-          <RouterLink class="header__nav__item" to="/">
-            Inicio
-            <ArrowRight :size="18" color="#E57309" />
-          </RouterLink>
-        </li>
-        <li>
           <RouterLink class="header__nav__item" to="/recetas">
             Todas las recetas
             <ArrowRight :size="18" color="#E57309" />

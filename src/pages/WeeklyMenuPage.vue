@@ -373,20 +373,18 @@ const { isAuthenticated } = storeToRefs(auth)
 
   &__subtitle {
     font-size: 16px;
+    margin: 10px 10px 0 10px;
     margin-top: 10px;
     max-width: 1100px;
   }
 
   &__bullets {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     margin: 10px;
-    padding: 10px 0 10px 40px;
-    border: 1.5px solid $primary-yellow;
-    box-shadow:
-      0 4px 6px -1px rgba(252, 154, 16, 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    padding: 10px 30px;
+
     @include regular-text(14px);
     border-radius: 8px;
     max-width: 400px;
@@ -394,11 +392,28 @@ const { isAuthenticated } = storeToRefs(auth)
     max-width: 600px;
 
     li {
-      padding: 2px 0;
       list-style: disc;
 
       &::marker {
         color: $primary-yellow;
+      }
+    }
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      padding: 10px 0 10px 40px;
+      border: 1.5px solid $primary-yellow;
+      box-shadow:
+        0 4px 6px -1px rgba(252, 154, 16, 0.1),
+        0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+      li {
+        padding: 2px 0;
+        list-style: disc;
+
+        &::marker {
+          color: $primary-yellow;
+        }
       }
     }
   }
@@ -430,8 +445,16 @@ const { isAuthenticated } = storeToRefs(auth)
 
     &__content {
       overflow-y: scroll;
-      max-height: 500px;
-      margin: 20px 0;
+      max-height: 260px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+
+      @media (min-width: 768px) {
+        max-height: 400px;
+      }
     }
 
     &__title {
@@ -464,7 +487,7 @@ const { isAuthenticated } = storeToRefs(auth)
       background-color: white;
       color: black;
       border-radius: 5px;
-      padding: 5px 5px 5px 5px;
+      padding: 5px;
       width: 150px;
       font-size: 14px;
       border: 1.5px solid $secondary-orange;
@@ -479,7 +502,7 @@ const { isAuthenticated } = storeToRefs(auth)
       &__select {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 24px;
         justify-content: space-between;
       }
     }

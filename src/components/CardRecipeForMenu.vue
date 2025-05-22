@@ -101,7 +101,6 @@ const selectedMeal = ref<string | null>(null)
   background-color: white;
   display: flex;
   flex-direction: row;
-  margin: 20px 0;
   position: relative;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
   padding: 10px;
