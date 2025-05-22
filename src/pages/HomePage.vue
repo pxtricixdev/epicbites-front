@@ -88,7 +88,6 @@ import { useReviewStore } from '@/stores/reviewStore'
 import { storeToRefs } from 'pinia'
 import InspireSection from '@/components/InspireSection.vue'
 
-const features = ['Rápido', 'Sencillo', 'Delicioso']
 const vegetarianRecipes = ref<IGetAllRecipes[]>([])
 const fastRecipes = ref<IGetAllRecipes[]>([])
 const randomRecipe = ref(0)
@@ -139,17 +138,16 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 20px;
-    gap: 50px;
     margin-top: 20px;
 
     @media (min-width: 768px) {
-      margin-top: 70px;
+      margin-top: 50px;
+      gap: 50px;
     }
   }
 
   &__recipes {
-    padding-top: 40px;
+    padding-top: 30px;
     max-width: 1200px;
     margin: 0 auto;
 

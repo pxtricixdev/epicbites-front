@@ -29,13 +29,24 @@ const redirectTo = computed(() => (auth.isAuthenticated ? '/' : '/registro'))
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 40px 5px;
+  padding: 2px 5px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin: 30px auto;
+  margin: 0 auto;
   max-width: 1160px;
   font-family: $body;
   position: relative;
+  height: 150px;
+
+  @media (min-width: 768px) {
+    margin: 0;
+    height: 235px;
+    padding: 40px 5px;
+  }
+
+  @media (min-width: 1024px) {
+    margin: 30px auto;
+  }
 
   &::before {
     content: '';
@@ -114,7 +125,6 @@ const redirectTo = computed(() => (auth.isAuthenticated ? '/' : '/registro'))
     &:hover {
       background-color: rgb(255, 250, 91);
     }
-    transition: all 0.3s ease;
   }
 }
 </style>
