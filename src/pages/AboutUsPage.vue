@@ -1,14 +1,22 @@
 <template>
-  <section class="about-us">
+  <Head>
+    <title>{{ seoTitle }}</title>
+    <meta name="description" :content="seoDescription" />
+    <meta name="keywords" content="Epic Bites, sobre nosotros, equipo culinario, recetas caseras, comunidad gastronómica, cocina accesible, chef expertos" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Epic Bites Team" />
+  </Head>
+
+  <section class="about-us" >
     <div class="about-us__content">
-      <h1 class="about-us__title">Sobre Nosotros</h1>
-      <p class="about-us__description">
-        En <strong>Epic Bites</strong>, creemos que la cocina debe ser accesible, divertida y
+      <h1 class="about-us__title" itemprop="headline">Sobre Nosotros</h1>
+      <p class="about-us__description" itemprop="description">
+        En <strong itemprop="name">Epic Bites</strong>, creemos que la cocina debe ser accesible, divertida y
         deliciosa para todos. No importa si eres un experto en la cocina o si apenas estás
         comenzando, aquí encontrarás inspiración para preparar recetas sencillas, saludables y
         llenas de sabor.
       </p>
-      <p class="about-us__description">
+      <p class="about-us__description" itemprop="description">
         Nuestro objetivo es crear una comunidad global donde las personas compartan sus recetas
         favoritas, descubran nuevas culturas gastronómicas y disfruten del placer de cocinar en
         casa. Creemos en el poder de la comida para unir a las personas y transformar momentos
@@ -17,21 +25,26 @@
     </div>
 
     <div class="about-us__image">
-      <Image src="/images/pareja.webp" alt="Persona cocinando en la cocina" width="400" />
+      <Image 
+        src="/images/pareja.webp" 
+        alt="Pareja cocinando juntos en una cocina moderna, preparando recetas caseras con alegría" 
+        width="400"
+        itemprop="image"
+      />
     </div>
   </section>
 
-  <section class="nuestra-mision">
+  <section class="nuestra-mision" >
     <div class="nuestra-mision__content">
-      <h2 class="nuestra-mision__title">Nuestra Misión y Propósito</h2>
-      <p class="nuestra-mision__description">
+      <h2 class="nuestra-mision__title" itemprop="name">Nuestra Misión y Propósito</h2>
+      <p class="nuestra-mision__description" itemprop="mission">
         En <strong>Epic Bites</strong>, queremos inspirar a las personas a descubrir nuevas recetas,
         mejorar sus habilidades culinarias y compartir su amor por la cocina. Nos esforzamos por
         ofrecer una plataforma accesible, repleta de contenido útil y de calidad, que permita a
         todos, desde principiantes hasta chefs experimentados, explorar la gastronomía de forma
         sencilla.
       </p>
-      <p class="nuestra-mision__description">
+      <p class="nuestra-mision__description" itemprop="description">
         Creemos que cocinar no es solo una necesidad, sino un arte, una forma de expresión y una
         oportunidad para compartir con los demás. En un mundo donde el tiempo es un recurso valioso,
         queremos simplificar la cocina sin sacrificar la calidad ni el sabor.
@@ -39,13 +52,18 @@
     </div>
 
     <div class="nuestra-mision__image">
-      <Image src="/images/nenes.webp" alt="Niños cocinando" width="400" />
+      <Image 
+        src="/images/nenes.webp" 
+        alt="Niños felices aprendiendo a cocinar recetas fáciles en la cocina familiar" 
+        width="400"
+        itemprop="image"
+      />
     </div>
   </section>
 
-  <section class="nuestro-equipo">
-    <h2 class="nuestro-equipo__title">Nuestro Equipo</h2>
-    <div class="nuestro-equipo__container">
+  <section class="nuestro-equipo" >
+    <h2 class="nuestro-equipo__title" itemprop="name">Nuestro Equipo</h2>
+    <div class="nuestro-equipo__container" itemprop="member">
       <div v-for="member in teamMembers" :key="member.image">
         <TeamMember
           :image="member.image"
@@ -59,9 +77,28 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import TeamMember from '@/components/TeamMember.vue'
 import { teamMembers } from '@/data/teamMembers'
 import { Image } from 'primevue'
+
+// meta tags dinámicos
+const seoTitle = computed(() => {
+  const teamCount = teamMembers?.length || 0
+  if (teamCount > 0) {
+    return `Sobre Epic Bites - Equipo de ${teamCount} Expertos Culinarios | Nuestra Historia`
+  }
+  return 'Sobre Epic Bites - Nuestra Misión y Equipo Culinario | Comunidad Gastronómica'
+})
+
+const seoDescription = computed(() => {
+  const teamCount = teamMembers?.length || 0
+  if (teamCount > 0) {
+    return `Conoce la historia de Epic Bites y nuestro equipo de ${teamCount} expertos culinarios. Creamos una comunidad global para compartir recetas caseras, saludables y deliciosas para todos.`
+  }
+  return 'Descubre la historia de Epic Bites, nuestra misión de hacer la cocina accesible y divertida para todos. Conoce a nuestro equipo de expertos culinarios y únete a nuestra comunidad gastronómica.'
+})
+
 </script>
 
 <style lang="scss" scoped>
