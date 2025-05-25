@@ -1,12 +1,20 @@
 <template>
+  <Head>
+    <title>{{ seoTitle }}</title>
+    <meta name="description" :content="seoDescription" />
+    <meta name="keywords" :content="seoKeywords" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Epic Bites" />
+  </Head>
+
   <section>
     <div class="card-recipe__loading" v-if="loadingAllRecipes">Cargando...</div>
     <div v-else>
       <div class="card-recipe__content">
-        <h1 class="card-recipe__title">
+        <h1 class="card-recipe__title" itemprop="name">
           {{ category ? `Recetas de ${category}` : 'Todas las recetas' }}
         </h1>
-        <p class="card-recipe__text">
+        <p class="card-recipe__text" itemprop="description">
           Aquí encontrarás una gran variedad de recetas, desde opciones rápidas y saludables hasta
           platos más elaborados para sorprender en cualquier ocasión. ¿Buscas una cena ligera, un
           postre irresistible o una comida completa? Explora nuestro catálogo y descubre recetas
@@ -25,10 +33,12 @@
           type="text"
           v-model="searchRecipe"
           placeholder="Busca la receta por nombre, categoría.."
+          aria-label="Buscar recetas por nombre o categoría"
+          role="searchbox"
         />
-        <div class="card-recipe__timePreparation">
-          <p>Por tiempo de preparación:</p>
-          <div class="card-recipe__radiobutton">
+        <div class="card-recipe__timePreparation" role="group" aria-labelledby="time-filter-label">
+          <p id="time-filter-label">Por tiempo de preparación:</p>
+          <div class="card-recipe__radiobutton" role="radiogroup" aria-labelledby="time-filter-label">
             <div>
               <RadioButton v-model="timeRecipe" inputId="all" name="timeFilter" value="" />
               <label for="all">Todas</label>
@@ -54,11 +64,12 @@
         </div>
       </div>
 
-      <div class="card-recipe__container">
-        <div v-for="recipe in filteredRecipes" :key="recipe.id">
+      <div class="card-recipe__container" role="list" aria-label="Lista de recetas disponibles">
+        <meta itemprop="numberOfItems" :content="filteredRecipes.length.toString()" />
+        <div v-for="(recipe, index) in filteredRecipes" :key="recipe.id" role="listitem">
           <CardRecipeInfo
             :image="recipe.image"
-            :alt="recipe.name"
+            :alt="`Imagen de la receta ${recipe.name} - ${recipe.diet} en ${recipe.time} minutos`"
             :title="recipe.name"
             :time="recipe.time"
             :diet="dietLabels[recipe.diet] || recipe.diet"
@@ -66,10 +77,12 @@
             :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
             :meal="recipe.meal"
             :link="`/receta/${recipe.id}`"
+            :itemPosition="index + 1"
           />
         </div>
-        <div v-if="filteredRecipes.length === 0">
-          <p>No hay recetas que coincidan con tu búsqueda</p>
+
+        <div v-if="filteredRecipes.length === 0" role="status" aria-live="polite">
+          <p>No hay recetas que coincidan con tu búsqueda. Intenta con otros términos o filtros.</p>
         </div>
       </div>
     </div>
@@ -77,30 +90,49 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { storeToRefs } from 'pinia'
-import { onMounted, computed, ref } from 'vue'
 import CardRecipeInfo from '@/components/CardRecipeInfo.vue'
-import { useRoute } from 'vue-router'
 import { CookingPot } from 'lucide-vue-next'
 import RadioButton from 'primevue/radiobutton'
 import { difficultyLabels, dietLabels, flavourLabels } from '@/data/labels'
 
 const route = useRoute()
-const category = computed(() => route.params.category)
+const category = computed(() => route.params.category as string)
 
 const recipeStore = useRecipeStore()
 const { allRecipes, loadingAllRecipes } = storeToRefs(recipeStore)
 const { fetchAllRecipes } = recipeStore
 
+const searchRecipe = ref('')
+const timeRecipe = ref('')
+
+// funciones computadas para meta tags dinámicos
+const seoTitle = computed(() => {
+  const allRecipesCount = allRecipes.value.length
+
+  return allRecipesCount > 0 
+    ? `${allRecipesCount} Recetas Caseras | Vegetarianas, Rápidas y Saludables | Epic Bites`
+    : 'Todas las Recetas Caseras | Vegetarianas y Rápidas | Epic Bites'
+})
+
+const seoDescription = computed(() => {
+  const totalRecipes = filteredRecipes.value.length
+  const fastRecipes = filteredRecipes.value.filter(r => r.time <= 20).length
+  const vegetarianRecipes = filteredRecipes.value.filter(r => r.diet.toLowerCase().includes('vegetarian')).length
+  return `Explora ${totalRecipes} recetas caseras con ${fastRecipes} opciones rápidas y ${vegetarianRecipes} vegetarianas. Busca por nombre, categoría o tiempo de preparación y encuentra tu receta ideal.`
+})
+
+const seoKeywords = computed(() => {
+  const baseKeywords = 'recetas caseras, recetas fáciles, cocina en casa, recetas rápidas, recetas vegetarianas'
+  return `${baseKeywords}, búsqueda de recetas, filtros de cocina, recetas por tiempo`
+})
+
 onMounted(async () => {
   await fetchAllRecipes()
 })
-
-const searchRecipe = ref('')
-
-const timeRecipe = ref('')
-
 const filteredRecipes = computed(() => {
   if (!allRecipes.value) return []
 
