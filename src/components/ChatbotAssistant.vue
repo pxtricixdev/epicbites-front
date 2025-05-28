@@ -145,6 +145,7 @@ onMounted(() => {
     position: relative;
     z-index: 1001;
     font-size: 25px;
+    border: 2px solid $light-grey;
 
     &:hover {
       transform: scale(1.05);

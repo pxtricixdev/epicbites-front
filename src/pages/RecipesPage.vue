@@ -4,7 +4,7 @@
     <div v-else>
       <div class="card-recipe__content">
         <h1 class="card-recipe__title">
-          {{ category ? `Recetas de ${category}` : 'Todas las recetas' }}
+          {{ category ? `Filtrando las recetas por categoría: ${category}` : 'Todas las recetas' }}
         </h1>
         <p class="card-recipe__text">
           Aquí encontrarás una gran variedad de recetas, desde opciones rápidas y saludables hasta
@@ -101,26 +101,45 @@ const searchRecipe = ref('')
 
 const timeRecipe = ref('')
 
+// Quitamos acentos y normalizamos las cadenas para facilitar la búsqueda y el filtrado de recetas
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const removeAccents = (str: any) =>
+  str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeCategoryValue = (value: any) => removeAccents(value || '').replace(/\s+/g, '')
+
 const filteredRecipes = computed(() => {
   if (!allRecipes.value) return []
 
-  const searchInput = searchRecipe.value.toLowerCase().trim()
+  const searchInput = normalizeCategoryValue(searchRecipe.value)
+  const categoryValue = normalizeCategoryValue(category.value)
 
   return allRecipes.value.filter((recipe) => {
+    const recipeMeal = normalizeCategoryValue(recipe.meal)
+    const recipeDiet = normalizeCategoryValue(recipe.diet)
+    const recipeFlavour = normalizeCategoryValue(recipe.flavour)
+    const recipeDifficulty = normalizeCategoryValue(recipe.difficulty)
+    const recipeName = normalizeCategoryValue(recipe.name)
+
     const matchesCategory = category.value
-      ? recipe.meal === category.value ||
-        recipe.diet === category.value ||
-        recipe.flavour === category.value ||
-        recipe.difficulty === category.value
+      ? recipeMeal === categoryValue ||
+        recipeDiet === categoryValue ||
+        recipeFlavour === categoryValue ||
+        recipeDifficulty === categoryValue
       : true
 
     const matchesSearch =
       searchInput === '' ||
-      recipe.name.toLowerCase().includes(searchInput) ||
-      recipe.meal.toLowerCase().includes(searchInput) ||
-      recipe.diet.toLowerCase().includes(searchInput) ||
-      recipe.flavour.toLowerCase().includes(searchInput) ||
-      recipe.difficulty.toLowerCase().includes(searchInput)
+      recipeName.includes(searchInput) ||
+      recipeMeal.includes(searchInput) ||
+      recipeDiet.includes(searchInput) ||
+      recipeFlavour.includes(searchInput) ||
+      recipeDifficulty.includes(searchInput)
 
     const preparationTime = recipe.time
     let matchesTime = true
@@ -138,6 +157,7 @@ const filteredRecipes = computed(() => {
           break
       }
     }
+
     return matchesCategory && matchesSearch && matchesTime
   })
 })

@@ -68,8 +68,8 @@ defineProps<{
   position: relative;
 
   @media (min-width: 768px) {
-    width: 241px;
-    height: 381px;
+    width: 250px;
+    height: 380px;
   }
 
   &__image {
@@ -116,7 +116,7 @@ defineProps<{
   }
 
   &__title {
-    font-weight: 400;
+    font-weight: 600;
     font-size: 13px;
     color: $black;
 
@@ -161,6 +161,14 @@ defineProps<{
 
     &:hover {
       background-color: #f3f3f3;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 12px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 13px;
     }
   }
 }
