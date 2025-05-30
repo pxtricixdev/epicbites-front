@@ -69,7 +69,7 @@ defineProps<{
 
   @media (min-width: 768px) {
     width: 250px;
-    height: 380px;
+    height: 400px;
   }
 
   &__image {
@@ -102,6 +102,7 @@ defineProps<{
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
+    align-items: center;
 
     @media (min-width: 768px) {
       gap: 10px;
@@ -119,6 +120,11 @@ defineProps<{
     font-weight: 600;
     font-size: 13px;
     color: $black;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
 
     @media (min-width: 768px) {
       font-size: 15px;

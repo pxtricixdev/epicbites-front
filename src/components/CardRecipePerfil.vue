@@ -5,7 +5,6 @@
       <div class="cardperfil__info">
         <div class="cardperfil__text">
           <div class="cardperfil__text__top">
-            <span class="cardperfil__score">{{ time }} '</span>
             <span class="cardperfil__text__title">{{ title }} </span>
           </div>
         </div>
@@ -85,7 +84,15 @@ defineProps<{
       font-size: 13px;
       color: $black;
       font-weight: 570;
-      width: 80%;
+      text-align: center;
+      max-width: 240px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

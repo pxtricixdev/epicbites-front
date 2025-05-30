@@ -451,9 +451,11 @@ const { isAuthenticated } = storeToRefs(auth)
       gap: 20px;
       justify-content: center;
       margin-top: 20px;
+      scrollbar-width: thin;
+      scrollbar-color: #000000 #f0f0f0;
 
       @media (min-width: 768px) {
-        max-height: 400px;
+        max-height: 430px;
       }
     }
 
