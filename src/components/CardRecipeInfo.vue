@@ -1,41 +1,60 @@
 <template>
   <div class="card-recipe">
-    <RouterLink :to="link">
-      <img :src="image" :alt="alt" class="card-recipe__image" />
-    </RouterLink>
-    <div class="card-recipe__info">
+    <template v-if="!isLoading">
       <RouterLink :to="link">
-        <h3 class="card-recipe__title">{{ title }}</h3>
+        <img :src="image" :alt="alt" class="card-recipe__image" />
       </RouterLink>
-      <div class="card-recipe__tags">
-        <RouterLink :to="`/recetas/${meal}`" class="card-recipe__meal">{{ meal }}</RouterLink>
-        <RouterLink :to="`/recetas/${diet}`" class="card-recipe__diet">{{ diet }}</RouterLink>
-        <RouterLink :to="`/recetas/${flavour}`" class="card-recipe__flavour"
-          >{{ flavour }}
+      <div class="card-recipe__info">
+        <RouterLink :to="link">
+          <h3 class="card-recipe__title">{{ title }}</h3>
         </RouterLink>
-      </div>
-
-      <div class="card-recipe__details">
-        <div class="card-recipe__time">
-          <Clock color="#676767" :size="15" />
-          {{ time }}'
+        <div class="card-recipe__tags">
+          <RouterLink :to="`/recetas/${meal}`" class="card-recipe__meal">{{ meal }}</RouterLink>
+          <RouterLink :to="`/recetas/${diet}`" class="card-recipe__diet">{{ diet }}</RouterLink>
+          <RouterLink :to="`/recetas/${flavour}`" class="card-recipe__flavour">{{
+            flavour
+          }}</RouterLink>
         </div>
-        <RouterLink :to="`/recetas/${difficulty}`">
-          <span
-            class="card-recipe__difficulty"
-            :style="{
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              borderRadius: '3px',
-              backgroundColor:
-                difficulty === 'Fácil' ? '#7fe570' : difficulty === 'Media' ? 'orange' : '#8bd2ff',
-            }"
-          >
-            {{ difficulty }}
-          </span>
-        </RouterLink>
+        <div class="card-recipe__details">
+          <div class="card-recipe__time">
+            <Clock color="#676767" :size="15" />
+            {{ time }}'
+          </div>
+          <RouterLink :to="`/recetas/${difficulty}`">
+            <span
+              class="card-recipe__difficulty"
+              :style="{
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                borderRadius: '3px',
+                backgroundColor:
+                  difficulty === 'Fácil'
+                    ? '#7fe570'
+                    : difficulty === 'Media'
+                      ? 'orange'
+                      : '#8bd2ff',
+              }"
+            >
+              {{ difficulty }}
+            </span>
+          </RouterLink>
+        </div>
       </div>
-    </div>
+    </template>
+
+    <template v-else>
+      <div class="card-recipe__image skeleton"></div>
+      <div class="card-recipe__info">
+        <div class="skeleton skeleton-title"></div>
+        <div class="card-recipe__tags">
+          <div class="skeleton skeleton-tag" v-for="i in 3" :key="i"></div>
+        </div>
+        <div class="card-recipe__details">
+          <div class="skeleton skeleton-time"></div>
+          <div class="skeleton skeleton-difficulty"></div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -52,6 +71,7 @@ defineProps<{
   meal: string
   flavour: string
   link: string
+  isLoading?: boolean
 }>()
 </script>
 
@@ -176,6 +196,44 @@ defineProps<{
     @media (min-width: 1024px) {
       font-size: 13px;
     }
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f8f8f8 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+
+  &.skeleton-title {
+    height: 20px;
+    width: 80%;
+    margin: 10px 0;
+  }
+
+  &.skeleton-tag {
+    width: 50px;
+    height: 16px;
+    margin-right: 5px;
+  }
+
+  &.skeleton-time {
+    width: 40px;
+    height: 16px;
+  }
+
+  &.skeleton-difficulty {
+    width: 60px;
+    height: 18px;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 </style>

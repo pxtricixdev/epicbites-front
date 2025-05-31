@@ -1,7 +1,10 @@
 <template>
   <div class="recipe-carousel">
     <Carousel
-      :value="recipes"
+      :key="carouselKey"
+      ref="carouselRef"
+      v-model:page="carouselPage"
+      :value="isLoading ? Array.from({ length: 5 }) : recipes"
       :numVisible="5"
       :numScroll="2"
       :responsiveOptions="responsiveOptions"
@@ -10,12 +13,13 @@
       <template #item="{ data: recipe }">
         <div class="recipe-card">
           <CardRecipe
-            :score="recipe.score"
-            :title="recipe.name"
-            :user="recipe.userName"
-            :src="recipe.image"
-            :alt="`Imagen de la receta ${recipe.name}`"
-            :link="`/receta/${recipe.id}`"
+            :score="recipe?.score ?? 0"
+            :title="recipe?.name ?? ''"
+            :user="recipe?.userName ?? ''"
+            :src="recipe?.image ?? ''"
+            :alt="recipe?.name ? `Imagen de la receta ${recipe.name}` : ''"
+            :link="recipe?.id ? `/receta/${recipe.id}` : '#'"
+            :isLoading="isLoading"
           />
         </div>
       </template>
@@ -24,12 +28,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import CardRecipe from '@/components/CardRecipe.vue'
 import { Carousel } from 'primevue'
 import type { IGetMostRatedRecipes } from '@/stores/interfaces/IGetMostRatedRecipes'
 
-defineProps<{ recipes: Array<IGetMostRatedRecipes> }>()
+const { isLoading, recipes } = defineProps<{
+  recipes: Array<IGetMostRatedRecipes>
+  isLoading?: boolean
+}>()
+
+const carouselKey = ref(0)
+const carouselPage = ref(0)
+const carouselRef = ref()
+
+watch(
+  () => isLoading,
+  (newVal) => {
+    if (!newVal) {
+      nextTick(() => {
+        carouselKey.value++
+        carouselPage.value = 0
+      })
+    }
+  },
+)
 
 const responsiveOptions = ref([
   {

@@ -5,11 +5,11 @@
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas mejor valoradas 🔥</h2>
-      <div v-if="loadingMostRated && mostRatedRecipes.length === 0" class="home-page__loading-data">
-        <p>Cargando...</p>
-      </div>
       <div class="home-page__recipes__cards">
-        <RecipeCarousel :recipes="mostRatedRecipes.slice(0, 11)" />
+        <RecipeCarousel
+          :isLoading="loadingMostRated && mostRatedRecipes.length === 0"
+          :recipes="mostRatedRecipes.slice(0, 11)"
+        />
       </div>
     </section>
 
@@ -38,37 +38,34 @@
 
     <section class="home-page__recipes">
       <h2 class="home-page__section-title">Recetas vegetarianas 🌱</h2>
-      <div v-if="loadingAllRecipes" class="home-page__loading-data">
-        <p>Cargando...</p>
-      </div>
       <div class="home-page__recipes__cards">
-        <RecipeCarousel :recipes="vegetarianRecipes" />
+        <RecipeCarousel :isLoading="loadingAllRecipes" :recipes="vegetarianRecipes" />
       </div>
     </section>
 
     <section class="home-page__recipes">
-      <h2 class="home-page__section-title">Recetas rápidas < 20 mins</h2>
-      <div v-if="loadingAllRecipes" class="home-page__loading-data">
-        <p>Cargando...</p>
-      </div>
+      <h2 class="home-page__section-title">Recetas rápidas &lt; 20 mins</h2>
       <div class="home-page__recipes__cards">
-        <RecipeCarousel :recipes="fastRecipes" />
+        <RecipeCarousel :isLoading="loadingAllRecipes" :recipes="fastRecipes" />
       </div>
     </section>
 
     <section class="home-page__reviews">
       <h2 class="home-page__section-title">Últimas reseñas ⭐</h2>
-      <div v-if="loadingAllReviews" class="home-page__loading-data">
-        <p>Cargando...</p>
-      </div>
-      <div v-else class="reviews-container">
-        <div v-for="data in allReviews.slice(0, 6)" :key="data.id">
+      <div class="reviews-container">
+        <div
+          v-for="(data, index) in loadingAllReviews
+            ? Array.from({ length: 6 })
+            : allReviews.slice(0, 6)"
+          :key="loadingAllReviews ? index : (data as any).id"
+        >
           <HomeReview
-            :stars="data.score"
-            :text="data.text"
-            :author="data.username"
-            :recipe="data.name"
-            :recipeLink="`/receta/${data.recipeId}`"
+            :stars="!loadingAllReviews ? (data as any).score : 0"
+            :text="!loadingAllReviews ? (data as any).text : ''"
+            :author="!loadingAllReviews ? (data as any).username : ''"
+            :recipe="!loadingAllReviews ? (data as any).name : ''"
+            :recipeLink="!loadingAllReviews ? `/receta/${(data as any).recipeId}` : '#'"
+            :isLoading="loadingAllReviews"
           />
         </div>
       </div>

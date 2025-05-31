@@ -1,5 +1,5 @@
 <template>
-  <RouterLink :to="link">
+  <RouterLink v-if="!isLoading" :to="link">
     <div class="card">
       <div class="card__img" :alt="alt" :style="{ backgroundImage: `url(${src})` }"></div>
       <div class="card__info">
@@ -13,6 +13,19 @@
       </div>
     </div>
   </RouterLink>
+
+  <div v-else class="card">
+    <div class="card__img skeleton"></div>
+    <div class="card__info">
+      <div class="card__text">
+        <div class="card__text__top">
+          <span class="card__score skeleton-circle"></span>
+          <span class="card__text__title skeleton skeleton-text"></span>
+        </div>
+        <span class="card__text__user skeleton skeleton-text"></span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -23,6 +36,7 @@ defineProps<{
   src: string
   link: string
   alt: string
+  isLoading?: boolean
 }>()
 </script>
 
@@ -97,6 +111,34 @@ defineProps<{
       color: #656565;
       font-weight: 570;
     }
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f8f8f8 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+
+  &-circle {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+  }
+
+  &-text {
+    height: 16px;
+    width: 80%;
+    margin-top: 4px;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 </style>

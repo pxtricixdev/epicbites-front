@@ -1,11 +1,20 @@
 <template>
-  <div class="card">
+  <div v-if="!isLoading" class="card">
     <div class="card__stars">
       <Star v-for="star in stars" :key="star" class="card__icon filled" />
     </div>
     <RouterLink class="card__link" :to="recipeLink">{{ recipe }}</RouterLink>
     <p class="card__text">{{ text }}</p>
     <p class="card__author">{{ author }}</p>
+  </div>
+
+  <div v-else class="card">
+    <div class="card__stars">
+      <div v-for="n in 5" :key="n" class="skeleton skeleton-star"></div>
+    </div>
+    <div class="card__link skeleton skeleton-text--short"></div>
+    <div class="card__text skeleton skeleton-text--multi"></div>
+    <div class="card__author skeleton skeleton-text--short"></div>
   </div>
 </template>
 
@@ -18,6 +27,7 @@ defineProps<{
   author: string
   recipe: string
   recipeLink: string
+  isLoading?: boolean
 }>()
 </script>
 
@@ -83,6 +93,41 @@ defineProps<{
     font-weight: bold;
     font-size: 14.4px;
     color: $black;
+  }
+}
+
+// Skeleton styles
+.skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f8f8f8 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+
+  &-star {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+  }
+
+  &-text--short {
+    width: 40%;
+    height: 14px;
+    margin: 6px 0;
+  }
+
+  &-text--multi {
+    width: 100%;
+    height: 34px;
+    margin: 6px 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 </style>

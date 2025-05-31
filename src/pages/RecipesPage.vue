@@ -1,7 +1,6 @@
 <template>
   <section>
-    <div class="card-recipe__loading" v-if="loadingAllRecipes">Cargando...</div>
-    <div v-else>
+    <div>
       <div class="card-recipe__content">
         <h1 class="card-recipe__title">
           {{ category ? `Filtrando las recetas por categoría: ${category}` : 'Todas las recetas' }}
@@ -55,20 +54,35 @@
       </div>
 
       <div class="card-recipe__container">
-        <div v-for="recipe in filteredRecipes" :key="recipe.id">
+        <div
+          v-for="(recipe, index) in loadingAllRecipes ? Array.from({ length: 8 }) : filteredRecipes"
+          :key="loadingAllRecipes ? index : (recipe as any).id"
+        >
           <CardRecipeInfo
-            :image="recipe.image"
-            :alt="recipe.name"
-            :title="recipe.name"
-            :time="recipe.time"
-            :diet="dietLabels[recipe.diet] || recipe.diet"
-            :flavour="flavourLabels[recipe.flavour] || recipe.flavour"
-            :difficulty="difficultyLabels[recipe.difficulty] || recipe.difficulty"
-            :meal="recipe.meal"
-            :link="`/receta/${recipe.id}`"
+            :image="(recipe as any)?.image ?? ''"
+            :alt="(recipe as any)?.name ?? ''"
+            :title="(recipe as any)?.name ?? ''"
+            :time="(recipe as any)?.time ?? 0"
+            :diet="
+              (recipe as any)?.diet ? dietLabels[(recipe as any).diet] || (recipe as any).diet : ''
+            "
+            :flavour="
+              (recipe as any)?.flavour
+                ? flavourLabels[(recipe as any).flavour] || (recipe as any).flavour
+                : ''
+            "
+            :difficulty="
+              (recipe as any)?.difficulty
+                ? difficultyLabels[(recipe as any).difficulty] || (recipe as any).difficulty
+                : ''
+            "
+            :meal="(recipe as any)?.meal ?? ''"
+            :link="(recipe as any)?.id ? `/receta/${(recipe as any).id}` : '#'"
+            :isLoading="loadingAllRecipes"
           />
         </div>
-        <div v-if="filteredRecipes.length === 0">
+
+        <div v-if="!loadingAllRecipes && filteredRecipes.length === 0">
           <p>No hay recetas que coincidan con tu búsqueda</p>
         </div>
       </div>
