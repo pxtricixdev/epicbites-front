@@ -28,7 +28,7 @@ export const useRecipeStore = defineStore('recipes', () => {
     error.value = null
 
     try {
-      const response = await fetch('https://localhost:7129/api/recetas/all', {
+      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recetas/all', {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -54,7 +54,7 @@ export const useRecipeStore = defineStore('recipes', () => {
     recipeDetail.value = null
 
     try {
-      const response = await fetch(`https://localhost:7129/api/recetas/${id}`, {
+      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recetas/${id}`, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -79,7 +79,7 @@ export const useRecipeStore = defineStore('recipes', () => {
     error.value = null
 
     try {
-      const response = await fetch('https://localhost:7129/api/recetas/most-rated', {
+      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recetas/most-rated', {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -104,7 +104,7 @@ export const useRecipeStore = defineStore('recipes', () => {
     error.value = null
 
     try {
-      const response = await fetch(`https://localhost:7129/api/recetas/${id}`, {
+      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recetas/${id}`, {
         method: 'DELETE',
         headers: {
           accept: 'application/json',
@@ -138,7 +138,7 @@ export const useRecipeStore = defineStore('recipes', () => {
 
       formData.append('recipeData', JSON.stringify(recipeData))
 
-      const response = await fetch('https://localhost:7129/api/recetas', {
+      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recetas', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -177,7 +177,7 @@ export const useRecipeStore = defineStore('recipes', () => {
     error.value = null
 
     try {
-      const response = await fetch(`https://localhost:7129/api/recetas/user/${userId}`, {
+      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recetas/user/${userId}`, {
         method: 'GET',
         headers: {
           Accept: 'application/json',

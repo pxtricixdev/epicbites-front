@@ -21,7 +21,7 @@ export const useUserStore = defineStore('users', () => {
     error.value = null
 
     try {
-      const response = await fetch('https://localhost:7129/api/users', {
+      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/users', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -65,7 +65,7 @@ export const useUserStore = defineStore('users', () => {
         throw new Error('No hay campos para actualizar')
       }
 
-      const response = await fetch(`https://localhost:7129/api/users/${targetUserId}`, {
+      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/users/${targetUserId}`, {
         method: 'PATCH',
         headers: {
           accept: 'text/plain',
@@ -102,7 +102,7 @@ export const useUserStore = defineStore('users', () => {
     error.value = null
 
     try {
-      const response = await fetch(`https://localhost:7129/api/users/${id}`, {
+      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/users/${id}`, {
         method: 'DELETE',
         headers: {
           accept: 'application/json',
