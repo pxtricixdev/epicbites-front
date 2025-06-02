@@ -28,7 +28,7 @@ export const authStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/auth/login', {
+      const response = await fetch('https://epicbitesapi.retocsv.es/api/auth/login', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -85,7 +85,7 @@ export const authStore = defineStore('auth', () => {
     errorRegister.value = null
 
     try {
-      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/auth/registro-user', {
+      const response = await fetch('https://epicbitesapi.retocsv.es/api/auth/registro-user', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -115,7 +115,7 @@ export const authStore = defineStore('auth', () => {
     errorRegister.value = null
 
     try {
-      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/auth/registro-admin', {
+      const response = await fetch('https://epicbitesapi.retocsv.es/api/auth/registro-admin', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

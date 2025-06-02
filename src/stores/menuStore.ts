@@ -67,7 +67,7 @@ export const useMenuStore = defineStore('menu', () => {
 
     try {
       const response = await fetch(
-        `http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/weekly-menu/user/${userId}/week?startingDate=${startingDate}`,
+        `https://epicbitesapi.retocsv.es/api/weekly-menu/user/${userId}/week?startingDate=${startingDate}`,
         {
           method: 'GET',
           headers: {
@@ -114,7 +114,7 @@ export const useMenuStore = defineStore('menu', () => {
     }
 
     try {
-      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/weekly-menu/', {
+      const response = await fetch('https://epicbitesapi.retocsv.es/api/weekly-menu/', {
         method: 'POST',
         headers: {
           accept: 'application/json',
@@ -162,7 +162,7 @@ export const useMenuStore = defineStore('menu', () => {
     }
 
     try {
-      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/weekly-menu/${menuId}`, {
+      const response = await fetch(`https://epicbitesapi.retocsv.es/api/weekly-menu/${menuId}`, {
         method: 'PUT',
         headers: {
           accept: 'application/json',
@@ -189,7 +189,7 @@ export const useMenuStore = defineStore('menu', () => {
     error.value = null
 
     try {
-      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/weekly-menu/${menuId}`, {
+      const response = await fetch(`https://epicbitesapi.retocsv.es/api/weekly-menu/${menuId}`, {
         method: 'DELETE',
         headers: {
           accept: 'application/json',

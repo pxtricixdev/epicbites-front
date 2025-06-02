@@ -22,7 +22,7 @@ export const useRecipeNoteStore = defineStore('recipeNotes', () => {
     loadingAllNotes.value = true
     error.value = null
     try {
-      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recipe-notes', {
+      const response = await fetch('https://epicbitesapi.retocsv.es/api/recipe-notes', {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -49,7 +49,7 @@ export const useRecipeNoteStore = defineStore('recipeNotes', () => {
     loadingNotesByUser.value = true
     error.value = null
     try {
-      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recipe-notes/user/${userId}`, {
+      const response = await fetch(`https://epicbitesapi.retocsv.es/api/recipe-notes/user/${userId}`, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -71,7 +71,7 @@ export const useRecipeNoteStore = defineStore('recipeNotes', () => {
     loadingDelete.value = true
     error.value = null
     try {
-      const response = await fetch(`http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recipe-notes/${id}`, {
+      const response = await fetch(`https://epicbitesapi.retocsv.es/api/recipe-notes/${id}`, {
         method: 'DELETE',
         headers: {
           Accept: 'application/json',
@@ -100,7 +100,7 @@ export const useRecipeNoteStore = defineStore('recipeNotes', () => {
         noteText: noteData.noteText,
         userId: noteData.userId
       }
-      const response = await fetch('http://a727d32b9ef624da0b6536a0056c27f3-78280615.us-east-1.elb.amazonaws.com/api/recipe-notes', {
+      const response = await fetch('https://epicbitesapi.retocsv.es/api/recipe-notes', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

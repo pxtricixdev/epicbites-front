@@ -31,7 +31,7 @@ export const useChatStore = defineStore('chat', () => {
     error.value = null
 
     try {
-      const response = await fetch('http://a2de18a0e4c3144819d425589ca307b5-2076261844.us-east-1.elb.amazonaws.com/chat', {
+      const response = await fetch('https://epicbiteschatbot.retocsv.es/chat', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
