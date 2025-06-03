@@ -21,7 +21,7 @@
 
       <div class="chatbot__messages" ref="messagesContainer">
         <div v-if="messages.length === 0" class="chatbot__welcome">
-          <p>👋 ¡Hola! Soy tu asistente de cocina. ¿Que te apetece comer hoy?</p>
+          <p>👋 ¡Hola! Soy tu asistente de cocina. ¿Qué te apetece comer hoy?</p>
         </div>
 
         <div
@@ -227,6 +227,7 @@ onMounted(() => {
     flex-direction: column;
     gap: 10px;
     background-color: #f9f9f9;
+    overflow-y: auto;
   }
 
   &__welcome {
@@ -261,6 +262,19 @@ onMounted(() => {
       background-color: $light-grey;
       color: $black;
       border-top-left-radius: 2px;
+      padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 80%;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+
+      a {
+        color: $secondary-orange;
+        text-decoration: underline;
+        word-break: break-all;
+      }
     }
   }
 

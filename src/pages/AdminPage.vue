@@ -141,7 +141,11 @@
 
                 <Column field="userName" header="Usuario"></Column>
 
-                <Column field="difficulty" header="Dificultad"></Column>
+                <Column field="difficulty" header="Dificultad">
+                  <template #body="slotProps">
+                    {{ difficultyLabels[slotProps.data.difficulty] || slotProps.data.difficulty }}
+                  </template>
+                </Column>
 
                 <Column field="score" header="Puntuación">
                   <template #body="slotProps">
@@ -482,7 +486,6 @@ import { toTypedSchema } from '@vee-validate/zod'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import { Toaster, toast } from 'vue-sonner'
-import { useRouter } from 'vue-router'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { useReviewStore } from '@/stores/reviewStore'
 import { useUserStore } from '@/stores/userStore'
@@ -490,8 +493,7 @@ import { authStore } from '@/stores/authStore'
 import type { IGetAllUsers } from '@/stores/interfaces/IGetAllUsers'
 import { storeToRefs } from 'pinia'
 import useCharts from '@/data/useChart'
-
-const router = useRouter()
+import { difficultyLabels } from '@/data/labels'
 
 const { isAuthenticated, userRole, logout } = authStore()
 const userData = ref({ total: 0 })
@@ -538,9 +540,6 @@ const {
 
   initializeCharts,
   setupWatchers,
-
-  isLoading,
-  error,
 } = useCharts(
   activeSection,
   homeDifficultyChartRef,
