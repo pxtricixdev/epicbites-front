@@ -40,6 +40,6 @@ spec:
     spec:
       containers:
         - name: epicbites-web
-          image: patriciaabad/epicbites-web:7.0
+          image: patriciaabad/epicbites-web:8.0
           ports:
             - containerPort: 80
