@@ -266,15 +266,6 @@ onMounted(() => {
       font-size: 14px;
       line-height: 1.4;
       max-width: 80%;
-      word-wrap: break-word;
-      overflow-wrap: anywhere;
-      white-space: pre-wrap;
-
-      a {
-        color: $secondary-orange;
-        text-decoration: underline;
-        word-break: break-all;
-      }
     }
   }
 
@@ -288,12 +279,20 @@ onMounted(() => {
     border-radius: 12px;
     font-size: 14px;
     line-height: 1.4;
-    max-width: 80%;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 
     a {
       color: $secondary-orange;
+      display: inline-block;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
       text-decoration: underline;
-      word-break: break-all;
     }
   }
 
