@@ -7,6 +7,11 @@
         lleva un control de tus comidas y disfruta de una alimentación variada y equilibrada sin
         complicaciones.
       </p>
+      <p class="weekly-menu__subtitle">
+        <RouterLink to="/registro">Regístrate</RouterLink> o
+        <RouterLink to="/login">Inicia sesión</RouterLink>
+        para crear tu menú semanal.
+      </p>
     </div>
     <div class="weekly-menu__animation">
       <div class="weekly-menu__bullets">
@@ -376,6 +381,16 @@ const { isAuthenticated } = storeToRefs(auth)
     margin: 10px 10px 0 10px;
     margin-top: 10px;
     max-width: 1100px;
+
+    a {
+      color: $secondary-orange;
+      @include semibold-text(16px);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   &__bullets {
