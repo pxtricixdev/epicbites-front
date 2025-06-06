@@ -18,7 +18,7 @@ import { ArrowRight } from 'lucide-vue-next'
 import { authStore } from '@/stores/authStore'
 
 const auth = authStore()
-const redirectTo = computed(() => (auth.isAuthenticated ? '/' : '/registro'))
+const redirectTo = computed(() => (auth.isAuthenticated ? '/recetas' : '/registro'))
 </script>
 
 <style scoped lang="scss">

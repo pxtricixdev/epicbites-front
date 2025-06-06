@@ -109,7 +109,7 @@ onMounted(async () => {
 
   fastRecipes.value = allRecipes.value.filter((recipe) => recipe.time <= 20)
 
-  randomRecipe.value = allRecipes.value[Math.floor(Math.random() * allRecipes.value.length)].id
+  randomRecipe.value = allRecipes.value[Math.floor(Math.random() * allRecipes.value.length) + 1].id
 })
 </script>
 
