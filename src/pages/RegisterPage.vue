@@ -1,5 +1,8 @@
 <template>
-  <div class="register">
+  <div v-if="isAuthenticated">
+    {{ router.push('/') }}
+  </div>
+  <div v-else class="register">
     <div class="register__welcome">
       <p class="register__welcome__title">¡Bienvenido/a!</p>
       <p class="register__welcome__subtitle">
@@ -76,7 +79,7 @@ const validationSchema = toTypedSchema(
   }),
 )
 const auth = authStore()
-const { register, clearRegisterData } = auth
+const { register, clearRegisterData, isAuthenticated } = auth
 
 const registerForm = reactive({
   username: '',
